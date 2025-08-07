@@ -85,7 +85,7 @@
 											</li>
 											<li><a href="blog.html">Blog</a></li>
                                             <li><a href="contact.html">Contact</a></li>                                               
-                                            <li><a href="contact.html" class="top-btn">SINGUP</a></li>                                               
+                                            <li><a href="<?= site_url('login'); ?>" class="top-btn">SINGUP</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -868,61 +868,6 @@
                 </div>
             </section>
             <!-- services-area-end -->
-			
-            <!-- testimonial-area -->
-            <section id="testimonios" class="testimonial-area gray-bg testimonial-p pt-115 pb-185 text-center" style="background-image:url(/public/template/img/testimonial/test-bg.jpg)">
-                <div class="container">
-                    <div class="row">
-                          <div class="col-lg-2">
-						  </div>
-                        <div class="col-lg-8">
-                            <div class="section-title center-align mb-40 wow fadeInDown animated" data-animation="fadeInDown animated" data-delay=".2s">
-                                <span>Experice With me</span>
-                                <h2>Testimonios</h2>
-                            </div>
-                            <div class="testimonial-active">
-                                <div class="single-testimonial">
-								<i class="fas fa-quote-left"></i>
-                                    <p>“Nam liber tempor cum soluta nobis eleifend option congue is nihil imper per tem por legere me doming vulputate velit esse molestiesoluta nobis eleifend option congue is nihil imper per tem por legere me doming vulputate velit esse molestiesoluta nobis eleifend option congue is nihil imper .</p>
-                                    <div class="testi-author text-center">
-                                        <img src="/template/img/testimonial/testi_avatar.png" alt="img">
-                                        <div class="ta-info">
-                                            <h6>Mr Jone Dose</h6>
-                                            <span>Web Developer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-testimonial">
-								<i class="fas fa-quote-left"></i>
-                                   <p>“Nam liber tempor cum soluta nobis eleifend option congue is nihil imper per tem por legere me doming vulputate velit esse molestiesoluta nobis eleifend option congue is nihil imper per tem por legere me doming vulputate velit esse molestiesoluta nobis eleifend option congue is nihil imper .</p>
-                                    <div class="testi-author text-center">
-                                        <img src="/template/img/testimonial/testi_avatar.png" alt="img">
-                                        <div class="ta-info">
-                                            <h6>Margie R. Robinson</h6>
-                                            <span>Web Developer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-testimonial">
-								<i class="fas fa-quote-left"></i>
-                                    <p>“Nam liber tempor cum soluta nobis eleifend option congue is nihil imper per tem por legere me doming vulputate velit esse molestiesoluta nobis eleifend option congue is nihil imper per tem por legere me doming vulputate velit esse molestiesoluta nobis eleifend option congue is nihil imper .</p>
-                                    <div class="testi-author text-center">
-                                        <img src="/template/img/testimonial/testi_avatar.png" alt="img">
-                                        <div class="ta-info">
-                                            <h6>Mr Jone Dose</h6>
-                                            <span>Web Developer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-						   <div class="col-lg-2">
-						  </div>
-                    </div>
-                </div>
-            </section>
-            <!-- testimonial-area-end -->
-           
            
             <!-- blog-area -->
             <section id="blog" class="blog-area  p-relative pt-120 pb-90">
@@ -1069,7 +1014,7 @@
             </section>
             <!-- contact-area-end -->
 			 <!-- brand-area -->
-            <div class="brand-area pt-60 pb-60" style="background-color:#d29751">
+            <div class="brand-area pt-60 pb-60" style="background-color:#9bb3dd">
                 <div class="container">
                     <div class="row brand-active">
                         <div class="col-xl-2">
