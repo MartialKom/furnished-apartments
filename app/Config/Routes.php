@@ -22,8 +22,15 @@ $routes->group('', ['namespace' => 'App\Controllers\Frontend'], function ($route
     $routes->post('/contact', 'HomeController::contact');
 });
 
-// Admin Routes
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
+// Authentication Routes
+$routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('login', 'AuthController::login');
+    $routes->post('attempt-login', 'AuthController::attemptLogin');
+    $routes->get('logout', 'AuthController::logout');
+});
+
+// Admin Routes (Protected)
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'auth'], function ($routes) {
     $routes->get('/', 'DashboardController::index');
     $routes->get('dashboard', 'DashboardController::index');
     $routes->get('analytics', 'DashboardController::analytics');

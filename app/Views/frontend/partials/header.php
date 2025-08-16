@@ -61,7 +61,7 @@
 											</li>
 											<li><a href="blog.html">Blog</a></li>
                                             <li><a href="contact.html">Contact</a></li>                                               
-                                            <li><a href="contact.html" class="top-btn">SINGUP</a></li>                                               
+                                            <li><a href="<?= base_url('auth/login') ?>" class="top-btn">LOGIN</a></li>                                               
                                         </ul>
                                     </nav>
                                 </div>
