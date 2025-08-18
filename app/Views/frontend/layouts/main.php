@@ -9,15 +9,15 @@
     <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/frontend/images/favicon.ico') ?>">
 
     <!-- CSS here -->
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/bootstrap.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/animate.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/magnific-popup.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/fontawesome-all.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/dripicons.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/slick.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/default.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/style.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/frontend/css/responsive.css') ?>">
+    <link rel="stylesheet" href="/template/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/template/css/animate.min.css">
+    <link rel="stylesheet" href="/template/css/magnific-popup.css">
+    <link rel="stylesheet" href="/template/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/template/css/dripicons.css">
+    <link rel="stylesheet" href="/template/css/slick.css">
+    <link rel="stylesheet" href="/template/css/default.css">
+    <link rel="stylesheet" href="/template/css/style.css">
+    <link rel="stylesheet" href="/template/css/responsive.css">
 </head>
 <body>
     <!-- Header -->
@@ -32,24 +32,24 @@
     <?= $this->include('frontend/partials/footer') ?>
 
     <!-- JS here -->
-    <script src="<?= base_url('assets/frontend/js/vendor/modernizr-3.5.0.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/vendor/jquery-1.12.4.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/popper.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/bootstrap.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/one-page-nav-min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/slick.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/ajax-form.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/paroller.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/wow.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/js_isotope.pkgd.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/imagesloaded.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/parallax.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/jquery.waypoints.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/jquery.counterup.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/jquery.scrollUp.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/main.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/jquery.magnific-popup.min.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/element-in-view.js') ?>"></script>
-    <script src="<?= base_url('assets/frontend/js/main.js') ?>"></script>
+    <script src="/template/js/vendor/modernizr-3.5.0.min.js"></script>
+    <script src="/template/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="/template/js/popper.min.js"></script>
+    <script src="/template/js/bootstrap.min.js"></script>
+    <script src="/template/js/one-page-nav-min.js"></script>
+    <script src="/template/js/slick.min.js"></script>
+    <script src="/template/js/ajax-form.js"></script>
+    <script src="/template/js/paroller.js"></script>
+    <script src="/template/js/wow.min.js"></script>
+    <script src="/template/js/js_isotope.pkgd.min.js"></script>
+    <script src="/template/js/imagesloaded.min.js"></script>
+    <script src="/template/js/parallax.min.js"></script>
+    <script src="/template/js/jquery.waypoints.min.js"></script>
+    <script src="/template/js/jquery.counterup.min.js"></script>
+    <script src="/template/js/jquery.scrollUp.min.js"></script>
+    <script src="/template/js/parallax-scroll.js"></script>
+    <script src="/template/js/jquery.magnific-popup.min.js"></script>
+    <script src="/template/js/element-in-view.js"></script>
+    <script src="/template/js/main.js"></script>
 </body>
 </html>

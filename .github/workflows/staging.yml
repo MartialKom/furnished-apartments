@@ -3,7 +3,7 @@ name: Deploy furnished apartments
 on:
   push:
     branches:
-      - staging
+      - martial
 
 jobs:
   deploy:
@@ -22,7 +22,7 @@ jobs:
           password: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 4589
           source: "."
-          target: "/home/admin/app/furnished-apartments"
+          target: "/home/admin/app/furnished_apartments"
 
       - name: Deploy application
         uses: appleboy/ssh-action@master
@@ -32,9 +32,9 @@ jobs:
           password: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 4589
           script: |
-            cd /home/admin/app/furnished-apartments
+            cd /home/admin/app/furnished_apartments
             docker stop FURNISHED_PARTMENTS || true
             docker rm FURNISHED_PARTMENTS || true
             docker rmi furnished-apartments:V1 || true
             docker build -t furnished-apartments:V1 .
-            docker run -d --name FURNISHED_PARTMENTS --network sfo -p 8181:80 -v /home/admin/app/volumes/power_social_boost/writable:/var/www/html/writable furnished-apartments:V1
+            docker run -d --name FURNISHED_PARTMENTS --network sfo -p 8181:80 -v /home/admin/app/volumes/furnished_apartments/writable:/var/www/html/writable furnished-apartments:V1

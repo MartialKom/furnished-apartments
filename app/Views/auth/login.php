@@ -82,21 +82,6 @@
                             <?php endif; ?>
                         </div>
 
-                        <div class="form-group mb-4">
-                            <div class="form-check" style="display: flex; align-items: center;">
-                                <input 
-                                    type="checkbox" 
-                                    id="remember" 
-                                    name="remember" 
-                                    class="form-check-input" 
-                                    style="margin-right: 10px; transform: scale(1.2);"
-                                >
-                                <label for="remember" style="color: #6e6e6e; font-size: 14px; cursor: pointer;">
-                                    Se souvenir de moi
-                                </label>
-                            </div>
-                        </div>
-
                         <button 
                             type="submit" 
                             class="btn btn-primary w-100" 
