@@ -27,8 +27,7 @@
                                     </li>
                                 </ul>
                                 <div class="slider-btn mt-55">
-                                    <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Get a
-                                        Quote</a>
+                                    <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
                                     <a href="https://www.youtube.com/watch?v=vKSA_idPZkc" class="video-i popup-video"
                                        data-animation="fadeInUp" data-delay=".8s" style="animation-delay: 0.8s;"
                                        tabindex="0"><i class="fas fa-play"></i></a>
@@ -38,7 +37,7 @@
                         <div class="col-lg-4">
                             <div class="slider-price">
                                 <h3>Prix:</h3>
-                                <h2>FCFA 20.000 / jrs</h2>
+                                <h2>Fcfa 20.000/jrs</h2>
                             </div>
                         </div>
                     </div>
@@ -67,8 +66,7 @@
                                     </li>
                                 </ul>
                                 <div class="slider-btn mt-55">
-                                    <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Get a
-                                        Quote</a>
+                                    <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
                                     <a href="https://www.youtube.com/watch?v=vKSA_idPZkc" class="video-i popup-video"
                                        data-animation="fadeInUp" data-delay=".8s" style="animation-delay: 0.8s;"
                                        tabindex="0"><i class="fas fa-play"></i></a>
@@ -78,7 +76,7 @@
                         <div class="col-lg-4">
                             <div class="slider-price">
                                 <h3>Prix:</h3>
-                                <h2>FCFA 20.000 / jrs</h2>
+                                <h2>Fcfa 20.000/jrs</h2>
                             </div>
                         </div>
                     </div>
@@ -277,7 +275,7 @@
     </section>
     <!-- choose-area-end -->
 
-    <!-- testimonial-area -->
+    <!-- testimonial-area
     <section id="testimonios" class="testimonial-area gray-bg testimonial-p pt-115 pb-185 text-center"
              style="background-image:url(<?= base_url('assets/frontend/images/testimonial/test-bg.jpg') ?>)">
         <div class="container">
@@ -308,8 +306,7 @@
                 <div class="col-lg-2"></div>
             </
     </section>
-    <!-- testimonial-area-end -->
-
+    testimonial-area-end -->
 
     <!-- apartments-area -->
     <section class="apartments pt-120 pb-90">
@@ -344,9 +341,9 @@
                                 <p>Dès votre entrée, vous serez séduit par son ambiance chaleureuse. La cuisine entièrement équipée vous permettra de préparer vos repas dans un cadre agréable, tandis que le salon, avec ses meubles contemporains, invite à la détente après une longue journée. La salle de bain privative, avec ses finitions élégantes, ajoute une touche de luxe à votre quotidien.</p>
                                 <p>De plus, le studio est équipé de la climatisation et d'un accès Wi-Fi haut débit, pour un confort optimal.</p>
                                 <ul>
-                                    <li>N° Etage <span class="after"> 3</span></li>
-                                    <li>PIECE N° <span class="after"> 2</span></li>
-                                    <li>PRIX <span class="after"> 20000Fcfa/Month</span></li>
+                                    <li>N° Etage<span class="after"> 3</span></li>
+                                    <li>PIECE N°<span class="after"> 2</span></li>
+                                    <li>PRIX<span class="after"> 20000Fcfa/Month</span></li>
                                 </ul>
                             </div>
                             <div class="col-lg-6">
@@ -363,9 +360,9 @@
                                 <p>À votre arrivée, vous serez accueilli par un vaste salon baigné de lumière naturelle, idéal pour se détendre ou recevoir des amis. La cuisine ouverte, entièrement équipée avec des appareils modernes, vous invite à explorer vos talents culinaires. Les chambres, avec leurs lits confortables et leur décoration raffinée, offrent un havre de paix pour des nuits reposantes.</p>
                                 <p>L'appartement dispose également de balcons privés, parfaits pour savourer votre café du matin ou apprécier un coucher de soleil. Avec des commodités telles que la climatisation, le Wi-Fi haut débit, et un accès sécurisé, votre confort est notre priorité.</p>
                                 <ul>
-                                    <li>N° Etage <span class="after"> 2</span></li>
-                                    <li>PIECE N° <span class="after"> 4</span></li>
-                                    <li>PRIX <span class="after"> 25000Fcfa/Month</span></li>
+                                    <li>N° Etage<span class="after"> 2</span></li>
+                                    <li>PIECE N°<span class="after"> 4</span></li>
+                                    <li>PRIX<span class="after"> 25000Fcfa/Month</span></li>
                                 </ul>
                             </div>
                             <div class="col-lg-6">
