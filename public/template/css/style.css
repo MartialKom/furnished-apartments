@@ -434,6 +434,11 @@ label {
 	font-size: 60px;
 	font-weight: 500;
 }
+
+.single-slider {
+	display: flex;
+	flex-direction: row;
+}
 .second-header {
 	border: none;
 	padding-bottom: 15px;

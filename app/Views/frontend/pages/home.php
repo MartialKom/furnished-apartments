@@ -28,9 +28,6 @@
                                 </ul>
                                 <div class="slider-btn mt-55">
                                     <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
-                                    <a href="https://www.youtube.com/watch?v=vKSA_idPZkc" class="video-i popup-video"
-                                       data-animation="fadeInUp" data-delay=".8s" style="animation-delay: 0.8s;"
-                                       tabindex="0"><i class="fas fa-play"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -66,9 +63,6 @@
                                 </ul>
                                 <div class="slider-btn mt-55">
                                     <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
-                                    <a href="https://www.youtube.com/watch?v=vKSA_idPZkc" class="video-i popup-video"
-                                       data-animation="fadeInUp" data-delay=".8s" style="animation-delay: 0.8s;"
-                                       tabindex="0"><i class="fas fa-play"></i></a>
                                 </div>
                             </div>
                         </div>

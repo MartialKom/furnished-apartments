@@ -49,6 +49,6 @@
     <script src="<?= base_url('template/js/main.js') ?>"></script>
     <script src="<?= base_url('template/js/jquery.magnific-popup.min.js') ?>"></script>
     <script src="<?= base_url('template/js/element-in-view.js') ?>"></script>
-    <script src="<?= base_url('template/js/main.js') ?>"></script>
+
 </body>
 </html>
