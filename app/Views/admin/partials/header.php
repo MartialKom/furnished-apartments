@@ -34,8 +34,8 @@
                                 <div class="d-flex align-items-center">
                                     <img src="<?= base_url('assets/admin/images/avatar/1.png') ?>" alt="user-image" class="img-fluid user-avtar">
                                     <div>
-                                        <h6 class="text-dark mb-0">Administrator</h6>
-                                        <span class="fs-12 fw-medium text-muted">admin@furnished-apartments.com</span>
+                                        <h6 class="text-dark mb-0"><?= session()->get('user_name') ?? 'Utilisateur' ?></h6>
+                                        <span class="fs-12 fw-medium text-muted"><?= ucfirst(session()->get('user_role') ?? 'Utilisateur') ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                                 <span>Account Settings</span>
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="<?= base_url('/admin/logout') ?>" class="dropdown-item">
+                            <a href="<?= base_url('auth/logout') ?>" class="dropdown-item">
                                 <i class="feather-log-out"></i>
                                 <span>Logout</span>
                             </a>

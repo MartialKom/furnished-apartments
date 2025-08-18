@@ -169,7 +169,7 @@
                                         <div class="avatar-text">JD</div>
                                         <div class="d-flex flex-column">
                                             <a href="javascript:void(0);" class="fw-semibold text-dark mb-0">John Doe</a>
-                                            <span class="fs-12 fw-medium text-muted">john&#64;example.com</span>
+                                            <span class="fs-12 fw-medium text-muted">john@example.com</span>
                                         </div>
                                     </div>
                                 </td>
@@ -185,7 +185,7 @@
                                         <div class="avatar-text">JS</div>
                                         <div class="d-flex flex-column">
                                             <a href="javascript:void(0);" class="fw-semibold text-dark mb-0">Jane Smith</a>
-                                            <span class="fs-12 fw-medium text-muted">jane&#64;example.com</span>
+                                            <span class="fs-12 fw-medium text-muted">jane@example.com</span>
                                         </div>
                                     </div>
                                 </td>
