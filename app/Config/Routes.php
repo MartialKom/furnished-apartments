@@ -14,6 +14,6 @@ $routes->group('', ['namespace' => 'App\Controllers\Frontend'], function ($route
     $routes->get('/apartments', 'Home::apartments');
 });
 
-$routes->group('', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
     $routes->get('/', 'DashboardController::index');
 });

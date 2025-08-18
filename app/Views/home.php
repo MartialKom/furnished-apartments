@@ -6,7 +6,7 @@
         <title>Relxtower - Multipurpose Business Landing Page Template</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="shortcut icon" type="image/x-icon" href="/template/img/favicon.ico">
+		<link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/admin/images/favicon.ico') ?>">
         <!-- Place favicon.ico in the root directory -->
 
 		<!-- CSS here -->
@@ -58,7 +58,7 @@
                         <div class="row align-items-center">
                             <div class="col-xl-2 col-lg-2">
                                 <div class="logo">
-                                    <a href="index.html"><img src="/template/img/logo/logo.png" alt="logo"></a>
+                                    <a href="index.html"><img src="<?= base_url('assets/admin/images/logo-full.png') ?>" alt="logo"></a>
                                 </div>
                             </div>
                             <div class="col-xl-10 col-lg-9">
