@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="slider-content s-slider-content text-left">
-                                <h2 data-animation="fadeInUp" data-delay=".4s">Alliez <br>confort et le <br>Luxe</h2>
+                                <h2 data-animation="fadeInUp" data-delay=".4s">Alliez <br>confort et <br>Luxe</h2>
                                 <ul data-animation="fadeInUp" data-delay=".6s">
                                     <li>
                                         <i class="fas fa-bed"></i>
@@ -43,7 +43,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="single-slider slider-bg d-flex align-items-center"
                  style="background-image:url(<?= base_url('assets/frontend/images/slider/slider2.png') ?>)">
                 <div class="container">
@@ -429,7 +428,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="contact-field p-relative c-name mb-40">
-                                <input type="text" placeholder="Ecrit ici  Jhonathan">
+                                <input type="text" placeholder="Ecrit ici Jhonathan">
                             </div>
                         </div>
                         <div class="col-lg-12">
