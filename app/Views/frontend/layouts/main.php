@@ -17,12 +17,46 @@
     <link rel="stylesheet" href="<?= base_url('template/css/default.css') ?>">
     <link rel="stylesheet" href="<?= base_url('template/css/style.css') ?>">
     <link rel="stylesheet" href="<?= base_url('template/css/responsive.css') ?>">
+    <style>
+        #loader {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3; /* Couleur de fond */
+            border-top: 8px solid #3498db; /* Couleur du spinner */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
 </head>
 <body>
     <!-- Header -->
     <?= $this->include('frontend/partials/header') ?>
 
     <!-- Main Content -->
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
     <main>
         <?= $this->renderSection('content') ?>
     </main>
@@ -31,8 +65,10 @@
     <?= $this->include('frontend/partials/footer') ?>
 
     <!-- JS here -->
-    <script src="<?= base_url('assets/frontend/js/vendor/modernizr-3.5.0.min.js') ?>"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="<?= base_url('assets/frontend/js/vendor/jquery-1.12.4.min.js') ?>"></script>
+    <script src="<?= base_url('assets/frontend/js/vendor/modernizr-3.5.0.min.js') ?>"></script>
     <script src="<?= base_url('assets/frontend/js/popper.min.js') ?>"></script>
     <script src="<?= base_url('assets/frontend/js/bootstrap.min.js') ?>"></script>
     <script src="<?= base_url('assets/frontend/js/one-page-nav-min.js') ?>"></script>
@@ -49,6 +85,16 @@
     <script src="<?= base_url('assets/frontend/js/main.js') ?>"></script>
     <script src="<?= base_url('assets/frontend/js/jquery.magnific-popup.min.js') ?>"></script>
     <script src="<?= base_url('assets/frontend/js/element-in-view.js') ?>"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Masquer le loader une fois que la page est complètement chargée
+            $("#loader").fadeOut("slow");
+        });
+        $(window).on('load', function() {
+            $("#loader").fadeOut("slow");
+        });
+    </script>
 
 </body>
 </html>
