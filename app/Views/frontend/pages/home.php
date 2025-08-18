@@ -116,7 +116,7 @@
             <div class="row">
                 <div class="col-lg-3 col-sm-6">
                     <div class="single-counter text-center mb-30 wow fadeInUp animated">
-                        <i class="fal fa-pencil-ruler"></i>
+                        <i class="fa fa-plus-square-o"></i>
                         <div class="counter p-relative">
                             <span class="count">30</span>
                         </div>
@@ -231,9 +231,8 @@
                             <h2>A louer !</h2>
                         </div>
                         <div class="choose-content wow fadeInUp animated">
-                            <p>Pellentesque habitant morbi tristique senectus et netus et fames acturpis egestas.
-                                Vestibulum tortor quam, feugiat vitae, tempor sit amet, ante. Donec eu libero sit amet
-                                quam egestas semper.</p>
+                            <p>Profitez de notre appartement haut standing avec accès au WIFI et climatisation à disposition.
+                            Votre confort n'a pas de prix !</p>
 
                             <div class="choose-list mt-20 mb-20">
                                 <ul>
@@ -242,12 +241,12 @@
                                         <span>3 chambres.</span>
                                     </li>
                                     <li>
-                                        <i class="fal fa-pencil-ruler"></i>
+                                        <i class="fa fa-plus-square-o"></i>
                                         <span>4 pièces</span>
                                     </li>
                                     <li>
                                         <i class="fas fa-bath"></i>
-                                        <span>Lit super confort</span>
+                                        <span>2 salles de bain</span>
                                     </li>
                                     <li>
                                         <i class="fas fa-car"></i>
