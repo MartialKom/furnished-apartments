@@ -37,4 +37,4 @@ jobs:
             docker rm FURNISHED_PARTMENTS || true
             docker rmi furnished-apartments:V1 || true
             docker build -t furnished-apartments:V1 .
-            docker run -d --name FURNISHED_PARTMENTS -p 8282:80 -v /home/admin/app/volumes/furnished_apartments/writable:/var/www/html/writable furnished-apartments:V1
+            docker run -d --name FURNISHED_PARTMENTS -p 8282:80 --network martial -v /home/admin/app/volumes/furnished_apartments/writable:/var/www/html/writable furnished-apartments:V1

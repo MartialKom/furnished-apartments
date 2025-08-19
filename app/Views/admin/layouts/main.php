@@ -4,11 +4,11 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="<?= isset($description) ? $description : 'Admin Dashboard - Furnished Apartments' ?>" />
+    <meta name="description" content="<?= isset($description) ? $description : 'Admin Dashboard - NSENOU TOWER' ?>" />
     <meta name="keyword" content="" />
     <meta name="author" content="Furnished Apartments" />
     
-    <title><?= isset($title) ? $title : 'Admin Dashboard - Furnished Apartments' ?></title>
+    <title><?= isset($title) ? $title : 'Admin Dashboard - NsenouTower' ?></title>
     
     <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/admin/images/favicon.ico') ?>" />
     

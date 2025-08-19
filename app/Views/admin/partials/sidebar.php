@@ -2,7 +2,7 @@
     <div class="navbar-wrapper">
         <div class="m-header">
             <a href="<?= base_url('/admin') ?>" class="b-brand">
-                <img src="<?= base_url('assets/admin/images/logo-full.png') ?>" alt="Logo" class="logo logo-lg" />
+                <img src="<?= base_url('assets/frontend/images/logo/nsenou.png') ?>" alt="Logo" class="logo logo-lg" />
                 <img src="<?= base_url('assets/admin/images/logo-abbr.png') ?>" alt="Logo" class="logo logo-sm" />
             </a>
         </div>
