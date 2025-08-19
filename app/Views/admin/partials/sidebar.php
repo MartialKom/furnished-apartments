@@ -11,94 +11,70 @@
                 <li class="nxl-item nxl-caption">
                     <label>Navigation</label>
                 </li>
-                <li class="nxl-item nxl-hasmenu">
-                    <a href="javascript:void(0);" class="nxl-link">
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-airplay"></i></span>
                         <span class="nxl-mtext">Dashboard</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
-                    <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin') ?>">Main Dashboard</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/analytics') ?>">Analytics</a></li>
-                    </ul>
                 </li>
                 
                 <li class="nxl-item nxl-caption">
-                    <label>Apartment Management</label>
+                    <label>Gestion des Appartements</label>
                 </li>
                 <li class="nxl-item">
                     <a href="<?= base_url('/admin/apartments') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home"></i></span>
-                        <span class="nxl-mtext">Apartments</span>
+                        <span class="nxl-mtext">Appartements</span>
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="<?= base_url('/admin/bookings') ?>" class="nxl-link">
+                    <a href="<?= base_url('/admin/reservations') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-calendar"></i></span>
-                        <span class="nxl-mtext">Bookings</span>
+                        <span class="nxl-mtext">Réservations</span>
                     </a>
                 </li>
-                <li class="nxl-item nxl-hasmenu">
-                    <a href="javascript:void(0);" class="nxl-link">
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/locataires') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-users"></i></span>
-                        <span class="nxl-mtext">Customers</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Locataires</span>
                     </a>
-                    <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/customers') ?>">All Customers</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/customers/create') ?>">Add Customer</a></li>
-                    </ul>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/paiements') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-credit-card"></i></span>
+                        <span class="nxl-mtext">Paiements</span>
+                    </a>
                 </li>
                 
                 <li class="nxl-item nxl-caption">
-                    <label>Business Management</label>
+                    <label>Rapports</label>
                 </li>
-                <li class="nxl-item nxl-hasmenu">
-                    <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-target"></i></span>
-                        <span class="nxl-mtext">Leads</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
-                    </a>
-                    <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/leads') ?>">All Leads</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/leads/create') ?>">Add Lead</a></li>
-                    </ul>
-                </li>
-                <li class="nxl-item nxl-hasmenu">
-                    <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-briefcase"></i></span>
-                        <span class="nxl-mtext">Projects</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
-                    </a>
-                    <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/projects') ?>">All Projects</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/projects/create') ?>">Create Project</a></li>
-                    </ul>
-                </li>
-                
-                <li class="nxl-item nxl-caption">
-                    <label>Reports & Analytics</label>
-                </li>
-                <li class="nxl-item nxl-hasmenu">
-                    <a href="javascript:void(0);" class="nxl-link">
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/analytics') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-bar-chart-2"></i></span>
-                        <span class="nxl-mtext">Reports</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Analytics</span>
                     </a>
-                    <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/reports/sales') ?>">Sales Report</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/reports/leads') ?>">Leads Report</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="<?= base_url('/admin/reports/projects') ?>">Projects Report</a></li>
-                    </ul>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/reports') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-file-text"></i></span>
+                        <span class="nxl-mtext">Rapports</span>
+                    </a>
                 </li>
                 
                 <li class="nxl-item nxl-caption">
-                    <label>System</label>
+                    <label>Système</label>
                 </li>
                 <li class="nxl-item">
                     <a href="<?= base_url('/admin/settings') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-settings"></i></span>
-                        <span class="nxl-mtext">Settings</span>
+                        <span class="nxl-mtext">Paramètres</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/') ?>" class="nxl-link" target="_blank">
+                        <span class="nxl-micon"><i class="feather-external-link"></i></span>
+                        <span class="nxl-mtext">Voir le Site</span>
                     </a>
                 </li>
             </ul>

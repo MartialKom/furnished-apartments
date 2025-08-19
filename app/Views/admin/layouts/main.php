@@ -21,6 +21,101 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/theme.min.css') ?>" />
+    
+    <!-- Custom Alignment Fix -->
+    <style>
+        /* Fix navbar and sidebar alignment - Force override */
+        .nxl-container .nxl-header,
+        header.nxl-header,
+        .nxl-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 280px !important;
+            right: 0 !important;
+            z-index: 1000 !important;
+            transition: all 0.3s ease !important;
+            width: auto !important;
+            margin-left: 0 !important;
+        }
+        
+        /* When sidebar is collapsed - Force override */
+        body.nxl-ltr-text.nxl-navigation-wrap-compact .nxl-container .nxl-header,
+        body.nxl-ltr-text.nxl-navigation-wrap-compact header.nxl-header,
+        body.nxl-ltr-text.nxl-navigation-wrap-compact .nxl-header {
+            left: 78px !important;
+            width: auto !important;
+            margin-left: 0 !important;
+        }
+        
+        /* Header wrapper must stretch */
+        .nxl-header .header-wrapper {
+            width: 100% !important;
+            max-width: none !important;
+        }
+        
+        /* Sidebar positioning */
+       
+        
+        /* Main content area adjustment */
+        .nxl-container {
+            transition: margin-left 0.3s ease !important;
+        }
+        
+        /* When sidebar is collapsed */
+        body.nxl-ltr-text.nxl-navigation-wrap-compact .nxl-container {
+            margin-left: 78px !important;
+        }
+        
+        /* Header wrapper alignment */
+        .header-wrapper {
+            padding-left: 0 !important;
+            height: 70px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        
+        /* Sidebar improvements */
+        .nxl-navbar .nxl-item .nxl-link {
+            padding: 12px 20px !important;
+            border-radius: 6px !important;
+            margin: 2px 10px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .nxl-navbar .nxl-item .nxl-link:hover {
+            background: rgba(210, 151, 81, 0.1) !important;
+            color: #d29751 !important;
+        }
+        
+        .nxl-navbar .nxl-item.active .nxl-link,
+        .nxl-navbar .nxl-item .nxl-link.active {
+            background: #d29751 !important;
+            color: white !important;
+        }
+        
+        /* Caption styling */
+        .nxl-navbar .nxl-caption label {
+            color: #d29751 !important;
+            font-weight: 600 !important;
+            font-size: 11px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+        }
+        
+        /* Breadcrumb navigation collée à la navbar */
+        .nxl-content {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .nxl-container .nxl-content {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+        
+        
+
+    </style>
 </head>
 
 <body>
@@ -74,11 +169,16 @@
     </main>
 
     <!-- Scripts -->
-    <script src="<?= base_url('assets/admin/js/jquery.min.js') ?>"></script>
-    <script src="<?= base_url('assets/admin/js/bootstrap.min.js') ?>"></script>
-    <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
+     <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
+
+     <script src="<?= base_url('assets/admin/js/daterangepicker.min.js') ?>"></script>
+     <script src="<?= base_url('assets/admin/js/apexcharts.min.js') ?>"></script>
+     <script src="<?= base_url('assets/admin/js/circle-progress.min.js') ?>"></script>
+    
     <script src="<?= base_url('assets/admin/js/common-init.min.js') ?>"></script>
     <script src="<?= base_url('assets/admin/js/dashboard-init.min.js') ?>"></script>
+    
+    <script src="<?= base_url('assets/admin/js/theme-customizer-init.min.js') ?>"></script>
     
     <?= $this->renderSection('scripts') ?>
 </body>
