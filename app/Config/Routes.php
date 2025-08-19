@@ -42,6 +42,28 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->get('dashboard', 'DashboardController::index');
     $routes->get('analytics', 'DashboardController::analytics');
     
+    // User Management
+    $routes->get('utilisateurs', 'UtilisateurController::index');
+    $routes->post('utilisateurs/create', 'UtilisateurController::create');
+    $routes->get('utilisateurs/get/(:num)', 'UtilisateurController::get/$1');
+    $routes->post('utilisateurs/update/(:num)', 'UtilisateurController::update/$1');
+    $routes->post('utilisateurs/toggle-status/(:num)', 'UtilisateurController::toggleStatus/$1');
+    $routes->delete('utilisateurs/delete/(:num)', 'UtilisateurController::delete/$1');
+    
+    // Reservation Management
+    $routes->get('reservations', 'ReservationController::index');
+    $routes->post('reservations/confirmer/(:num)', 'ReservationController::confirmer/$1');
+    $routes->post('reservations/annuler/(:num)', 'ReservationController::annuler/$1');
+    $routes->get('reservations/get/(:num)', 'ReservationController::get/$1');
+    
+    // Appartement Management
+    $routes->get('appartements', 'AppartementController::index');
+    $routes->post('appartements/create', 'AppartementController::create');
+    $routes->get('appartements/get/(:num)', 'AppartementController::get/$1');
+    $routes->post('appartements/update/(:num)', 'AppartementController::update/$1');
+    $routes->post('appartements/toggle-status/(:num)', 'AppartementController::toggleStatus/$1');
+    $routes->delete('appartements/delete/(:num)', 'AppartementController::delete/$1');
+    
     // Customers
     $routes->get('customers', 'DashboardController::customers');
     $routes->get('customers/create', 'DashboardController::createCustomer');

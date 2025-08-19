@@ -15,11 +15,11 @@ class CreateReservationsTable extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'dateDebut' => [
+            'date_debut' => [
                 'type' => 'DATE',
                 'null' => false,
             ],
-            'dateFin' => [
+            'date_fin' => [
                 'type' => 'DATE',
                 'null' => false,
             ],
@@ -40,6 +40,16 @@ class CreateReservationsTable extends Migration
                 'constraint' => ['en_attente', 'confirmee', 'annulee', 'terminee'],
                 'default' => 'en_attente',
                 'null' => false,
+            ],
+            'montant_total' => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
+                'null' => false,
+                'default' => 0,
+            ],
+            'motif_annulation' => [
+                'type' => 'TEXT',
+                'null' => true,
             ],
             'created_at' => [
                 'type' => 'TIMESTAMP',

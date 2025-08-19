@@ -52,6 +52,12 @@ class CreateUtilisateursTable extends Migration
                 'constraint' => 255,
                 'null' => false,
             ],
+            'statut' => [
+                'type' => 'ENUM',
+                'constraint' => ['actif', 'inactif'],
+                'default' => 'actif',
+                'null' => false,
+            ],
             'created_at' => [
                 'type' => 'TIMESTAMP',
                 'null' => true,

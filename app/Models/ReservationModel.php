@@ -12,7 +12,7 @@ class ReservationModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['dateDebut', 'dateFin', 'locataire_id', 'appartement_id', 'statut'];
+    protected $allowedFields    = ['date_debut', 'date_fin', 'locataire_id', 'appartement_id', 'statut', 'montant_total', 'motif_annulation'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -29,11 +29,13 @@ class ReservationModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'dateDebut' => 'required|valid_date',
-        'dateFin' => 'required|valid_date',
+        'date_debut' => 'required|valid_date',
+        'date_fin' => 'required|valid_date',
         'locataire_id' => 'required|integer',
         'appartement_id' => 'required|integer',
-        'statut' => 'required|in_list[en_attente,confirmee,annulee,terminee]'
+        'statut' => 'required|in_list[en_attente,confirmee,annulee,terminee]',
+        'montant_total' => 'required|decimal',
+        'motif_annulation' => 'permit_empty|string'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -54,8 +56,8 @@ class ReservationModel extends Model
         $conflits = $this->where('appartement_id', $appartementId)
                          ->where('statut !=', 'annulee')
                          ->groupStart()
-                             ->where('dateDebut <=', $dateFin)
-                             ->where('dateFin >=', $dateDebut)
+                             ->where('date_debut <=', $dateFin)
+                             ->where('date_fin >=', $dateDebut)
                          ->groupEnd()
                          ->findAll();
         

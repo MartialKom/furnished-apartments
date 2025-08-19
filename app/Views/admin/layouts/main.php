@@ -24,33 +24,19 @@
     
     <!-- Custom Alignment Fix -->
     <style>
-        /* Fix navbar and sidebar alignment - Force override */
-        .nxl-container .nxl-header,
-        header.nxl-header,
         .nxl-header {
             position: fixed !important;
             top: 0 !important;
-            left: 280px !important;
+            left: 280px !important; /* Width of sidebar */
             right: 0 !important;
-            z-index: 1000 !important;
-            transition: all 0.3s ease !important;
-            width: auto !important;
-            margin-left: 0 !important;
+            transition: left 0.3s ease !important;
+            width: calc(100% - 280px) !important;
         }
         
-        /* When sidebar is collapsed - Force override */
-        body.nxl-ltr-text.nxl-navigation-wrap-compact .nxl-container .nxl-header,
-        body.nxl-ltr-text.nxl-navigation-wrap-compact header.nxl-header,
+        /* When sidebar is collapsed */
         body.nxl-ltr-text.nxl-navigation-wrap-compact .nxl-header {
-            left: 78px !important;
-            width: auto !important;
-            margin-left: 0 !important;
-        }
-        
-        /* Header wrapper must stretch */
-        .nxl-header .header-wrapper {
-            width: 100% !important;
-            max-width: none !important;
+            left: 78px !important; /* Collapsed sidebar width */
+            width: calc(100% - 78px) !important;
         }
         
         /* Sidebar positioning */
@@ -169,6 +155,9 @@
     </main>
 
     <!-- Scripts -->
+    <!-- jQuery (nécessaire pour les interactions) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
      <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
 
      <script src="<?= base_url('assets/admin/js/daterangepicker.min.js') ?>"></script>
@@ -179,6 +168,7 @@
     <script src="<?= base_url('assets/admin/js/dashboard-init.min.js') ?>"></script>
     
     <script src="<?= base_url('assets/admin/js/theme-customizer-init.min.js') ?>"></script>
+    
     
     <?= $this->renderSection('scripts') ?>
 </body>

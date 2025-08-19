@@ -146,8 +146,8 @@
                                             </div>
                                         </td>
                                         <td><span class="fw-medium"><?= esc($reservation['adresse']) ?></span></td>
-                                        <td><span class="fs-12 text-muted"><?= date('d/m/Y', strtotime($reservation['dateDebut'])) ?></span></td>
-                                        <td><span class="fs-12 text-muted"><?= date('d/m/Y', strtotime($reservation['dateFin'])) ?></span></td>
+                                        <td><span class="fs-12 text-muted"><?= date('d/m/Y', strtotime($reservation['date_debut'])) ?></span></td>
+                                        <td><span class="fs-12 text-muted"><?= date('d/m/Y', strtotime($reservation['date_fin'])) ?></span></td>
                                         <td>
                                             <?php 
                                             $badgeClass = '';

@@ -22,7 +22,7 @@
                     <label>Gestion des Appartements</label>
                 </li>
                 <li class="nxl-item">
-                    <a href="<?= base_url('/admin/apartments') ?>" class="nxl-link">
+                    <a href="<?= base_url('/admin/appartements') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home"></i></span>
                         <span class="nxl-mtext">Appartements</span>
                     </a>
@@ -43,6 +43,16 @@
                     <a href="<?= base_url('/admin/paiements') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-credit-card"></i></span>
                         <span class="nxl-mtext">Paiements</span>
+                    </a>
+                </li>
+                
+                <li class="nxl-item nxl-caption">
+                    <label>Administration</label>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/utilisateurs') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                        <span class="nxl-mtext">Utilisateurs</span>
                     </a>
                 </li>
                 

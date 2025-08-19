@@ -81,11 +81,12 @@ class ReservationController extends BaseController
 
         // Créer la réservation
         $reservationData = [
-            'dateDebut' => $data['dateDebut'],
-            'dateFin' => $data['dateFin'],
+            'date_debut' => $data['dateDebut'],
+            'date_fin' => $data['dateFin'],
             'locataire_id' => $locataireId,
             'appartement_id' => $data['appartement_id'],
-            'statut' => 'en_attente'
+            'statut' => 'en_attente',
+            'montant_total' => 0 // Sera calculé selon la logique métier
         ];
 
         $reservationId = $this->reservationModel->insert($reservationData);

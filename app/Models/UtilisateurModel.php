@@ -12,7 +12,7 @@ class UtilisateurModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nom', 'prenom', 'nomUtilisateur', 'telephone', 'email', 'role', 'motDePasse'];
+    protected $allowedFields    = ['nom', 'prenom', 'nomUtilisateur', 'telephone', 'email', 'role', 'motDePasse', 'statut'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -35,7 +35,8 @@ class UtilisateurModel extends Model
         'telephone' => 'required|string|max_length[20]|is_unique[utilisateurs.telephone,id,{id}]',
         'email' => 'permit_empty|valid_email|max_length[150]',
         'role' => 'required|in_list[admin,gestionnaire]',
-        'motDePasse' => 'required|string|min_length[6]'
+        'motDePasse' => 'required|string|min_length[6]',
+        'statut' => 'permit_empty|in_list[actif,inactif]'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
