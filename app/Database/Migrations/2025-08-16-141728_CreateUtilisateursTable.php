@@ -20,6 +20,28 @@ class CreateUtilisateursTable extends Migration
                 'constraint' => 100,
                 'null' => false,
             ],
+            'prenom' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => false,
+            ],
+            'nomUtilisateur' => [
+                'type' => 'VARCHAR',
+                'constraint' => 50,
+                'null' => false,
+                'unique' => true,
+            ],
+            'telephone' => [
+                'type' => 'VARCHAR',
+                'constraint' => 20,
+                'null' => false,
+                'unique' => true,
+            ],
+            'email' => [
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+                'null' => true,
+            ],
             'role' => [
                 'type' => 'ENUM',
                 'constraint' => ['admin', 'gestionnaire'],

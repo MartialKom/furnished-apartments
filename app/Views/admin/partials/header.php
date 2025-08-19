@@ -34,8 +34,10 @@
                                 <div class="d-flex align-items-center">
                                     <img src="<?= base_url('assets/admin/images/avatar/1.png') ?>" alt="user-image" class="img-fluid user-avtar">
                                     <div>
-                                        <h6 class="text-dark mb-0"><?= session()->get('user_name') ?? 'Utilisateur' ?></h6>
-                                        <span class="fs-12 fw-medium text-muted"><?= ucfirst(session()->get('user_role') ?? 'Utilisateur') ?></span>
+                                        <h6 class="text-dark mb-0"><?= (session()->get('user_prenom') ?? '') . ' ' . (session()->get('user_nom') ?? 'Utilisateur') ?></h6>
+                                        <span class="fs-12 fw-medium text-muted">@<?= session()->get('user_nom_utilisateur') ?? 'utilisateur' ?></span>
+                                        <br>
+                                        <span class="fs-11 fw-normal text-muted"><?= ucfirst(session()->get('user_role') ?? 'Utilisateur') ?></span>
                                     </div>
                                 </div>
                             </div>

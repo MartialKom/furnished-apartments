@@ -27,7 +27,7 @@
                                     </li>
                                 </ul>
                                 <div class="slider-btn mt-55">
-                                    <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
+                                    <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
                                 </div>
                             </div>
                         </div>
@@ -62,7 +62,7 @@
                                     </li>
                                 </ul>
                                 <div class="slider-btn mt-55">
-                                    <a href="#" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
+                                    <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +101,7 @@
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
                             labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
                             laboris nisi ut aliquip ex ea commodo consequat.</p>
-                        <a href="#" class="btn">Reservez maintenant</a>
+                        <a href="<?= base_url('reservation') ?>" class="btn">Reservez maintenant</a>
                     </div>
                 </div>
             </div>
@@ -337,6 +337,12 @@
                                     <li>PIECE N°<span class="after"> 2</span></li>
                                     <li>PRIX<span class="after"> 20000Fcfa/Month</span></li>
                                 </ul>
+                                <div class="mt-30">
+                                    <a href="<?= base_url('reservation') ?>" class="btn" style="background: #d29751; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
+                                        <i class="fas fa-calendar-check" style="margin-right: 8px;"></i>
+                                        Réserver ce studio
+                                    </a>
+                                </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="apartments-img">
@@ -356,6 +362,12 @@
                                     <li>PIECE N°<span class="after"> 4</span></li>
                                     <li>PRIX<span class="after"> 25000Fcfa/Month</span></li>
                                 </ul>
+                                <div class="mt-30">
+                                    <a href="<?= base_url('reservation') ?>" class="btn" style="background: #d29751; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
+                                        <i class="fas fa-calendar-check" style="margin-right: 8px;"></i>
+                                        Réserver cet appartement
+                                    </a>
+                                </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="apartments-img">
@@ -451,5 +463,24 @@
 </section>
     <!-- contact-area-end -->
 
+<style>
+/* Styles pour les boutons de réservation */
+.btn:hover {
+    background: #b8834a !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(210, 151, 81, 0.3) !important;
+}
+
+/* Animation pour les nouveaux boutons de réservation */
+.mt-30 .btn {
+    transition: all 0.3s ease;
+}
+
+.mt-30 .btn:hover {
+    background: #b8834a !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(210, 151, 81, 0.4) !important;
+}
+</style>
 
 <?= $this->endSection() ?>

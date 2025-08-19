@@ -33,14 +33,14 @@
                         <div class="form-group mb-4">
                             <label for="username" style="color: #555; font-weight: 500; margin-bottom: 8px; display: block;">
                                 <i class="fas fa-user" style="color: #d29751; margin-right: 8px;"></i>
-                                Nom d'utilisateur
+                                Nom d'utilisateur ou Téléphone
                             </label>
                             <input 
                                 type="text" 
                                 id="username" 
                                 name="username" 
                                 class="form-control" 
-                                placeholder="Entrez votre nom d'utilisateur"
+                                placeholder="Entrez votre nom d'utilisateur ou téléphone"
                                 value="<?= old('username') ?>"
                                 style="padding: 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 16px; transition: all 0.3s ease;"
                                 required

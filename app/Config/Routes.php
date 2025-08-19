@@ -29,6 +29,13 @@ $routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('logout', 'AuthController::logout');
 });
 
+// Reservation Routes
+$routes->group('reservation', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('/', 'ReservationController::index');
+    $routes->post('create', 'ReservationController::create');
+    $routes->get('check-availability', 'ReservationController::checkAvailability');
+});
+
 // Admin Routes (Protected)
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'auth'], function ($routes) {
     $routes->get('/', 'DashboardController::index');

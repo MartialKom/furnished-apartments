@@ -50,7 +50,11 @@ class AuthController extends BaseController
         if ($user) {
             $sessionData = [
                 'user_id' => $user['id'],
-                'user_name' => $user['nom'],
+                'user_nom' => $user['nom'],
+                'user_prenom' => $user['prenom'],
+                'user_nom_utilisateur' => $user['nomUtilisateur'],
+                'user_telephone' => $user['telephone'],
+                'user_email' => $user['email'],
                 'user_role' => $user['role'],
                 'is_logged_in' => true
             ];
