@@ -70,6 +70,6 @@ class AuthController extends BaseController
     public function logout()
     {
         $this->session->destroy();
-        return redirect()->to('/')->with('success', 'Vous avez été déconnecté avec succès.');
+        return redirect()->to('/admin/auth/login')->with('success', 'Vous avez été déconnecté avec succès.');
     }
 }

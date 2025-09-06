@@ -117,6 +117,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="createUserForm">
+                <?= csrf_field() ?>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -199,6 +200,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="editUserForm">
+                <?= csrf_field() ?>
                 <input type="hidden" id="editUserId" name="userId">
                 <div class="modal-body">
                     <div class="row">
@@ -318,13 +320,26 @@ $(document).ready(function() {
         
         const formData = new FormData(this);
         
+        console.log('Submitting form with data:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+        
         $.ajax({
             url: '<?= base_url("/admin/utilisateurs/create") ?>',
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
+            dataType: 'json',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            beforeSend: function() {
+                $('#createUserForm button[type="submit"]').prop('disabled', true);
+            },
             success: function(response) {
+                console.log('Response:', response);
                 if (response.success) {
                     $('#createUserModal').modal('hide');
                     showToast('success', response.message);
@@ -339,8 +354,37 @@ $(document).ready(function() {
                     }
                 }
             },
-            error: function() {
-                showToast('error', 'Une erreur est survenue lors de la création.');
+            error: function(xhr, status, error) {
+                console.error('Ajax error:', xhr.status, xhr.responseText);
+                
+                if (xhr.status === 401 || xhr.status === 403) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        showToast('error', response.message);
+                        if (response.redirect) {
+                            setTimeout(() => {
+                                window.location.href = response.redirect;
+                            }, 2000);
+                        }
+                    } catch (e) {
+                        showToast('error', 'Session expirée. Redirection...');
+                        setTimeout(() => {
+                            window.location.href = '/admin/auth/login';
+                        }, 2000);
+                    }
+                } else {
+                    let errorMessage = 'Une erreur est survenue lors de la création.';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        errorMessage = response.message || errorMessage;
+                    } catch (e) {
+                        errorMessage += ' Status: ' + xhr.status;
+                    }
+                    showToast('error', errorMessage);
+                }
+            },
+            complete: function() {
+                $('#createUserForm button[type="submit"]').prop('disabled', false);
             }
         });
     });
@@ -403,7 +447,7 @@ $(document).ready(function() {
                     }
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
                 showToast('error', 'Une erreur est survenue lors de la modification.');
             }
         });

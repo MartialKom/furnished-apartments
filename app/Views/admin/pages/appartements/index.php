@@ -151,18 +151,43 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="photos" class="form-label">Photos (URLs séparées par des virgules)</label>
-                                <input type="text" class="form-control" id="photos" name="photos" placeholder="url1.jpg, url2.jpg, url3.jpg">
-                                <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <!-- Section Photos -->
+                    <div class="mb-4">
+                        <label class="form-label">Photos de l'appartement</label>
+                        <div class="photo-upload-container">
+                            <div id="photoDropZone" class="photo-drop-zone">
+                                <div class="drop-zone-content">
+                                    <i class="feather-camera" style="font-size: 2rem; color: #d29751;"></i>
+                                    <p class="mb-2">Glissez vos photos ici ou <span class="text-primary">parcourez</span></p>
+                                    <small class="text-muted">Formats acceptés: JPG, PNG, WebP (Max: 5MB chacune)</small>
+                                </div>
+                                <input type="file" id="photoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                             </div>
+                            <div id="photoPreviewContainer" class="photo-preview-container mt-3"></div>
+                            <input type="hidden" id="photos" name="photos">
                         </div>
                     </div>
+                    
+                    <!-- Section Équipements -->
                     <div class="mb-3">
-                        <label for="equipements" class="form-label">Équipements</label>
-                        <textarea class="form-control" id="equipements" name="equipements" rows="3" placeholder="WiFi, Climatisation, Cuisine équipée, Parking..."></textarea>
-                        <div class="invalid-feedback"></div>
+                        <label class="form-label">Équipements</label>
+                        <div id="equipmentContainer">
+                            <div class="equipment-row mb-2">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="feather-settings"></i></span>
+                                    <input type="text" class="form-control equipment-input" placeholder="Ex: WiFi gratuit" name="equipment[]">
+                                    <button type="button" class="btn btn-outline-danger remove-equipment" style="display: none;">
+                                        <i class="feather-trash-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addEquipment" class="btn btn-outline-primary btn-sm">
+                            <i class="feather-plus me-1"></i>Ajouter un équipement
+                        </button>
+                        <input type="hidden" id="equipements" name="equipements">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -217,18 +242,43 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="editPhotos" class="form-label">Photos (URLs séparées par des virgules)</label>
-                                <input type="text" class="form-control" id="editPhotos" name="photos">
-                                <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <!-- Section Photos pour modification -->
+                    <div class="mb-4">
+                        <label class="form-label">Photos de l'appartement</label>
+                        <div class="photo-upload-container">
+                            <div id="editPhotoDropZone" class="photo-drop-zone">
+                                <div class="drop-zone-content">
+                                    <i class="feather-camera" style="font-size: 2rem; color: #d29751;"></i>
+                                    <p class="mb-2">Glissez vos photos ici ou <span class="text-primary">parcourez</span></p>
+                                    <small class="text-muted">Formats acceptés: JPG, PNG, WebP (Max: 5MB chacune)</small>
+                                </div>
+                                <input type="file" id="editPhotoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                             </div>
+                            <div id="editPhotoPreviewContainer" class="photo-preview-container mt-3"></div>
+                            <input type="hidden" id="editPhotos" name="photos">
                         </div>
                     </div>
+                    
+                    <!-- Section Équipements pour modification -->
                     <div class="mb-3">
-                        <label for="editEquipements" class="form-label">Équipements</label>
-                        <textarea class="form-control" id="editEquipements" name="equipements" rows="3"></textarea>
-                        <div class="invalid-feedback"></div>
+                        <label class="form-label">Équipements</label>
+                        <div id="editEquipmentContainer">
+                            <div class="equipment-row mb-2">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="feather-settings"></i></span>
+                                    <input type="text" class="form-control equipment-input" placeholder="Ex: WiFi gratuit" name="editEquipment[]">
+                                    <button type="button" class="btn btn-outline-danger remove-equipment" style="display: none;">
+                                        <i class="feather-trash-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="editAddEquipment" class="btn btn-outline-primary btn-sm">
+                            <i class="feather-plus me-1"></i>Ajouter un équipement
+                        </button>
+                        <input type="hidden" id="editEquipements" name="equipements">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -252,6 +302,91 @@
     background-color: rgba(210, 151, 81, 0.05);
 }
 
+/* Photo Upload Styles */
+.photo-drop-zone {
+    border: 2px dashed #d29751;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    background: rgba(210, 151, 81, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.photo-drop-zone:hover,
+.photo-drop-zone.drag-over {
+    border-color: #b8834a;
+    background: rgba(210, 151, 81, 0.1);
+}
+
+.photo-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.photo-preview-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.photo-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-preview-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: rgba(220, 53, 69, 0.9);
+    border: none;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo-preview-remove:hover {
+    background: #dc3545;
+}
+
+/* Equipment Styles */
+.equipment-row {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.remove-equipment {
+    transition: all 0.3s ease;
+}
+
+.equipment-input:focus {
+    border-color: #d29751;
+    box-shadow: 0 0 0 0.2rem rgba(210, 151, 81, 0.25);
+}
+
 /* Modal fixes are handled in modal-fix.css */
 </style>
 
@@ -263,6 +398,324 @@ $(document).ready(function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
+    // Variables pour la gestion des photos
+    let selectedFiles = [];
+    let photoCounter = 0;
+
+    // Gestion du drag & drop pour les photos
+    const dropZone = $('#photoDropZone');
+    const fileInput = $('#photoFiles');
+    const previewContainer = $('#photoPreviewContainer');
+
+    dropZone.on('click', function(e) {
+        e.preventDefault();
+        fileInput[0].click(); // Utiliser l'élément DOM natif
+    });
+
+    dropZone.on('dragover dragenter', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('drag-over');
+    });
+
+    dropZone.on('dragleave dragend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('drag-over');
+    });
+
+    dropZone.on('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('drag-over');
+        
+        const files = e.originalEvent.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    fileInput.on('change', function() {
+        handleFiles(this.files);
+    });
+
+    function handleFiles(files) {
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024) { // 5MB max
+                selectedFiles.push(file);
+                addPhotoPreview(file);
+            } else {
+                showToast('error', 'Fichier non valide: ' + file.name + '. Seules les images de moins de 5MB sont acceptées.');
+            }
+        });
+        updatePhotosInput();
+    }
+
+    function addPhotoPreview(file) {
+        const reader = new FileReader();
+        const photoId = 'photo_' + (++photoCounter);
+        
+        reader.onload = function(e) {
+            const previewHtml = `
+                <div class="photo-preview-item" data-photo-id="${photoId}">
+                    <img src="${e.target.result}" alt="Preview">
+                    <button type="button" class="photo-preview-remove" onclick="removePhoto('${photoId}')">
+                        <i class="feather-x"></i>
+                    </button>
+                </div>
+            `;
+            previewContainer.append(previewHtml);
+        };
+        
+        reader.readAsDataURL(file);
+        file.photoId = photoId;
+    }
+
+    window.removePhoto = function(photoId) {
+        // Supprimer de l'interface
+        $(`.photo-preview-item[data-photo-id="${photoId}"]`).remove();
+        
+        // Supprimer du tableau des fichiers
+        selectedFiles = selectedFiles.filter(file => file.photoId !== photoId);
+        updatePhotosInput();
+    };
+
+    function updatePhotosInput() {
+        // Les fichiers seront envoyés via FormData, pas besoin de mettre à jour le champ caché
+        // Le champ caché est conservé pour compatibilité mais les vrais fichiers sont dans selectedFiles
+    }
+
+    // Gestion des équipements dynamiques
+    let equipmentCounter = 1;
+
+    $('#addEquipment').on('click', function() {
+        const newRow = `
+            <div class="equipment-row mb-2">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="feather-settings"></i></span>
+                    <input type="text" class="form-control equipment-input" placeholder="Ex: Climatisation" name="equipment[]">
+                    <button type="button" class="btn btn-outline-danger remove-equipment">
+                        <i class="feather-trash-2"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        $('#equipmentContainer').append(newRow);
+        equipmentCounter++;
+        updateRemoveButtons();
+    });
+
+    // Supprimer un équipement
+    $(document).on('click', '.remove-equipment', function() {
+        $(this).closest('.equipment-row').remove();
+        updateRemoveButtons();
+        updateEquipmentInput();
+    });
+
+    // Mettre à jour l'affichage des boutons de suppression
+    function updateRemoveButtons() {
+        const rows = $('.equipment-row');
+        if (rows.length <= 1) {
+            $('.remove-equipment').hide();
+        } else {
+            $('.remove-equipment').show();
+        }
+    }
+
+    // Mettre à jour le champ caché des équipements
+    function updateEquipmentInput() {
+        const equipments = [];
+        $('.equipment-input').each(function() {
+            const value = $(this).val().trim();
+            if (value) {
+                equipments.push(value);
+            }
+        });
+        $('#equipements').val(equipments.join(', '));
+    }
+
+    // Mettre à jour les équipements à chaque saisie
+    $(document).on('input', '.equipment-input', function() {
+        updateEquipmentInput();
+    });
+
+    // Gestion du formulaire de modification - Photos
+    let editSelectedFiles = [];
+    let editPhotoCounter = 0;
+
+    const editDropZone = $('#editPhotoDropZone');
+    const editFileInput = $('#editPhotoFiles');
+    const editPreviewContainer = $('#editPhotoPreviewContainer');
+
+    editDropZone.on('click', function(e) {
+        e.preventDefault();
+        editFileInput[0].click(); // Utiliser l'élément DOM natif
+    });
+
+    // Mêmes événements drag & drop pour le formulaire de modification
+    editDropZone.on('dragover dragenter', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('drag-over');
+    });
+
+    editDropZone.on('dragleave dragend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('drag-over');
+    });
+
+    editDropZone.on('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('drag-over');
+        
+        const files = e.originalEvent.dataTransfer.files;
+        handleEditFiles(files);
+    });
+
+    editFileInput.on('change', function() {
+        handleEditFiles(this.files);
+    });
+
+    function handleEditFiles(files) {
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024) {
+                editSelectedFiles.push(file);
+                addEditPhotoPreview(file);
+            } else {
+                showToast('error', 'Fichier non valide: ' + file.name + '. Seules les images de moins de 5MB sont acceptées.');
+            }
+        });
+        updateEditPhotosInput();
+    }
+
+    function addEditPhotoPreview(file) {
+        const reader = new FileReader();
+        const photoId = 'edit_photo_' + (++editPhotoCounter);
+        
+        reader.onload = function(e) {
+            const previewHtml = `
+                <div class="photo-preview-item" data-photo-id="${photoId}">
+                    <img src="${e.target.result}" alt="Preview">
+                    <button type="button" class="photo-preview-remove" onclick="removeEditPhoto('${photoId}')">
+                        <i class="feather-x"></i>
+                    </button>
+                </div>
+            `;
+            editPreviewContainer.append(previewHtml);
+        };
+        
+        reader.readAsDataURL(file);
+        file.photoId = photoId;
+    }
+
+    window.removeEditPhoto = function(photoId) {
+        $(`.photo-preview-item[data-photo-id="${photoId}"]`).remove();
+        editSelectedFiles = editSelectedFiles.filter(file => file.photoId !== photoId);
+        updateEditPhotosInput();
+    };
+
+    function updateEditPhotosInput() {
+        // Les fichiers seront envoyés via FormData
+    }
+
+    // Gestion des équipements pour la modification
+    $('#editAddEquipment').on('click', function() {
+        const newRow = `
+            <div class="equipment-row mb-2">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="feather-settings"></i></span>
+                    <input type="text" class="form-control equipment-input" placeholder="Ex: Climatisation" name="editEquipment[]">
+                    <button type="button" class="btn btn-outline-danger remove-equipment">
+                        <i class="feather-trash-2"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        $('#editEquipmentContainer').append(newRow);
+        updateEditRemoveButtons();
+    });
+
+    function updateEditRemoveButtons() {
+        const rows = $('#editEquipmentContainer .equipment-row');
+        if (rows.length <= 1) {
+            $('#editEquipmentContainer .remove-equipment').hide();
+        } else {
+            $('#editEquipmentContainer .remove-equipment').show();
+        }
+    }
+
+    function updateEditEquipmentInput() {
+        const equipments = [];
+        $('#editEquipmentContainer .equipment-input').each(function() {
+            const value = $(this).val().trim();
+            if (value) {
+                equipments.push(value);
+            }
+        });
+        $('#editEquipements').val(equipments.join(', '));
+    }
+
+    $(document).on('input', '#editEquipmentContainer .equipment-input', function() {
+        updateEditEquipmentInput();
+    });
+
+    // Fonction pour charger les équipements existants
+    function loadExistingEquipments(equipementsString) {
+        // Vider le container
+        $('#editEquipmentContainer').empty();
+        
+        if (equipementsString && equipementsString.trim()) {
+            const equipements = equipementsString.split(',').map(e => e.trim()).filter(e => e);
+            
+            equipements.forEach((equipement, index) => {
+                const showRemoveBtn = equipements.length > 1 ? '' : 'style="display: none;"';
+                const newRow = `
+                    <div class="equipment-row mb-2">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="feather-settings"></i></span>
+                            <input type="text" class="form-control equipment-input" value="${equipement}" name="editEquipment[]">
+                            <button type="button" class="btn btn-outline-danger remove-equipment" ${showRemoveBtn}>
+                                <i class="feather-trash-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                $('#editEquipmentContainer').append(newRow);
+            });
+        } else {
+            // Si pas d'équipements, ajouter une ligne vide
+            const newRow = `
+                <div class="equipment-row mb-2">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="feather-settings"></i></span>
+                        <input type="text" class="form-control equipment-input" placeholder="Ex: WiFi gratuit" name="editEquipment[]">
+                        <button type="button" class="btn btn-outline-danger remove-equipment" style="display: none;">
+                            <i class="feather-trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            $('#editEquipmentContainer').append(newRow);
+        }
+        
+        updateEditRemoveButtons();
+        updateEditEquipmentInput();
+    }
+
+    // Fonction pour charger les photos existantes
+    function loadExistingPhotos(photosString) {
+        // Vider les photos
+        editSelectedFiles = [];
+        $('#editPhotoPreviewContainer').empty();
+        $('#editPhotos').val('');
+        
+        if (photosString && photosString.trim()) {
+            $('#editPhotos').val(photosString);
+            // Note: Dans un vrai projet, vous afficheriez les photos existantes
+            // Ici on ne fait que conserver la chaîne de caractères
+        }
+    }
+
     // Modal fixes are now handled globally in main layout
 
     // Gérer le formulaire de création
@@ -270,6 +723,11 @@ $(document).ready(function() {
         e.preventDefault();
         
         const formData = new FormData(this);
+        
+        // Ajouter les fichiers sélectionnés
+        selectedFiles.forEach(file => {
+            formData.append('photoFiles[]', file);
+        });
         
         $.ajax({
             url: '<?= base_url("/admin/appartements/create") ?>',
@@ -312,8 +770,12 @@ $(document).ready(function() {
                     $('#editAdresse').val(appartement.adresse);
                     $('#editTarifs').val(appartement.tarifs);
                     $('#editStatut').val(appartement.statut);
-                    $('#editPhotos').val(appartement.photos);
-                    $('#editEquipements').val(appartement.equipements);
+                    
+                    // Charger les équipements existants
+                    loadExistingEquipments(appartement.equipements);
+                    
+                    // Charger les photos existantes (si c'étaient des URLs)
+                    loadExistingPhotos(appartement.photos);
                     
                     $('#editAppartementModal').modal('show');
                 } else {
@@ -332,6 +794,11 @@ $(document).ready(function() {
         
         const appartementId = $('#editAppartementId').val();
         const formData = new FormData(this);
+        
+        // Ajouter les nouveaux fichiers sélectionnés
+        editSelectedFiles.forEach(file => {
+            formData.append('photoFiles[]', file);
+        });
         
         $.ajax({
             url: `<?= base_url("/admin/appartements/update") ?>/${appartementId}`,
@@ -430,10 +897,54 @@ $(document).ready(function() {
     }
 
     // Reset form on modal hide
-    $('#createAppartementModal, #editAppartementModal').on('hidden.bs.modal', function() {
+    $('#createAppartementModal').on('hidden.bs.modal', function() {
         $(this).find('form')[0].reset();
         $(this).find('.is-invalid').removeClass('is-invalid');
         $(this).find('.invalid-feedback').text('');
+        
+        // Nettoyer les photos
+        selectedFiles = [];
+        $('#photoPreviewContainer').empty();
+        $('#photos').val('');
+        
+        // Nettoyer les équipements (garder une ligne vide)
+        $('#equipmentContainer').html(`
+            <div class="equipment-row mb-2">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="feather-settings"></i></span>
+                    <input type="text" class="form-control equipment-input" placeholder="Ex: WiFi gratuit" name="equipment[]">
+                    <button type="button" class="btn btn-outline-danger remove-equipment" style="display: none;">
+                        <i class="feather-trash-2"></i>
+                    </button>
+                </div>
+            </div>
+        `);
+        $('#equipements').val('');
+    });
+
+    $('#editAppartementModal').on('hidden.bs.modal', function() {
+        $(this).find('form')[0].reset();
+        $(this).find('.is-invalid').removeClass('is-invalid');
+        $(this).find('.invalid-feedback').text('');
+        
+        // Nettoyer les photos d'édition
+        editSelectedFiles = [];
+        $('#editPhotoPreviewContainer').empty();
+        $('#editPhotos').val('');
+        
+        // Nettoyer les équipements d'édition
+        $('#editEquipmentContainer').html(`
+            <div class="equipment-row mb-2">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="feather-settings"></i></span>
+                    <input type="text" class="form-control equipment-input" placeholder="Ex: WiFi gratuit" name="editEquipment[]">
+                    <button type="button" class="btn btn-outline-danger remove-equipment" style="display: none;">
+                        <i class="feather-trash-2"></i>
+                    </button>
+                </div>
+            </div>
+        `);
+        $('#editEquipements').val('');
     });
 });
 

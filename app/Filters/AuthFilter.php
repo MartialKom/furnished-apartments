@@ -29,7 +29,15 @@ class AuthFilter implements FilterInterface
         
         // Vérifier si l'utilisateur est connecté
         if (!$session->get('is_logged_in')) {
-            return redirect()->to('/auth/login')->with('error', 'Vous devez vous connecter pour accéder à cette page.');
+            // Si c'est une requête AJAX, retourner une réponse JSON
+            if ($request->isAJAX()) {
+                return service('response')->setJSON([
+                    'success' => false,
+                    'message' => 'Session expirée. Veuillez vous reconnecter.',
+                    'redirect' => '/admin/auth/login'
+                ])->setStatusCode(401);
+            }
+            return redirect()->to('/admin/auth/login')->with('error', 'Vous devez vous connecter pour accéder à cette page.');
         }
         
         // Vérifier le rôle si spécifié dans les arguments
@@ -38,7 +46,15 @@ class AuthFilter implements FilterInterface
             $userRole = $session->get('user_role');
             
             if ($userRole !== $requiredRole && $userRole !== 'admin') {
-                return redirect()->to('/auth/login')->with('error', 'Vous n\'avez pas les permissions nécessaires.');
+                // Si c'est une requête AJAX, retourner une réponse JSON
+                if ($request->isAJAX()) {
+                    return service('response')->setJSON([
+                        'success' => false,
+                        'message' => 'Vous n\'avez pas les permissions nécessaires.',
+                        'redirect' => '/admin/auth/login'
+                    ])->setStatusCode(403);
+                }
+                return redirect()->to('/admin/auth/login')->with('error', 'Vous n\'avez pas les permissions nécessaires.');
             }
         }
     }

@@ -35,7 +35,6 @@ class AppartementController extends BaseController
             'adresse' => 'required|string|max_length[255]',
             'tarifs' => 'required|decimal',
             'statut' => 'required|in_list[disponible,maintenance]',
-            'photos' => 'permit_empty|string',
             'equipements' => 'permit_empty|string'
         ];
 
@@ -46,11 +45,50 @@ class AppartementController extends BaseController
             ]);
         }
 
+        // Gérer l'upload des photos
+        $uploadedPhotos = [];
+        $photoFiles = $this->request->getFiles();
+        
+        if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
+            foreach ($photoFiles['photoFiles'] as $file) {
+                if ($file && $file->isValid() && !$file->hasMoved()) {
+                    // Vérifier le type de fichier
+                    if (!in_array($file->getClientMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Format de fichier non autorisé: ' . $file->getClientName()
+                        ]);
+                    }
+                    
+                    // Vérifier la taille (5MB max)
+                    if ($file->getSizeByUnit('mb') > 5) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Fichier trop volumineux: ' . $file->getClientName() . ' (max 5MB)'
+                        ]);
+                    }
+                    
+                    // Générer un nom unique
+                    $newName = $file->getRandomName();
+                    
+                    // Déplacer le fichier
+                    if ($file->move(FCPATH . 'uploads/appartements/', $newName)) {
+                        $uploadedPhotos[] = 'uploads/appartements/' . $newName;
+                    } else {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Erreur lors de l\'upload de: ' . $file->getClientName()
+                        ]);
+                    }
+                }
+            }
+        }
+
         $data = [
             'adresse' => $this->request->getPost('adresse'),
             'tarifs' => $this->request->getPost('tarifs'),
             'statut' => $this->request->getPost('statut'),
-            'photos' => $this->request->getPost('photos'),
+            'photos' => implode(',', $uploadedPhotos),
             'equipements' => $this->request->getPost('equipements')
         ];
 
@@ -88,7 +126,6 @@ class AppartementController extends BaseController
             'adresse' => 'required|string|max_length[255]',
             'tarifs' => 'required|decimal',
             'statut' => 'required|in_list[disponible,maintenance]',
-            'photos' => 'permit_empty|string',
             'equipements' => 'permit_empty|string'
         ];
 
@@ -99,11 +136,54 @@ class AppartementController extends BaseController
             ]);
         }
 
+        // Récupérer les photos existantes
+        $existingPhotos = explode(',', $appartement['photos'] ?? '');
+        $existingPhotos = array_filter($existingPhotos); // Supprimer les valeurs vides
+        
+        // Gérer l'upload des nouvelles photos
+        $uploadedPhotos = [];
+        $photoFiles = $this->request->getFiles();
+        
+        if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
+            foreach ($photoFiles['photoFiles'] as $file) {
+                if ($file && $file->isValid() && !$file->hasMoved()) {
+                    // Vérifications comme dans create()
+                    if (!in_array($file->getClientMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Format de fichier non autorisé: ' . $file->getClientName()
+                        ]);
+                    }
+                    
+                    if ($file->getSizeByUnit('mb') > 5) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Fichier trop volumineux: ' . $file->getClientName() . ' (max 5MB)'
+                        ]);
+                    }
+                    
+                    $newName = $file->getRandomName();
+                    
+                    if ($file->move(FCPATH . 'uploads/appartements/', $newName)) {
+                        $uploadedPhotos[] = 'uploads/appartements/' . $newName;
+                    } else {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Erreur lors de l\'upload de: ' . $file->getClientName()
+                        ]);
+                    }
+                }
+            }
+        }
+        
+        // Combiner photos existantes et nouvelles
+        $allPhotos = array_merge($existingPhotos, $uploadedPhotos);
+
         $data = [
             'adresse' => $this->request->getPost('adresse'),
             'tarifs' => $this->request->getPost('tarifs'),
             'statut' => $this->request->getPost('statut'),
-            'photos' => $this->request->getPost('photos'),
+            'photos' => implode(',', $allPhotos),
             'equipements' => $this->request->getPost('equipements')
         ];
 

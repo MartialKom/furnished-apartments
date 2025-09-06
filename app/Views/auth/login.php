@@ -27,7 +27,7 @@
                     <?php endif; ?>
 
                     <!-- Formulaire de connexion -->
-                    <form action="<?= base_url('auth/attempt-login') ?>" method="POST" class="login-form">
+                    <form action="<?= base_url('admin/auth/attempt-login') ?>" method="POST" class="login-form">
                         <?= csrf_field() ?>
                         
                         <div class="form-group mb-4">

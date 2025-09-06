@@ -65,6 +65,7 @@ class UtilisateurModel extends Model
 
     protected function hashPassword(array $data)
     {
+        // Pour beforeInsert et beforeUpdate, les données sont dans $data['data']
         if (isset($data['data']['motDePasse'])) {
             $data['data']['motDePasse'] = password_hash($data['data']['motDePasse'], PASSWORD_DEFAULT);
         }

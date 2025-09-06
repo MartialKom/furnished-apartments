@@ -31,6 +31,14 @@ class UtilisateurController extends BaseController
 
     public function create()
     {
+        // Force JSON response
+        $this->response->setContentType('application/json');
+        
+        // Debug: Log POST data
+        log_message('debug', 'POST Data: ' . json_encode($this->request->getPost()));
+        log_message('debug', 'Request method: ' . $this->request->getMethod());
+        log_message('debug', 'Request URI: ' . $this->request->getUri());
+        
         $rules = [
             'nom' => 'required|string|max_length[100]',
             'prenom' => 'required|string|max_length[100]',
@@ -42,6 +50,7 @@ class UtilisateurController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
+            log_message('debug', 'Validation errors: ' . json_encode($this->validator->getErrors()));
             return $this->response->setJSON([
                 'success' => false,
                 'errors' => $this->validator->getErrors()
@@ -59,21 +68,41 @@ class UtilisateurController extends BaseController
             'statut' => 'actif'
         ];
 
-        if ($this->utilisateurModel->insert($data)) {
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Utilisateur créé avec succès !'
-            ]);
-        } else {
+        log_message('debug', 'Data to insert: ' . json_encode($data));
+
+        try {
+            $result = $this->utilisateurModel->insert($data);
+            log_message('debug', 'Insert result: ' . ($result ? 'success' : 'failed'));
+            
+            if ($result) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Utilisateur créé avec succès !'
+                ]);
+            } else {
+                $errors = $this->utilisateurModel->errors();
+                log_message('error', 'Model errors: ' . json_encode($errors));
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Erreur lors de la création de l\'utilisateur.',
+                    'model_errors' => $errors
+                ]);
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Exception during insert: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Erreur lors de la création de l\'utilisateur.'
+                'message' => 'Erreur lors de la création: ' . $e->getMessage()
             ]);
         }
     }
 
     public function update($id = null)
     {
+        // Debug
+        log_message('debug', 'Update method called with ID: ' . $id);
+        log_message('debug', 'POST data: ' . json_encode($this->request->getPost()));
+        
         if (!$id) {
             return $this->response->setJSON([
                 'success' => false,
@@ -126,12 +155,16 @@ class UtilisateurController extends BaseController
             $data['motDePasse'] = $motDePasse;
         }
 
+        // Désactiver temporairement la validation du modèle pour l'update
+        $this->utilisateurModel->skipValidation(true);
         if ($this->utilisateurModel->update($id, $data)) {
+            $this->utilisateurModel->skipValidation(false);
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Utilisateur modifié avec succès !'
             ]);
         } else {
+            $this->utilisateurModel->skipValidation(false);
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Erreur lors de la modification de l\'utilisateur.'

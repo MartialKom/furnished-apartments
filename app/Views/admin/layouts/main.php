@@ -21,6 +21,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/theme.min.css') ?>" />
+    <script src="<?= base_url('assets/admin/js/jquery.min.js') ?>"></script>
     
     <!-- Custom Alignment Fix -->
     <style>
@@ -155,8 +156,7 @@
     </main>
 
     <!-- Scripts -->
-    <!-- jQuery (nécessaire pour les interactions) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     
      <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
 

@@ -11,30 +11,30 @@
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="slider-content s-slider-content text-left">
-                                <h2 data-animation="fadeInUp" data-delay=".4s">Alliez <br>confort et <br>Luxe</h2>
+                                <h2 data-animation="fadeInUp" data-delay=".4s"><?= lang('Common.hero_title') ?></h2>
                                 <ul data-animation="fadeInUp" data-delay=".6s">
                                     <li>
                                         <i class="fas fa-bed"></i>
-                                        <span>3 chambres.</span>
+                                        <span>3 <?= lang('Common.bedrooms') ?></span>
                                     </li>
                                     <li>
                                         <i class="fas fa-bath"></i>
-                                        <span>2 douches</span>
+                                        <span>2 <?= lang('Common.bathrooms') ?></span>
                                     </li>
                                     <li>
                                         <i class="fas fa-car"></i>
-                                        <span>Accès au Parking</span>
+                                        <span><?= lang('Common.parking_access') ?></span>
                                     </li>
                                 </ul>
                                 <div class="slider-btn mt-55">
-                                    <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
+                                    <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s"><?= lang('Common.book_now') ?></a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="slider-price">
-                                <h3>Prix:</h3>
-                                <h2>Fcfa 20.000/jrs</h2>
+                                <h3><?= lang('Common.pricing_label') ?>:</h3>
+                                <h2>Fcfa 20.000<?= lang('Common.per_day_short') ?></h2>
                             </div>
                         </div>
                     </div>
@@ -46,30 +46,30 @@
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="slider-content s-slider-content text-left">
-                                <h2 data-animation="fadeInUp" data-delay=".4s">Découvrez nos appartements<br>Modernes</h2>
+                                <h2 data-animation="fadeInUp" data-delay=".4s"><?= lang('Common.hero_subtitle') ?></h2>
                                 <ul data-animation="fadeInUp" data-delay=".6s">
                                     <li>
                                         <i class="fas fa-bed"></i>
-                                        <span>3 chambres.</span>
+                                        <span>3 <?= lang('Common.bedrooms') ?></span>
                                     </li>
                                     <li>
                                         <i class="fas fa-bath"></i>
-                                        <span>2 douches</span>
+                                        <span>2 <?= lang('Common.bathrooms') ?></span>
                                     </li>
                                     <li>
                                         <i class="fas fa-car"></i>
-                                        <span>Accès au Parking</span>
+                                        <span><?= lang('Common.parking_access') ?></span>
                                     </li>
                                 </ul>
                                 <div class="slider-btn mt-55">
-                                    <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s">Reservez</a>
+                                    <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s"><?= lang('Common.book_now') ?></a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="slider-price">
-                                <h3>Prix:</h3>
-                                <h2>Fcfa 20.000/jrs</h2>
+                                <h3><?= lang('Common.pricing_label') ?>:</h3>
+                                <h2>Fcfa 20.000<?= lang('Common.per_day_short') ?></h2>
                             </div>
                         </div>
                     </div>
@@ -87,21 +87,21 @@
                     <div class="s-about-img p-relative">
                         <img src="<?= base_url('assets/frontend/images/features/about.png') ?>" alt="img">
                         <div class="about-text second-about">
-                            <span>3 ans <br> d'experience</span>
+                            <span>3 <?= lang('Common.years_experience') ?></span>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="about-content s-about-content pl-30">
                         <div class="about-title second-atitle">
-                            <span>A propos de nous</span>
-                            <h2>Bienvenue dans notre immeuble</h2>
-                            <p><span></span>Nous proposons ses services pour vous</p>
+                            <span><?= lang('Common.about_us_span') ?></span>
+                            <h2><?= lang('Common.welcome_building') ?></h2>
+                            <p><span></span><?= lang('Common.services_subtitle_desc') ?></p>
                         </div>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
                             labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
                             laboris nisi ut aliquip ex ea commodo consequat.</p>
-                        <a href="<?= base_url('reservation') ?>" class="btn">Reservez maintenant</a>
+                        <a href="<?= base_url('reservation') ?>" class="btn"><?= lang('Common.book_now_alt') ?></a>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@
                         <div class="counter p-relative">
                             <span class="count">30</span>
                         </div>
-                        <p>Pieces</p>
+                        <p><?= lang('Common.rooms_counter') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-sm-6">
@@ -129,7 +129,7 @@
                         <div class="counter p-relative">
                             <span class="count">10</span>
                         </div>
-                        <p>Salle de bain</p>
+                        <p><?= lang('Common.bathrooms_counter') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-sm-6">
@@ -138,7 +138,7 @@
                         <div class="counter p-relative">
                             <span class="count">25</span>
                         </div>
-                        <p>Chambres</p>
+                        <p><?= lang('Common.bedrooms_counter') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-sm-6">
@@ -147,7 +147,7 @@
                         <div class="counter p-relative">
                             <span class="count">15</span>
                         </div>
-                        <p>Places de parking</p>
+                        <p><?= lang('Common.parking_spaces') ?></p>
                     </div>
                 </div>
             </div>
@@ -161,8 +161,8 @@
             <div class="row justify-content-center">
                 <div class="col-xl-8 col-lg-10">
                     <div class="section-title text-center pl-40 pr-40 mb-80">
-                        <span>Nos pépites</span>
-                        <h2>Vue d'Intérieur</h2>
+                        <span><?= lang('Common.our_gems') ?></span>
+                        <h2><?= lang('Common.interior_view') ?></h2>
                     </div>
                 </div>
             </div>
@@ -176,8 +176,8 @@
                             </a>
                         </div>
                         <div class="services-content">
-                            <small>Explore Now</small>
-                            <h4><a href="apartments-details.html">Appartement 4 pièces</a></h4>
+                            <small><?= lang('Common.explore_now') ?></small>
+                            <h4><a href="apartments-details.html"><?= lang('Common.apartment_4_rooms') ?></a></h4>
                         </div>
                     </div>
                 </div>
@@ -190,8 +190,8 @@
                             </a>
                         </div>
                         <div class="services-content">
-                            <small>Explore Now</small>
-                            <h4><a href="apartments-details.html">Appartement Luxueux</a></h4>
+                            <small><?= lang('Common.explore_now') ?></small>
+                            <h4><a href="apartments-details.html"><?= lang('Common.luxury_apartment') ?></a></h4>
                         </div>
                     </div>
                 </div>
@@ -204,8 +204,8 @@
                             </a>
                         </div>
                         <div class="services-content">
-                            <small>Explorez maintenant</small>
-                            <h4><a href="apartments-details.html">Appartement Deluxe</a></h4>
+                            <small><?= lang('Common.explore_now_fr') ?></small>
+                            <h4><a href="apartments-details.html"><?= lang('Common.deluxe_apartment') ?></a></h4>
                         </div>
                     </div>
                 </div>
@@ -227,37 +227,36 @@
                 <div class="col-xl-6">
                     <div class="choose-wrap">
                         <div class="section-title w-title left-align mb-35 wow fadeInDown animated">
-                            <span>Meilleur Plan</span>
-                            <h2>A louer !</h2>
+                            <span><?= lang('Common.best_plan') ?></span>
+                            <h2><?= lang('Common.for_rent') ?></h2>
                         </div>
                         <div class="choose-content wow fadeInUp animated">
-                            <p>Profitez de notre appartement haut standing avec accès au WIFI et climatisation à disposition.
-                            Votre confort n'a pas de prix !</p>
+                            <p><?= lang('Common.comfort_description') ?></p>
 
                             <div class="choose-list mt-20 mb-20">
                                 <ul>
                                     <li>
                                         <i class="fas fa-bed"></i>
-                                        <span>3 chambres.</span>
+                                        <span>3 <?= lang('Common.bedrooms') ?></span>
                                     </li>
                                     <li>
                                         <i class="fa fa-plus-square-o"></i>
-                                        <span>4 pièces</span>
+                                        <span><?= lang('Common.rooms_4') ?></span>
                                     </li>
                                     <li>
                                         <i class="fas fa-bath"></i>
-                                        <span>2 salles de bain</span>
+                                        <span><?= lang('Common.bathrooms_2') ?></span>
                                     </li>
                                     <li>
                                         <i class="fas fa-car"></i>
-                                        <span>Accès au parking</span>
+                                        <span><?= lang('Common.parking_access') ?></span>
                                     </li>
                                 </ul>
                             </div>
-                            <h3>Prix:</h3>
+                            <h3><?= lang('Common.pricing_label') ?>:</h3>
                             <h2>FCFA 25 000 / jrs</h2>
                             <div class="choose-btn mt-30">
-                                <a href="#" class="btn">Contactez nous</a>
+                                <a href="#" class="btn"><?= lang('Common.nav_contact') ?></a>
                             </div>
                         </div>
                     </div>

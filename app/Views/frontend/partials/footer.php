@@ -9,10 +9,10 @@
                                     <a href="#"><img src="<?= base_url('assets/frontend/images/logo/nsenou.png') ?>" alt="logo"></a>
                                 </div>
                                 <div class="footer-text mb-20">
-                                    <p>NsenouTower combine le meilleur de la vie urbaine tout en vous offrant un cocon de sérénité. Choisir nos appartements, c'est opter pour un cadre de vie d'exception.</p>
+                                    <p><?= lang('Common.footer_description') ?></p>
                                 </div>
                                 <div class="footer-social">
-                                    <span>Suivez nous</span>
+                                    <span><?= lang('Common.follow_us') ?></span>
                                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                                     <a href="#"><i class="fab fa-twitter"></i></a>
                                     <a href="#"><i class="fab fa-instagram"></i></a>
@@ -23,13 +23,13 @@
 						<div class="col-xl-2 col-lg-3 col-sm-6">
                             <div class="footer-widget mb-30">
                                 <div class="f-widget-title">
-                                    <h5>Nouveautés Nsenou</h5>
+                                    <h5><?= lang('Common.nsenou_news') ?></h5>
                                 </div>
                                 <div class="footer-link">
                                     <ul>
-										<li><a href="#">A propos de nous</a></li>
-                                        <li><a href="#">Revues</a></li>
-                                        <li><a href="#">Aide</a></li>
+										<li><a href="#"><?= lang('Common.nav_about') ?></a></li>
+                                        <li><a href="#"><?= lang('Common.reviews') ?></a></li>
+                                        <li><a href="#"><?= lang('Common.help') ?></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -37,13 +37,13 @@
                         <div class="col-xl-2 col-lg-3 col-sm-6">
                             <div class="footer-widget mb-30">
                                 <div class="f-widget-title">
-                                    <h5>Liens Utiles</h5>
+                                    <h5><?= lang('Common.useful_links') ?></h5>
                                 </div>
                                 <div class="footer-link">
                                     <ul>
-                                        <li><a href="#">Home</a></li>
-                                        <li><a href="#">Contactez nous</a></li>
-                                        <li><a href="#">Services</a></li
+                                        <li><a href="#"><?= lang('Common.home_link') ?></a></li>
+                                        <li><a href="#"><?= lang('Common.contact_us_link') ?></a></li>
+                                        <li><a href="#"><?= lang('Common.services_link') ?></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="copyright-text text-center">
-                                <p>&copy; 2025 @ Nsenoutower  All design by Tamaroas-Dev.</p>
+                                <p><?= lang('Common.copyright_text') ?></p>
                             </div>
                         </div>
                     </div>

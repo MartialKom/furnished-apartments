@@ -22,11 +22,16 @@ $routes->group('', ['namespace' => 'App\Controllers\Frontend'], function ($route
     $routes->post('/contact', 'HomeController::contact');
 });
 
-// Authentication Routes
-$routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
+// Admin Authentication Routes
+$routes->group('admin/auth', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('login', 'AuthController::login');
     $routes->post('attempt-login', 'AuthController::attemptLogin');
     $routes->get('logout', 'AuthController::logout');
+});
+
+// Language Routes
+$routes->group('language', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('switch/(:alpha)', 'LanguageController::switch/$1');
 });
 
 // Reservation Routes

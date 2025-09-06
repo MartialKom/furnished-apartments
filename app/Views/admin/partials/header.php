@@ -51,7 +51,7 @@
                                 <span>Account Settings</span>
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="<?= base_url('auth/logout') ?>" class="dropdown-item">
+                            <a href="<?= base_url('admin/auth/logout') ?>" class="dropdown-item">
                                 <i class="feather-log-out"></i>
                                 <span>Logout</span>
                             </a>
