@@ -121,7 +121,8 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="createAppartementForm">
+            <form action="<?= base_url('appartements/create') ?>" method="POST" id="createAppartementForm">
+                <?= csrf_field() ?>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-8">
