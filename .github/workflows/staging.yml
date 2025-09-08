@@ -3,7 +3,7 @@ name: Deploy furnished apartments
 on:
   push:
     branches:
-      - staging
+      - develop
 
 jobs:
   deploy:
