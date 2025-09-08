@@ -112,7 +112,7 @@
     <?= $this->include('frontend/partials/footer') ?>
 
     <!-- JS here -->
-
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="<?= base_url('assets/frontend/js/vendor/jquery-1.12.4.min.js') ?>"></script>
     <script src="<?= base_url('assets/frontend/js/vendor/modernizr-3.5.0.min.js') ?>"></script>
     <script src="<?= base_url('assets/frontend/js/popper.min.js') ?>"></script>
