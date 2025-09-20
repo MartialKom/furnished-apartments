@@ -66,7 +66,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('reports/projects', 'DashboardController::reports');
         
         // Settings - Admin only
-        $routes->get('settings', 'DashboardController::settings');
+        $routes->get('settings', 'ParametresController::index');
         
         // Customers - Admin only
         $routes->get('customers', 'DashboardController::customers');
@@ -131,6 +131,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         // Reçus de paiement
         $routes->get('receipts/generate/(:num)', 'ReceiptController::generateReceipt/$1');
         $routes->get('receipts/multiple/(:num)/(:any)', 'ReceiptController::generateMultipleReceipt/$1/$2');
+        
+        // Contrats de location (Admin uniquement)
+        $routes->get('contrats-location', 'ContratController::listContrats');
+        $routes->get('contrats-location/generate/(:num)', 'ContratController::generateContrat/$1');
+        
+        // Paramètres de la structure (Admin uniquement)
+        $routes->get('parametres', 'ParametresController::index');
+        $routes->post('parametres/update', 'ParametresController::update');
+        $routes->post('parametres/add-param', 'ParametresController::addParam');
+        $routes->delete('parametres/delete/(:num)', 'ParametresController::deleteParam/$1');
+        $routes->get('parametres/get/(:any)', 'ParametresController::getParam/$1');
         $routes->get('receipts/view/(:num)', 'ReceiptController::viewReceipt/$1');
     });
     

@@ -139,6 +139,12 @@ $(document).ready(function() {
             return;
         }
 
+        const $submitBtn = $(this).find('button[type="submit"]');
+        const originalText = $submitBtn.html();
+        
+        // Désactiver le bouton et afficher un indicateur de chargement
+        $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Création en cours...');
+        
         const formData = new FormData(this);
         
         $.ajax({
@@ -150,20 +156,27 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    toastr.success(response.message);
-                    setTimeout(() => {
-                        window.location.href = '<?= base_url('admin/contrats') ?>';
-                    }, 1500);
+                    toastr.success(response.message, 'Succès', {
+                        timeOut: 3000,
+                        onHidden: function() {
+                            window.location.href = '<?= base_url('admin/contrats') ?>';
+                        }
+                    });
                 } else {
                     if (response.errors) {
                         displayValidationErrors(response.errors);
                     } else {
-                        toastr.error(response.message);
+                        toastr.error(response.message, 'Erreur');
                     }
+                    // Réactiver le bouton en cas d'erreur
+                    $submitBtn.prop('disabled', false).html(originalText);
                 }
             },
-            error: function() {
-                toastr.error('Erreur lors de la communication avec le serveur');
+            error: function(xhr, status, error) {
+                console.error('Erreur AJAX:', error);
+                toastr.error('Erreur lors de la communication avec le serveur', 'Erreur');
+                // Réactiver le bouton en cas d'erreur
+                $submitBtn.prop('disabled', false).html(originalText);
             }
         });
     });

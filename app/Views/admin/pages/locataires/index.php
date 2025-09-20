@@ -20,6 +20,8 @@
                                 <th>Nom</th>
                                 <th>Email</th>
                                 <th>Téléphone</th>
+                                <th>Nationalité</th>
+                                <th>Pièce d'identité</th>
                                 <th>Date d'inscription</th>
                                 <th>Actions</th>
                             </tr>
@@ -32,6 +34,14 @@
                                         <td><?= esc($locataire['nom']) ?></td>
                                         <td><?= esc($locataire['email']) ?></td>
                                         <td><?= esc($locataire['telephone']) ?></td>
+                                        <td><?= esc($locataire['nationalite'] ?? 'Non renseignée') ?></td>
+                                        <td>
+                                            <?php if (!empty($locataire['type_piece']) && !empty($locataire['numero_piece'])): ?>
+                                                <?= esc($locataire['type_piece']) ?>: <?= esc($locataire['numero_piece']) ?>
+                                            <?php else: ?>
+                                                Non renseignée
+                                            <?php endif; ?>
+                                        </td>
                                         <td><?= date('d/m/Y H:i', strtotime($locataire['created_at'])) ?></td>
                                         <td>
                                             <button class="btn btn-sm btn-info edit-locataire" data-id="<?= $locataire['id'] ?>">
@@ -45,7 +55,7 @@
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center">Aucun locataire trouvé</td>
+                                    <td colspan="8" class="text-center">Aucun locataire trouvé</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -58,7 +68,7 @@
 
 <!-- Modal Ajouter Locataire -->
 <div class="modal fade" id="addLocataireModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Ajouter un Locataire</h5>
@@ -66,17 +76,67 @@
             </div>
             <form id="addLocataireForm">
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="nom" name="nom" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nom" name="nom" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone</label>
+                                <input type="text" class="form-control" id="telephone" name="telephone">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nationalite" class="form-label">Nationalité <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nationalite" name="nationalite" value="Ivoirienne" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="telephone" class="form-label">Téléphone</label>
-                        <input type="text" class="form-control" id="telephone" name="telephone">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="date_naissance" class="form-label">Date de naissance</label>
+                                <input type="date" class="form-control" id="date_naissance" name="date_naissance">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="lieu_naissance" class="form-label">Lieu de naissance</label>
+                                <input type="text" class="form-control" id="lieu_naissance" name="lieu_naissance">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="type_piece" class="form-label">Type de pièce d'identité <span class="text-danger">*</span></label>
+                                <select class="form-control" id="type_piece" name="type_piece" required>
+                                    <option value="">Sélectionner...</option>
+                                    <option value="CNI">CNI</option>
+                                    <option value="PASSPORT">Passeport</option>
+                                    <option value="CARTE_SEJOUR">Carte de séjour</option>
+                                    <option value="AUTRE">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="numero_piece" class="form-label">Numéro de pièce d'identité</label>
+                                <input type="text" class="form-control" id="numero_piece" name="numero_piece">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -90,7 +150,7 @@
 
 <!-- Modal Modifier Locataire -->
 <div class="modal fade" id="editLocataireModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Modifier le Locataire</h5>
@@ -99,17 +159,67 @@
             <form id="editLocataireForm">
                 <input type="hidden" id="edit_locataire_id" name="id">
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="edit_nom" class="form-label">Nom <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="edit_nom" name="nom" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="edit_nom" name="nom" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="edit_email" name="email" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="edit_email" class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="edit_email" name="email" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_telephone" class="form-label">Téléphone</label>
+                                <input type="text" class="form-control" id="edit_telephone" name="telephone">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_nationalite" class="form-label">Nationalité <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="edit_nationalite" name="nationalite" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="edit_telephone" class="form-label">Téléphone</label>
-                        <input type="text" class="form-control" id="edit_telephone" name="telephone">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_date_naissance" class="form-label">Date de naissance</label>
+                                <input type="date" class="form-control" id="edit_date_naissance" name="date_naissance">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_lieu_naissance" class="form-label">Lieu de naissance</label>
+                                <input type="text" class="form-control" id="edit_lieu_naissance" name="lieu_naissance">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_type_piece" class="form-label">Type de pièce d'identité <span class="text-danger">*</span></label>
+                                <select class="form-control" id="edit_type_piece" name="type_piece" required>
+                                    <option value="">Sélectionner...</option>
+                                    <option value="CNI">CNI</option>
+                                    <option value="PASSPORT">Passeport</option>
+                                    <option value="CARTE_SEJOUR">Carte de séjour</option>
+                                    <option value="AUTRE">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edit_numero_piece" class="form-label">Numéro de pièce d'identité</label>
+                                <input type="text" class="form-control" id="edit_numero_piece" name="numero_piece">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -163,6 +273,11 @@ $(document).ready(function() {
                     $('#edit_nom').val(locataire.nom);
                     $('#edit_email').val(locataire.email);
                     $('#edit_telephone').val(locataire.telephone);
+                    $('#edit_nationalite').val(locataire.nationalite || '');
+                    $('#edit_date_naissance').val(locataire.date_naissance || '');
+                    $('#edit_lieu_naissance').val(locataire.lieu_naissance || '');
+                    $('#edit_type_piece').val(locataire.type_piece || '');
+                    $('#edit_numero_piece').val(locataire.numero_piece || '');
                     $('#editLocataireModal').modal('show');
                 }
             }

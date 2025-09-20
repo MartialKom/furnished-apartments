@@ -89,6 +89,12 @@ $userRole = $session->get('user_role');
                         <span class="nxl-mtext">Rapports</span>
                     </a>
                 </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/contrats-location') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-file-plus"></i></span>
+                        <span class="nxl-mtext">Contrats de Location</span>
+                    </a>
+                </li>
                 
                 <li class="nxl-item nxl-caption">
                     <label>Système</label>

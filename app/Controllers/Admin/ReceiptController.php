@@ -8,6 +8,7 @@ use App\Models\ContratLocataireModel;
 use App\Models\LocataireModel;
 use App\Models\AppartementModel;
 use App\Models\UtilisateurModel;
+use App\Models\StructureParamModel;
 
 class ReceiptController extends BaseController
 {
@@ -16,6 +17,7 @@ class ReceiptController extends BaseController
     protected $locataireModel;
     protected $appartementModel;
     protected $utilisateurModel;
+    protected $structureParamModel;
 
     public function __construct()
     {
@@ -24,6 +26,7 @@ class ReceiptController extends BaseController
         $this->locataireModel = new LocataireModel();
         $this->appartementModel = new AppartementModel();
         $this->utilisateurModel = new UtilisateurModel();
+        $this->structureParamModel = new StructureParamModel();
     }
 
     /**
@@ -119,6 +122,9 @@ class ReceiptController extends BaseController
         // Calculer la prochaine échéance
         $prochaineEcheance = $this->getProchaineEcheance($contrat['id']);
 
+        // Récupérer les paramètres de structure
+        $structureParams = $this->structureParamModel->getStructureParams();
+
         return [
             'type' => 'simple',
             'numero_receipt' => $this->generateReceiptNumber(),
@@ -126,10 +132,10 @@ class ReceiptController extends BaseController
             'date_paiement' => $paiement['date_paiement'],
             
             // Informations structure
-            'structure_nom' => 'APPARTEMENTS MEUBLES',
-            'structure_adresse' => '123 Rue de la Paix, Abidjan',
-            'structure_telephone' => '+225 XX XX XX XX',
-            'structure_email' => 'contact@appartements-meubles.ci',
+            'structure_nom' => $structureParams['structure_name'],
+            'structure_adresse' => $structureParams['structure_address'],
+            'structure_telephone' => $structureParams['structure_phone'],
+            'structure_email' => $structureParams['structure_email'],
             
             // Informations locataire
             'locataire_nom' => $locataire['nom'],
@@ -189,6 +195,9 @@ class ReceiptController extends BaseController
         // Calculer la prochaine échéance
         $prochaineEcheance = $this->getProchaineEcheance($contrat['id']);
 
+        // Récupérer les paramètres de structure
+        $structureParams = $this->structureParamModel->getStructureParams();
+
         return [
             'type' => 'multiple',
             'numero_receipt' => $this->generateReceiptNumber(),
@@ -196,10 +205,10 @@ class ReceiptController extends BaseController
             'date_paiement' => $paiements[0]['date_paiement'],
             
             // Informations structure
-            'structure_nom' => 'APPARTEMENTS MEUBLES',
-            'structure_adresse' => '123 Rue de la Paix, Abidjan',
-            'structure_telephone' => '+225 XX XX XX XX',
-            'structure_email' => 'contact@appartements-meubles.ci',
+            'structure_nom' => $structureParams['structure_name'],
+            'structure_adresse' => $structureParams['structure_address'],
+            'structure_telephone' => $structureParams['structure_phone'],
+            'structure_email' => $structureParams['structure_email'],
             
             // Informations locataire
             'locataire_nom' => $locataire['nom'],

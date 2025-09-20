@@ -34,7 +34,12 @@ class LocataireController extends BaseController
         $rules = [
             'nom' => 'required|string|max_length[100]',
             'email' => 'required|valid_email|is_unique[locataires.email]',
-            'telephone' => 'permit_empty|string|max_length[20]'
+            'telephone' => 'permit_empty|string|max_length[20]',
+            'date_naissance' => 'permit_empty|valid_date',
+            'type_piece' => 'required|in_list[CNI,PASSPORT,CARTE_SEJOUR,AUTRE]',
+            'numero_piece' => 'permit_empty|string|max_length[50]',
+            'lieu_naissance' => 'permit_empty|string|max_length[255]',
+            'nationalite' => 'required|string|max_length[100]'
         ];
 
         if (!$this->validate($rules)) {
@@ -47,7 +52,12 @@ class LocataireController extends BaseController
         $data = [
             'nom' => $this->request->getPost('nom'),
             'email' => $this->request->getPost('email'),
-            'telephone' => $this->request->getPost('telephone')
+            'telephone' => $this->request->getPost('telephone'),
+            'date_naissance' => $this->request->getPost('date_naissance'),
+            'type_piece' => $this->request->getPost('type_piece'),
+            'numero_piece' => $this->request->getPost('numero_piece'),
+            'lieu_naissance' => $this->request->getPost('lieu_naissance'),
+            'nationalite' => $this->request->getPost('nationalite')
         ];
 
         if ($this->locataireModel->insert($data)) {
@@ -83,7 +93,12 @@ class LocataireController extends BaseController
         $rules = [
             'nom' => 'required|string|max_length[100]',
             'email' => "required|valid_email|is_unique[locataires.email,id,{$id}]",
-            'telephone' => 'permit_empty|string|max_length[20]'
+            'telephone' => 'permit_empty|string|max_length[20]',
+            'date_naissance' => 'permit_empty|valid_date',
+            'type_piece' => 'required|in_list[CNI,PASSPORT,CARTE_SEJOUR,AUTRE]',
+            'numero_piece' => 'permit_empty|string|max_length[50]',
+            'lieu_naissance' => 'permit_empty|string|max_length[255]',
+            'nationalite' => 'required|string|max_length[100]'
         ];
 
         if (!$this->validate($rules)) {
@@ -96,7 +111,12 @@ class LocataireController extends BaseController
         $data = [
             'nom' => $this->request->getPost('nom'),
             'email' => $this->request->getPost('email'),
-            'telephone' => $this->request->getPost('telephone')
+            'telephone' => $this->request->getPost('telephone'),
+            'date_naissance' => $this->request->getPost('date_naissance'),
+            'type_piece' => $this->request->getPost('type_piece'),
+            'numero_piece' => $this->request->getPost('numero_piece'),
+            'lieu_naissance' => $this->request->getPost('lieu_naissance'),
+            'nationalite' => $this->request->getPost('nationalite')
         ];
 
         if ($this->locataireModel->update($id, $data)) {

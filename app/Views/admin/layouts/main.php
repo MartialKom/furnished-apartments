@@ -22,6 +22,10 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/theme.min.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/status-badges.css') ?>" />
+    
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    
     <script src="<?= base_url('assets/admin/js/jquery.min.js') ?>"></script>
     
     <!-- Custom Alignment Fix -->
@@ -157,18 +161,40 @@
     </main>
 
     <!-- Scripts -->
-
     
-     <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
-
-     <script src="<?= base_url('assets/admin/js/daterangepicker.min.js') ?>"></script>
-     <script src="<?= base_url('assets/admin/js/apexcharts.min.js') ?>"></script>
-     <script src="<?= base_url('assets/admin/js/circle-progress.min.js') ?>"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
+    <script src="<?= base_url('assets/admin/js/daterangepicker.min.js') ?>"></script>
+    <script src="<?= base_url('assets/admin/js/apexcharts.min.js') ?>"></script>
+    <script src="<?= base_url('assets/admin/js/circle-progress.min.js') ?>"></script>
     
     <script src="<?= base_url('assets/admin/js/common-init.min.js') ?>"></script>
     <script src="<?= base_url('assets/admin/js/dashboard-init.min.js') ?>"></script>
     
     <script src="<?= base_url('assets/admin/js/theme-customizer-init.min.js') ?>"></script>
+    
+    <!-- Toastr Configuration -->
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
     
     
     <?= $this->renderSection('scripts') ?>
