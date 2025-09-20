@@ -22,6 +22,9 @@ class DashboardController extends BaseController
 
     public function index()
     {
+        $session = session();
+        $userRole = $session->get('user_role');
+        
         // Statistiques des appartements
         $totalAppartements = $this->appartementModel->countAllResults();
         $appartementsDisponibles = $this->appartementModel->where('statut', 'disponible')->countAllResults();
@@ -43,18 +46,34 @@ class DashboardController extends BaseController
             $recentesReservations = array_slice($recentesReservations, 0, 5);
         }
 
+        // Statistiques selon le rôle
+        $stats = [
+            'total_appartements' => $totalAppartements,
+            'appartements_disponibles' => $appartementsDisponibles,
+            'appartements_maintenance' => $appartementsMaintenance,
+            'appartements_occupes' => $appartementsOccupes,
+            'reservations_en_attente' => $reservationsEnAttente,
+            'reservations_confirmees' => $reservationsConfirmees,
+            'reservations_annulees' => $reservationsAnnulees,
+            'total_reservations' => $totalReservations,
+            'nouveaux_locataires' => $nouveauxLocataires
+        ];
+
+        // Statistiques supplémentaires pour les admins uniquement
+        if ($userRole === 'admin') {
+            $utilisateurModel = new \App\Models\UtilisateurModel();
+            $paiementModel = new \App\Models\PaiementModel();
+            
+            $stats['total_utilisateurs'] = $utilisateurModel->countAllResults();
+            $stats['utilisateurs_actifs'] = $utilisateurModel->where('statut', 'actif')->countAllResults();
+            $stats['total_paiements'] = $paiementModel->countAllResults();
+            $stats['paiements_payes'] = $paiementModel->where('statut', 'paye')->countAllResults();
+            $stats['paiements_en_attente'] = $paiementModel->where('statut', 'en_attente')->countAllResults();
+        }
+
         $data = [
-            'stats' => [
-                'total_appartements' => $totalAppartements,
-                'appartements_disponibles' => $appartementsDisponibles,
-                'appartements_maintenance' => $appartementsMaintenance,
-                'appartements_occupes' => $appartementsOccupes,
-                'reservations_en_attente' => $reservationsEnAttente,
-                'reservations_confirmees' => $reservationsConfirmees,
-                'reservations_annulees' => $reservationsAnnulees,
-                'total_reservations' => $totalReservations,
-                'nouveaux_locataires' => $nouveauxLocataires
-            ],
+            'user_role' => $userRole,
+            'stats' => $stats,
             'recentes_reservations' => $recentesReservations
         ];
 

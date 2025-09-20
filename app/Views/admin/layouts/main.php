@@ -21,6 +21,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/theme.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/status-badges.css') ?>" />
     <script src="<?= base_url('assets/admin/js/jquery.min.js') ?>"></script>
     
     <!-- Custom Alignment Fix -->

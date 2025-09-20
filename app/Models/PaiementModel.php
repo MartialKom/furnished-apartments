@@ -65,6 +65,39 @@ class PaiementModel extends Model
         return $this->update($id, ['statut' => $statut]);
     }
 
+    public function getPaiementsByReservation($reservationId)
+    {
+        return $this->select('paiements.*, locataires.nom as locataire_nom')
+                    ->join('locataires', 'locataires.id = paiements.locataire_id')
+                    ->where('paiements.reservation_id', $reservationId)
+                    ->orderBy('paiements.created_at', 'DESC')
+                    ->findAll();
+    }
+
+    public function enregistrerPaiementPartiel($data)
+    {
+        // Enregistrer le paiement
+        $paiementId = $this->insert($data);
+        
+        if ($paiementId) {
+            // Recalculer le montant restant de la réservation
+            $reservationModel = new \App\Models\ReservationModel();
+            $reservationModel->calculerMontantRestant($data['reservation_id']);
+        }
+        
+        return $paiementId;
+    }
+
+    public function getTotalPaiementsByReservation($reservationId)
+    {
+        $result = $this->select('SUM(montant) as total')
+                       ->where('reservation_id', $reservationId)
+                       ->where('statut', 'paye')
+                       ->first();
+        
+        return $result['total'] ?? 0;
+    }
+
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];

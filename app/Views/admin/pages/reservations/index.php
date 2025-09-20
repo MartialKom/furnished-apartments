@@ -9,6 +9,9 @@
                 <i class="feather-calendar me-2"></i>
                 Gestion des Réservations
             </h5>
+            <button type="button" class="btn text-white" style="background: #d29751;" data-bs-toggle="modal" data-bs-target="#createReservationModal">
+                <i class="feather-plus me-2"></i>Créer une réservation
+            </button>
         </div>
         
         <!-- Onglets -->
@@ -48,6 +51,9 @@
                                         <th class="border-0">Appartement</th>
                                         <th class="border-0">Période</th>
                                         <th class="border-0">Montant</th>
+                                        <th class="border-0">Réduction</th>
+                                        <th class="border-0">Paiements</th>
+                                        <th class="border-0">Type</th>
                                         <th class="border-0">Date demande</th>
                                         <th class="border-0 text-center">Actions</th>
                                     </tr>
@@ -72,7 +78,41 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span class="fw-bold text-success"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</span>
+                                                    <div>
+                                                        <div class="fw-bold text-success"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                        <small class="text-muted">Total</small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php if (isset($reservation['reduction_pourcentage']) && $reservation['reduction_pourcentage'] > 0): ?>
+                                                        <div>
+                                                            <span class="badge bg-warning text-dark">-<?= $reservation['reduction_pourcentage'] ?>%</span>
+                                                            <div class="text-muted small"><?= number_format($reservation['montant_reduction'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">Aucune</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold text-primary"><?= number_format($reservation['montant_paye'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        <div class="text-muted small">Restant: <?= number_format($reservation['montant_restant'] ?? $reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'bg-success',
+                                                        'telephonique' => 'bg-info',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'En ligne',
+                                                        'telephonique' => 'Téléphonique',
+                                                        default => 'En ligne'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $typeClass ?>"><?= $typeText ?></span>
                                                 </td>
                                                 <td>
                                                     <small class="text-muted"><?= date('d/m/Y H:i', strtotime($reservation['created_at'])) ?></small>
@@ -83,6 +123,16 @@
                                                                 data-reservation-id="<?= $reservation['id'] ?>"
                                                                 data-bs-toggle="tooltip" title="Confirmer">
                                                             <i class="feather-check"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-primary add-payment" 
+                                                                data-reservation-id="<?= $reservation['id'] ?>"
+                                                                data-bs-toggle="tooltip" title="Ajouter un paiement">
+                                                            <i class="feather-credit-card"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-info view-payments" 
+                                                                data-reservation-id="<?= $reservation['id'] ?>"
+                                                                data-bs-toggle="tooltip" title="Voir les paiements">
+                                                            <i class="feather-eye"></i>
                                                         </button>
                                                         <button type="button" class="btn btn-sm btn-danger cancel-reservation" 
                                                                 data-reservation-id="<?= $reservation['id'] ?>"
@@ -95,7 +145,7 @@
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="6" class="text-center py-5">
+                                            <td colspan="9" class="text-center py-5">
                                                 <i class="feather-clock" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                                 <p class="text-muted mt-2">Aucune réservation en attente</p>
                                             </td>
@@ -120,6 +170,9 @@
                                         <th class="border-0">Appartement</th>
                                         <th class="border-0">Période</th>
                                         <th class="border-0">Montant</th>
+                                        <th class="border-0">Réduction</th>
+                                        <th class="border-0">Paiements</th>
+                                        <th class="border-0">Type</th>
                                         <th class="border-0">Date confirmation</th>
                                         <th class="border-0 text-center">Actions</th>
                                     </tr>
@@ -144,23 +197,69 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span class="fw-bold text-success"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</span>
+                                                    <div>
+                                                        <div class="fw-bold text-success"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                        <small class="text-muted">Total</small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php if (isset($reservation['reduction_pourcentage']) && $reservation['reduction_pourcentage'] > 0): ?>
+                                                        <div>
+                                                            <span class="badge bg-warning text-dark">-<?= $reservation['reduction_pourcentage'] ?>%</span>
+                                                            <div class="text-muted small"><?= number_format($reservation['montant_reduction'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">Aucune</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold text-primary"><?= number_format($reservation['montant_paye'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        <div class="text-muted small">Restant: <?= number_format($reservation['montant_restant'] ?? $reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'bg-success',
+                                                        'telephonique' => 'bg-info',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'En ligne',
+                                                        'telephonique' => 'Téléphonique',
+                                                        default => 'En ligne'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $typeClass ?>"><?= $typeText ?></span>
                                                 </td>
                                                 <td>
                                                     <small class="text-muted"><?= date('d/m/Y H:i', strtotime($reservation['updated_at'])) ?></small>
                                                 </td>
                                                 <td class="text-center">
-                                                    <button type="button" class="btn btn-sm btn-danger cancel-reservation" 
-                                                            data-reservation-id="<?= $reservation['id'] ?>"
-                                                            data-bs-toggle="tooltip" title="Annuler">
-                                                        <i class="feather-x"></i>
-                                                    </button>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-sm btn-primary add-payment" 
+                                                                data-reservation-id="<?= $reservation['id'] ?>"
+                                                                data-bs-toggle="tooltip" title="Ajouter un paiement">
+                                                            <i class="feather-credit-card"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-info view-payments" 
+                                                                data-reservation-id="<?= $reservation['id'] ?>"
+                                                                data-bs-toggle="tooltip" title="Voir les paiements">
+                                                            <i class="feather-eye"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger cancel-reservation" 
+                                                                data-reservation-id="<?= $reservation['id'] ?>"
+                                                                data-bs-toggle="tooltip" title="Annuler">
+                                                            <i class="feather-x"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="6" class="text-center py-5">
+                                            <td colspan="9" class="text-center py-5">
                                                 <i class="feather-check-circle" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                                 <p class="text-muted mt-2">Aucune réservation confirmée</p>
                                             </td>
@@ -185,6 +284,9 @@
                                         <th class="border-0">Appartement</th>
                                         <th class="border-0">Période</th>
                                         <th class="border-0">Montant</th>
+                                        <th class="border-0">Réduction</th>
+                                        <th class="border-0">Paiements</th>
+                                        <th class="border-0">Type</th>
                                         <th class="border-0">Motif d'annulation</th>
                                         <th class="border-0">Date annulation</th>
                                     </tr>
@@ -209,7 +311,31 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span class="fw-bold text-muted"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</span>
+                                                    <div>
+                                                        <div class="fw-bold text-muted"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                        <small class="text-muted">Total</small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold text-primary"><?= number_format($reservation['montant_paye'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        <div class="text-muted small">Restant: <?= number_format($reservation['montant_restant'] ?? $reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'bg-success',
+                                                        'telephonique' => 'bg-info',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'En ligne',
+                                                        'telephonique' => 'Téléphonique',
+                                                        default => 'En ligne'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $typeClass ?>"><?= $typeText ?></span>
                                                 </td>
                                                 <td>
                                                     <small class="text-muted"><?= esc($reservation['motif_annulation'] ?? 'Non spécifié') ?></small>
@@ -221,7 +347,7 @@
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="6" class="text-center py-5">
+                                            <td colspan="9" class="text-center py-5">
                                                 <i class="feather-x-circle" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                                 <p class="text-muted mt-2">Aucune réservation annulée</p>
                                             </td>
@@ -264,6 +390,272 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de création de réservation -->
+<div class="modal fade" id="createReservationModal" tabindex="-1" aria-labelledby="createReservationModalLabel" aria-hidden="true" style="z-index: 99999 !important;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 10px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #d29751 0%, #b8834a 100%);">
+                <h5 class="modal-title text-white" id="createReservationModalLabel">
+                    <i class="feather-plus me-2"></i>Créer une réservation
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<?= base_url('reservations/create') ?>" method="POST" id="createReservationForm">
+                <?= csrf_field() ?>
+                <div class="modal-body">
+                    <!-- Type de client -->
+                    <div class="mb-4">
+                        <label class="form-label">Type de client <span class="text-danger">*</span></label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="client_type" id="client_existant" value="existant" checked>
+                                    <label class="form-check-label" for="client_existant">
+                                        Client existant
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="client_type" id="client_nouveau" value="nouveau">
+                                    <label class="form-check-label" for="client_nouveau">
+                                        Nouveau client
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Client existant -->
+                    <div id="client-existant-section">
+                        <div class="mb-3">
+                            <label for="locataire_id" class="form-label">Sélectionner un locataire <span class="text-danger">*</span></label>
+                            <select class="form-select" id="locataire_id" name="locataire_id">
+                                <option value="">Sélectionner un locataire</option>
+                                <?php 
+                                $locataireModel = new \App\Models\LocataireModel();
+                                $locataires = $locataireModel->findAll();
+                                foreach ($locataires as $locataire): 
+                                ?>
+                                    <option value="<?= $locataire['id'] ?>"><?= esc($locataire['nom']) ?> - <?= esc($locataire['email']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <!-- Section Nouveau client -->
+                    <div id="client-nouveau-section" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="client_nom" class="form-label">Nom complet <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="client_nom" name="client_nom" placeholder="Jean Dupont">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="client_email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="client_email" name="client_email" placeholder="jean@example.com">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="client_telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="client_telephone" name="client_telephone" placeholder="+225 XX XX XX XX">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="appartement_id" class="form-label">Appartement <span class="text-danger">*</span></label>
+                                <select class="form-select" id="appartement_id" name="appartement_id" required>
+                                    <option value="">Sélectionner un appartement</option>
+                                    <?php 
+                                    $appartementModel = new \App\Models\AppartementModel();
+                                    $appartements = $appartementModel->where('statut', 'disponible')->findAll();
+                                    foreach ($appartements as $appartement): 
+                                    ?>
+                                        <option value="<?= $appartement['id'] ?>"><?= esc($appartement['adresse']) ?> - <?= number_format($appartement['tarifs'], 0, ',', ' ') ?> FCFA/nuit</option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="date_debut" class="form-label">Date de début <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date_debut" name="date_debut" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="date_fin" class="form-label">Date de fin <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date_fin" name="date_fin" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Section Calcul automatique du prix -->
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <h6 class="mb-3"><i class="feather-calculator me-2"></i>Calcul automatique du prix</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="reduction_pourcentage" class="form-label">Réduction (%)</label>
+                                    <input type="number" class="form-control" id="reduction_pourcentage" name="reduction_pourcentage" min="0" max="100" step="0.01" placeholder="0" value="0">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-outline-primary mt-4" id="calculatePriceBtn">
+                                        <i class="feather-calculator me-2"></i>Calculer le prix
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Affichage du calcul -->
+                        <div id="price-calculation-result" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="text-center p-2 bg-white rounded">
+                                        <small class="text-muted">Prix original</small>
+                                        <div class="fw-bold text-primary" id="prix-original">0 FCFA</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-2 bg-white rounded">
+                                        <small class="text-muted">Réduction</small>
+                                        <div class="fw-bold text-danger" id="montant-reduction">0 FCFA</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-2 bg-white rounded">
+                                        <small class="text-muted">Prix final</small>
+                                        <div class="fw-bold text-success" id="prix-final">0 FCFA</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="montant_paye" class="form-label">Montant payé (FCFA)</label>
+                                <input type="number" class="form-control" id="montant_paye" name="montant_paye" min="0" step="0.01" placeholder="0" value="0">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="type_reservation" class="form-label">Type de réservation <span class="text-danger">*</span></label>
+                                <select class="form-select" id="type_reservation" name="type_reservation" required>
+                                    <option value="">Sélectionner le type</option>
+                                    <option value="en_ligne">En ligne</option>
+                                    <option value="telephonique">Téléphonique</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Notes supplémentaires..."></textarea>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn text-white" style="background: #d29751;">
+                        <i class="feather-save me-2"></i>Créer la réservation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'ajout de paiement -->
+<div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true" style="z-index: 99999 !important;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 10px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #d29751 0%, #b8834a 100%);">
+                <h5 class="modal-title text-white" id="addPaymentModalLabel">
+                    <i class="feather-credit-card me-2"></i>Ajouter un paiement
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addPaymentForm">
+                <input type="hidden" id="paymentReservationId" name="reservation_id">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="payment_montant" class="form-label">Montant (FCFA) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="payment_montant" name="montant" required min="0" step="0.01" placeholder="50000">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_date" class="form-label">Date du paiement <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="payment_date" name="date" required value="<?= date('Y-m-d') ?>">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="feather-info me-2"></i>
+                        <span id="paymentInfo">Montant restant: <strong>0 FCFA</strong></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn text-white" style="background: #d29751;">
+                        <i class="feather-save me-2"></i>Enregistrer le paiement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de visualisation des paiements -->
+<div class="modal fade" id="viewPaymentsModal" tabindex="-1" aria-labelledby="viewPaymentsModalLabel" aria-hidden="true" style="z-index: 99999 !important;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 10px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #d29751 0%, #b8834a 100%);">
+                <h5 class="modal-title text-white" id="viewPaymentsModalLabel">
+                    <i class="feather-eye me-2"></i>Historique des paiements
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="paymentsList">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
         </div>
     </div>
 </div>
@@ -378,6 +770,205 @@ $(document).ready(function() {
         $(this).find('.is-invalid').removeClass('is-invalid');
         $(this).find('.invalid-feedback').text('');
     });
+
+    // Gérer l'ajout de paiement
+    $(document).on('click', '.add-payment', function() {
+        const reservationId = $(this).data('reservation-id');
+        $('#paymentReservationId').val(reservationId);
+        
+        // Charger les informations de la réservation pour afficher le montant restant
+        $.ajax({
+            url: `<?= base_url("/admin/reservations/get") ?>/${reservationId}`,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const reservation = response.reservation;
+                    const montantRestant = reservation.montant_restant || reservation.montant_total;
+                    $('#paymentInfo').html(`Montant restant: <strong>${new Intl.NumberFormat('fr-FR').format(montantRestant)} FCFA</strong>`);
+                    $('#payment_montant').attr('max', montantRestant);
+                }
+            }
+        });
+        
+        $('#addPaymentModal').modal('show');
+    });
+
+    // Gérer la visualisation des paiements
+    $(document).on('click', '.view-payments', function() {
+        const reservationId = $(this).data('reservation-id');
+        
+        $.ajax({
+            url: `<?= base_url("/admin/reservations/payments") ?>/${reservationId}`,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    let html = '<div class="table-responsive"><table class="table table-hover">';
+                    html += '<thead><tr><th>Date</th><th>Montant</th><th>Statut</th></tr></thead><tbody>';
+                    
+                    if (response.paiements && response.paiements.length > 0) {
+                        response.paiements.forEach(function(paiement) {
+                            const statutClass = paiement.statut === 'paye' ? 'bg-success' : 'bg-warning';
+                            html += `<tr>
+                                <td>${new Date(paiement.date).toLocaleDateString('fr-FR')}</td>
+                                <td class="fw-bold">${new Intl.NumberFormat('fr-FR').format(paiement.montant)} FCFA</td>
+                                <td><span class="badge ${statutClass}">${paiement.statut}</span></td>
+                            </tr>`;
+                        });
+                    } else {
+                        html += '<tr><td colspan="3" class="text-center text-muted">Aucun paiement enregistré</td></tr>';
+                    }
+                    
+                    html += '</tbody></table></div>';
+                    $('#paymentsList').html(html);
+                } else {
+                    $('#paymentsList').html('<div class="alert alert-danger">Erreur lors du chargement des paiements.</div>');
+                }
+            },
+            error: function() {
+                $('#paymentsList').html('<div class="alert alert-danger">Erreur lors du chargement des paiements.</div>');
+            }
+        });
+        
+        $('#viewPaymentsModal').modal('show');
+    });
+
+    // Gérer le formulaire d'ajout de paiement
+    $('#addPaymentForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const reservationId = $('#paymentReservationId').val();
+        
+        $.ajax({
+            url: `<?= base_url("/admin/reservations/add-payment") ?>/${reservationId}`,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    $('#addPaymentModal').modal('hide');
+                    showToast('success', response.message);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    if (response.errors) {
+                        displayFormErrors('#addPaymentForm', response.errors);
+                    } else {
+                        showToast('error', response.message);
+                    }
+                }
+            },
+            error: function() {
+                showToast('error', 'Erreur lors de l\'enregistrement du paiement.');
+            }
+        });
+    });
+
+    // Gérer le changement de type de client
+    $('input[name="client_type"]').on('change', function() {
+        const clientType = $(this).val();
+        
+        if (clientType === 'nouveau') {
+            $('#client-existant-section').hide();
+            $('#client-nouveau-section').show();
+            $('#locataire_id').prop('required', false);
+            $('#client_nom, #client_email, #client_telephone').prop('required', true);
+        } else {
+            $('#client-existant-section').show();
+            $('#client-nouveau-section').hide();
+            $('#locataire_id').prop('required', true);
+            $('#client_nom, #client_email, #client_telephone').prop('required', false);
+        }
+    });
+
+    // Gérer le calcul automatique du prix
+    $('#calculatePriceBtn').on('click', function() {
+        const appartementId = $('#appartement_id').val();
+        const dateDebut = $('#date_debut').val();
+        const dateFin = $('#date_fin').val();
+        const reductionPourcentage = $('#reduction_pourcentage').val() || 0;
+
+        if (!appartementId || !dateDebut || !dateFin) {
+            showToast('error', 'Veuillez sélectionner un appartement et les dates.');
+            return;
+        }
+
+        $.ajax({
+            url: '<?= base_url("/admin/reservations/calculate-price") ?>',
+            type: 'POST',
+            data: {
+                appartement_id: appartementId,
+                date_debut: dateDebut,
+                date_fin: dateFin,
+                reduction_pourcentage: reductionPourcentage
+            },
+            success: function(response) {
+                if (response.success) {
+                    const prix = response.prix;
+                    $('#prix-original').text(new Intl.NumberFormat('fr-FR').format(prix.prix_original) + ' FCFA');
+                    $('#montant-reduction').text(new Intl.NumberFormat('fr-FR').format(prix.montant_reduction) + ' FCFA');
+                    $('#prix-final').text(new Intl.NumberFormat('fr-FR').format(prix.montant_total) + ' FCFA');
+                    $('#price-calculation-result').show();
+                } else {
+                    showToast('error', response.message);
+                }
+            },
+            error: function() {
+                showToast('error', 'Erreur lors du calcul du prix.');
+            }
+        });
+    });
+
+    // Gérer le formulaire de création de réservation
+    $('#createReservationForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        $.ajax({
+            url: '<?= base_url("/admin/reservations/create") ?>',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    $('#createReservationModal').modal('hide');
+                    showToast('success', response.message);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    if (response.errors) {
+                        displayFormErrors('#createReservationForm', response.errors);
+                    } else {
+                        showToast('error', response.message);
+                    }
+                }
+            },
+            error: function() {
+                showToast('error', 'Erreur lors de la création de la réservation.');
+            }
+        });
+    });
+
+    // Fonction pour afficher les erreurs de formulaire
+    function displayFormErrors(formSelector, errors) {
+        // Reset previous errors
+        $(formSelector + ' .is-invalid').removeClass('is-invalid');
+        $(formSelector + ' .invalid-feedback').text('');
+        
+        // Display new errors
+        for (const field in errors) {
+            const input = $(formSelector + ` [name="${field}"]`);
+            if (input.length) {
+                input.addClass('is-invalid');
+                input.siblings('.invalid-feedback').text(errors[field]);
+            }
+        }
+    }
 });
 
 // Fonction pour afficher les toasts

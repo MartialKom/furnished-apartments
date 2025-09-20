@@ -1,33 +1,4 @@
-<header class="header-area">  
-			<div class="header-top second-header d-none d-md-block">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6">
-                            <div class="wellcome-text text-center text-lg-left">
-                                <p><?= lang('Common.welcome_message') ?></p>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 d-none d-lg-block">
-                            <div class="header-cta text-right">
-                                <ul>
-                                    <li>
-                                        <i class="icon dripicons-phone"></i>
-                                        <span>+1 (438) 467-2660</span>
-                                    </li>
-                                    <li>
-                                        <i class="icon dripicons-mail"></i>
-                                        <span>info&#64;nsenou-tower.com</span>
-                                    </li>
-                                    <li>
-                                        <i class="icon dripicons-clock"></i>
-                                        <span>24/7</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>		
+<header class="header-area">
             <div id="header-sticky" class="menu-area">
                 <div class="container">
                     <div class="second-menu">
@@ -44,7 +15,6 @@
                                         <ul>
                                             <li class="has-sub"><a href="<?= base_url('/') ?>" ><?= lang('Common.nav_home') ?></a></li>
                                             <li><a href="about.html"><?= lang('Common.nav_about') ?></a></li>
-                                            <li><a href="services.html"><?= lang('Common.nav_services') ?></a></li>
                                             <li><a href="apartments.html"><?= lang('Common.nav_apartments') ?></a></li>
                                             <li><a href="contact.html"><?= lang('Common.nav_contact') ?></a></li>
                                             <li class="has-sub">

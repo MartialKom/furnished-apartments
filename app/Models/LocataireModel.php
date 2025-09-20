@@ -30,7 +30,7 @@ class LocataireModel extends Model
     // Validation
     protected $validationRules      = [
         'nom' => 'required|string|max_length[100]',
-        'email' => 'required|valid_email|is_unique[locataires.email,id,{id}]',
+        'email' => 'required|valid_email',
         'telephone' => 'permit_empty|string|max_length[20]'
     ];
     protected $validationMessages   = [];

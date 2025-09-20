@@ -17,8 +17,8 @@ class UtilisateurController extends BaseController
 
     public function index()
     {
-        $utilisateurs = $this->utilisateurModel->findAll();
-        
+        $utilisateurs = $this->utilisateurModel->orderBy('created_at', 'DESC')->findAll();
+
         $data = [
             'title' => 'Gestion des Utilisateurs',
             'page_title' => 'Utilisateurs',
@@ -31,14 +31,6 @@ class UtilisateurController extends BaseController
 
     public function create()
     {
-        // Force JSON response
-        $this->response->setContentType('application/json');
-        
-        // Debug: Log POST data
-        log_message('debug', 'POST Data: ' . json_encode($this->request->getPost()));
-        log_message('debug', 'Request method: ' . $this->request->getMethod());
-        log_message('debug', 'Request URI: ' . $this->request->getUri());
-        
         $rules = [
             'nom' => 'required|string|max_length[100]',
             'prenom' => 'required|string|max_length[100]',
@@ -50,7 +42,6 @@ class UtilisateurController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            log_message('debug', 'Validation errors: ' . json_encode($this->validator->getErrors()));
             return $this->response->setJSON([
                 'success' => false,
                 'errors' => $this->validator->getErrors()
@@ -68,41 +59,21 @@ class UtilisateurController extends BaseController
             'statut' => 'actif'
         ];
 
-        log_message('debug', 'Data to insert: ' . json_encode($data));
-
-        try {
-            $result = $this->utilisateurModel->insert($data);
-            log_message('debug', 'Insert result: ' . ($result ? 'success' : 'failed'));
-            
-            if ($result) {
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Utilisateur créé avec succès !'
-                ]);
-            } else {
-                $errors = $this->utilisateurModel->errors();
-                log_message('error', 'Model errors: ' . json_encode($errors));
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Erreur lors de la création de l\'utilisateur.',
-                    'model_errors' => $errors
-                ]);
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Exception during insert: ' . $e->getMessage());
+        if ($this->utilisateurModel->insert($data)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Utilisateur créé avec succès !'
+            ]);
+        } else {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Erreur lors de la création: ' . $e->getMessage()
+                'message' => 'Erreur lors de la création de l\'utilisateur.'
             ]);
         }
     }
 
     public function update($id = null)
     {
-        // Debug
-        log_message('debug', 'Update method called with ID: ' . $id);
-        log_message('debug', 'POST data: ' . json_encode($this->request->getPost()));
-        
         if (!$id) {
             return $this->response->setJSON([
                 'success' => false,
@@ -143,28 +114,18 @@ class UtilisateurController extends BaseController
             'role' => $this->request->getPost('role')
         ];
 
-        // Mettre à jour le mot de passe seulement s'il est fourni
+        // Ajouter le mot de passe seulement s'il est fourni
         $motDePasse = $this->request->getPost('motDePasse');
         if (!empty($motDePasse)) {
-            if (strlen($motDePasse) < 6) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Le mot de passe doit contenir au moins 6 caractères.'
-                ]);
-            }
             $data['motDePasse'] = $motDePasse;
         }
 
-        // Désactiver temporairement la validation du modèle pour l'update
-        $this->utilisateurModel->skipValidation(true);
         if ($this->utilisateurModel->update($id, $data)) {
-            $this->utilisateurModel->skipValidation(false);
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Utilisateur modifié avec succès !'
             ]);
         } else {
-            $this->utilisateurModel->skipValidation(false);
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Erreur lors de la modification de l\'utilisateur.'
@@ -189,21 +150,8 @@ class UtilisateurController extends BaseController
             ]);
         }
 
-        // Ne pas permettre de désactiver le dernier admin
-        if ($utilisateur['role'] === 'admin' && $utilisateur['statut'] === 'actif') {
-            $nombreAdminsActifs = $this->utilisateurModel->where('role', 'admin')
-                                                       ->where('statut', 'actif')
-                                                       ->countAllResults();
-            if ($nombreAdminsActifs <= 1) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Impossible de désactiver le dernier administrateur actif.'
-                ]);
-            }
-        }
-
         $nouveauStatut = $utilisateur['statut'] === 'actif' ? 'inactif' : 'actif';
-        
+
         if ($this->utilisateurModel->update($id, ['statut' => $nouveauStatut])) {
             $action = $nouveauStatut === 'actif' ? 'activé' : 'désactivé';
             return $this->response->setJSON([
@@ -236,19 +184,9 @@ class UtilisateurController extends BaseController
             ]);
         }
 
-        // Ne pas permettre de supprimer le dernier admin
-        if ($utilisateur['role'] === 'admin') {
-            $nombreAdmins = $this->utilisateurModel->where('role', 'admin')->countAllResults();
-            if ($nombreAdmins <= 1) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Impossible de supprimer le dernier administrateur.'
-                ]);
-            }
-        }
-
-        // Ne pas permettre de se supprimer soi-même
-        if ($id == session()->get('user_id')) {
+        // Empêcher la suppression de l'utilisateur actuellement connecté
+        $session = session();
+        if ($session->get('user_id') == $id) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Vous ne pouvez pas supprimer votre propre compte.'

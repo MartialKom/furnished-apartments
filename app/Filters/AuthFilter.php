@@ -40,21 +40,60 @@ class AuthFilter implements FilterInterface
             return redirect()->to('/admin/auth/login')->with('error', 'Vous devez vous connecter pour accéder à cette page.');
         }
         
+        $userRole = $session->get('user_role');
+        
         // Vérifier le rôle si spécifié dans les arguments
         if ($arguments && count($arguments) > 0) {
             $requiredRole = $arguments[0];
-            $userRole = $session->get('user_role');
             
-            if ($userRole !== $requiredRole && $userRole !== 'admin') {
-                // Si c'est une requête AJAX, retourner une réponse JSON
-                if ($request->isAJAX()) {
-                    return service('response')->setJSON([
-                        'success' => false,
-                        'message' => 'Vous n\'avez pas les permissions nécessaires.',
-                        'redirect' => '/admin/auth/login'
-                    ])->setStatusCode(403);
+            // Les admins ont accès à tout
+            if ($userRole === 'admin') {
+                return; // Autoriser l'accès
+            }
+            
+            // Vérifier les permissions spécifiques
+            if ($userRole === 'gestionnaire') {
+                // Les gestionnaires peuvent accéder aux routes autorisées
+                $allowedRoutes = [
+                    'appartements', 'reservations', 'locataires', 'paiements'
+                ];
+                
+                if (in_array($requiredRole, $allowedRoutes)) {
+                    return; // Autoriser l'accès
                 }
-                return redirect()->to('/admin/auth/login')->with('error', 'Vous n\'avez pas les permissions nécessaires.');
+            }
+            
+            // Accès refusé
+            if ($request->isAJAX()) {
+                return service('response')->setJSON([
+                    'success' => false,
+                    'message' => 'Vous n\'avez pas les permissions nécessaires.',
+                    'redirect' => '/admin/dashboard'
+                ])->setStatusCode(403);
+            }
+            return redirect()->to('/admin/dashboard')->with('error', 'Vous n\'avez pas les permissions nécessaires.');
+        }
+        
+        // Vérifier les permissions pour les routes spécifiques
+        $uri = $request->getUri()->getPath();
+        
+        // Routes interdites aux gestionnaires
+        $adminOnlyRoutes = [
+            'utilisateurs', 'settings', 'reports', 'analytics'
+        ];
+        
+        if ($userRole === 'gestionnaire') {
+            foreach ($adminOnlyRoutes as $route) {
+                if (strpos($uri, $route) !== false) {
+                    if ($request->isAJAX()) {
+                        return service('response')->setJSON([
+                            'success' => false,
+                            'message' => 'Accès réservé aux administrateurs.',
+                            'redirect' => '/admin/dashboard'
+                        ])->setStatusCode(403);
+                    }
+                    return redirect()->to('/admin/dashboard')->with('error', 'Accès réservé aux administrateurs.');
+                }
             }
         }
     }

@@ -21,6 +21,7 @@
                         <thead style="background: #f8f9fa;">
                             <tr>
                                 <th class="border-0">Adresse</th>
+                                <th class="border-0">Type</th>
                                 <th class="border-0">Tarif/Nuit</th>
                                 <th class="border-0">Statut</th>
                                 <th class="border-0">Équipements</th>
@@ -34,6 +35,21 @@
                                     <tr data-appartement-id="<?= $appartement['id'] ?>">
                                         <td>
                                             <div class="fw-semibold"><?= esc($appartement['adresse']) ?></div>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $typeClass = match($appartement['type'] ?? 'meuble') {
+                                                'meuble' => 'bg-primary',
+                                                'non_meuble' => 'bg-secondary',
+                                                default => 'bg-secondary'
+                                            };
+                                            $typeText = match($appartement['type'] ?? 'meuble') {
+                                                'meuble' => 'Meublé',
+                                                'non_meuble' => 'Non meublé',
+                                                default => 'Meublé'
+                                            };
+                                            ?>
+                                            <span class="badge <?= $typeClass ?>"><?= $typeText ?></span>
                                         </td>
                                         <td>
                                             <span class="fw-bold text-success"><?= number_format($appartement['tarifs'], 0, ',', ' ') ?> FCFA</span>
@@ -85,6 +101,13 @@
                                                         <i class="feather-<?= $appartement['statut'] === 'disponible' ? 'tool' : 'check-circle' ?>"></i>
                                                     </button>
                                                 <?php endif; ?>
+                                                <button type="button" class="btn btn-sm btn-outline-info toggle-type" 
+                                                        data-appartement-id="<?= $appartement['id'] ?>"
+                                                        data-current-type="<?= $appartement['type'] ?? 'meuble' ?>"
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Changer le type">
+                                                    <i class="feather-refresh-cw"></i>
+                                                </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger delete-appartement" 
                                                         data-appartement-id="<?= $appartement['id'] ?>"
                                                         data-appartement-adresse="<?= esc($appartement['adresse']) ?>"
@@ -97,7 +120,7 @@
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center py-5">
+                                    <td colspan="7" class="text-center py-5">
                                         <i class="feather-home" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                         <p class="text-muted mt-2">Aucun appartement trouvé</p>
                                     </td>
@@ -148,6 +171,17 @@
                                     <option value="">Sélectionner le statut</option>
                                     <option value="disponible">Disponible</option>
                                     <option value="maintenance">En maintenance</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type d'appartement <span class="text-danger">*</span></label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="">Sélectionner le type</option>
+                                    <option value="meuble">Meublé</option>
+                                    <option value="non_meuble">Non meublé</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -239,6 +273,17 @@
                                     <option value="">Sélectionner le statut</option>
                                     <option value="disponible">Disponible</option>
                                     <option value="maintenance">En maintenance</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editType" class="form-label">Type d'appartement <span class="text-danger">*</span></label>
+                                <select class="form-select" id="editType" name="type" required>
+                                    <option value="">Sélectionner le type</option>
+                                    <option value="meuble">Meublé</option>
+                                    <option value="non_meuble">Non meublé</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -771,6 +816,7 @@ $(document).ready(function() {
                     $('#editAdresse').val(appartement.adresse);
                     $('#editTarifs').val(appartement.tarifs);
                     $('#editStatut').val(appartement.statut);
+                    $('#editType').val(appartement.type || 'meuble');
                     
                     // Charger les équipements existants
                     loadExistingEquipments(appartement.equipements);
@@ -850,6 +896,34 @@ $(document).ready(function() {
                 },
                 error: function() {
                     showToast('error', 'Erreur lors de la modification du statut.');
+                }
+            });
+        }
+    });
+
+    // Gérer le toggle du type d'appartement
+    $(document).on('click', '.toggle-type', function() {
+        const appartementId = $(this).data('appartement-id');
+        const currentType = $(this).data('current-type');
+        const nouveauType = currentType === 'meuble' ? 'non_meuble' : 'meuble';
+        const action = currentType === 'meuble' ? 'transformer en non meublé' : 'transformer en meublé';
+        
+        if (confirm(`Êtes-vous sûr de vouloir ${action} cet appartement ?`)) {
+            $.ajax({
+                url: `<?= base_url("/admin/appartements/toggle-type") ?>/${appartementId}`,
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        showToast('success', response.message);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showToast('error', response.message);
+                    }
+                },
+                error: function() {
+                    showToast('error', 'Erreur lors de la modification du type.');
                 }
             });
         }

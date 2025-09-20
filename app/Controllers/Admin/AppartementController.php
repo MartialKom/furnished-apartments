@@ -35,6 +35,7 @@ class AppartementController extends BaseController
             'adresse' => 'required|string|max_length[255]',
             'tarifs' => 'required|decimal',
             'statut' => 'required|in_list[disponible,maintenance]',
+            'type' => 'required|in_list[meuble,non_meuble]',
             'equipements' => 'permit_empty|string'
         ];
 
@@ -88,6 +89,7 @@ class AppartementController extends BaseController
             'adresse' => $this->request->getPost('adresse'),
             'tarifs' => $this->request->getPost('tarifs'),
             'statut' => $this->request->getPost('statut'),
+            'type' => $this->request->getPost('type'),
             'photos' => implode(',', $uploadedPhotos),
             'equipements' => $this->request->getPost('equipements')
         ];
@@ -126,6 +128,7 @@ class AppartementController extends BaseController
             'adresse' => 'required|string|max_length[255]',
             'tarifs' => 'required|decimal',
             'statut' => 'required|in_list[disponible,maintenance]',
+            'type' => 'required|in_list[meuble,non_meuble]',
             'equipements' => 'permit_empty|string'
         ];
 
@@ -183,6 +186,7 @@ class AppartementController extends BaseController
             'adresse' => $this->request->getPost('adresse'),
             'tarifs' => $this->request->getPost('tarifs'),
             'statut' => $this->request->getPost('statut'),
+            'type' => $this->request->getPost('type'),
             'photos' => implode(',', $allPhotos),
             'equipements' => $this->request->getPost('equipements')
         ];
@@ -281,6 +285,53 @@ class AppartementController extends BaseController
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Erreur lors de la suppression de l\'appartement.'
+            ]);
+        }
+    }
+
+    public function toggleType($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Appartement non trouvé.'
+            ]);
+        }
+
+        $appartement = $this->appartementModel->find($id);
+        if (!$appartement) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Appartement non trouvé.'
+            ]);
+        }
+
+        // Vérifier s'il y a des réservations actives
+        $reservationModel = new \App\Models\ReservationModel();
+        $reservationsActives = $reservationModel->where('appartement_id', $id)
+                                               ->whereIn('statut', ['confirmee', 'en_attente'])
+                                               ->countAllResults();
+
+        if ($reservationsActives > 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Impossible de modifier le type d\'un appartement avec des réservations actives.'
+            ]);
+        }
+
+        $nouveauType = $appartement['type'] === 'meuble' ? 'non_meuble' : 'meuble';
+        
+        if ($this->appartementModel->changerType($id, $nouveauType)) {
+            $typeLabel = $nouveauType === 'meuble' ? 'meublé' : 'non meublé';
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => "Appartement transformé en {$typeLabel} avec succès !",
+                'nouveau_type' => $nouveauType
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Erreur lors de la modification du type.'
             ]);
         }
     }

@@ -1,3 +1,8 @@
+<?php
+$session = session();
+$userRole = $session->get('user_role');
+?>
+
 <nav class="nxl-navigation">
     <div class="navbar-wrapper">
         <div class="m-header">
@@ -45,7 +50,20 @@
                         <span class="nxl-mtext">Paiements</span>
                     </a>
                 </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/contrats') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-file-text"></i></span>
+                        <span class="nxl-mtext">Contrats Long Terme</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/paiements-mensuels/dashboard') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-dollar-sign"></i></span>
+                        <span class="nxl-mtext">Paiements Mensuels</span>
+                    </a>
+                </li>
                 
+                <?php if ($userRole === 'admin'): ?>
                 <li class="nxl-item nxl-caption">
                     <label>Administration</label>
                 </li>
@@ -81,6 +99,8 @@
                         <span class="nxl-mtext">Paramètres</span>
                     </a>
                 </li>
+                <?php endif; ?>
+                
                 <li class="nxl-item">
                     <a href="<?= base_url('/') ?>" class="nxl-link" target="_blank">
                         <span class="nxl-micon"><i class="feather-external-link"></i></span>

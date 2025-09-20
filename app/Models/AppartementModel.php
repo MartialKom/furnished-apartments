@@ -12,7 +12,7 @@ class AppartementModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['adresse', 'photos', 'equipements', 'tarifs', 'statut'];
+    protected $allowedFields    = ['adresse', 'photos', 'equipements', 'tarifs', 'statut', 'type'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -31,7 +31,8 @@ class AppartementModel extends Model
     protected $validationRules      = [
         'adresse' => 'required|string|max_length[255]',
         'tarifs' => 'required|decimal',
-        'statut' => 'required|in_list[disponible,occupe,maintenance]'
+        'statut' => 'required|in_list[disponible,occupe,maintenance]',
+        'type' => 'required|in_list[meuble,non_meuble]'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -50,6 +51,26 @@ class AppartementModel extends Model
     public function obtenirDisponibles()
     {
         return $this->where('statut', 'disponible')->findAll();
+    }
+
+    public function obtenirParType($type)
+    {
+        return $this->where('type', $type)->where('statut', 'disponible')->findAll();
+    }
+
+    public function obtenirMeubles()
+    {
+        return $this->obtenirParType('meuble');
+    }
+
+    public function obtenirNonMeubles()
+    {
+        return $this->obtenirParType('non_meuble');
+    }
+
+    public function changerType($id, $nouveauType)
+    {
+        return $this->update($id, ['type' => $nouveauType]);
     }
 
     // Callbacks
