@@ -14,9 +14,9 @@
                                     <nav id="mobile-menu">
                                         <ul>
                                             <li class="has-sub"><a href="<?= base_url('/') ?>" ><?= lang('Common.nav_home') ?></a></li>
-                                            <li><a href="about.html"><?= lang('Common.nav_about') ?></a></li>
-                                            <li><a href="apartments.html"><?= lang('Common.nav_apartments') ?></a></li>
-                                            <li><a href="contact.html"><?= lang('Common.nav_contact') ?></a></li>
+                                            <li><a href="<?= base_url('about') ?>"><?= lang('Common.nav_about') ?></a></li>
+                                            <li><a href="<?= base_url('apartments') ?>"><?= lang('Common.nav_apartments') ?></a></li>
+                                            <li><a href="<?= base_url('contact') ?>"><?= lang('Common.nav_contact') ?></a></li>
                                             <li class="has-sub">
                                                 <a href="javascript:void(0)" class="top-btn" style="display: flex; align-items: center;">
                                                     <?php $currentLang = session()->get('language') ?? 'fr'; ?>
