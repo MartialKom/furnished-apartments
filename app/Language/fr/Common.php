@@ -199,4 +199,83 @@ return [
     'contact_us_link' => 'Contactez nous',
     'services_link' => 'Services',
     'copyright_text' => '© 2025 @ Nsenoutower All design by Tamaroas-Dev.',
+
+    // About page
+    'about_page_title' => 'À Propos de Nous',
+    'about_breadcrumb' => 'À Propos',
+    'about_who_title' => 'Qui sommes-nous',
+    'about_welcome_title' => 'Bienvenue dans votre Chez-Vous',
+    'about_intro_text_1' => 'Nous sommes spécialisés dans la location d\'appartements meublés de standing, offrant à nos clients un confort exceptionnel et un service personnalisé. Situés dans les quartiers les plus prisés, nos appartements sont conçus pour répondre aux besoins des voyageurs d\'affaires, des familles et de tous ceux qui recherchent un hébergement de qualité.',
+    'about_intro_text_2' => 'Chaque appartement est équipé de tout le nécessaire pour garantir un séjour agréable : WiFi haut débit, climatisation, cuisine équipée, et bien plus encore. Notre équipe dévouée est disponible 24h/24 pour assurer votre satisfaction.',
+    'about_premium_location' => 'Emplacement Premium',
+    'about_premium_location_desc' => 'Au cœur des meilleurs quartiers',
+    'about_service_24_7' => 'Service 24/7',
+    'about_service_24_7_desc' => 'Support client disponible à tout moment',
+    'about_years_experience' => 'Années d\'expérience',
+
+    // Statistics
+    'stat_apartments' => 'Appartements Disponibles',
+    'stat_clients' => 'Clients Satisfaits',
+    'stat_experience' => 'Années d\'Expérience',
+    'stat_satisfaction' => 'Taux de Satisfaction',
+
+    // Mission & Vision
+    'about_mission_title' => 'Notre Mission',
+    'about_mission_text' => 'Notre mission est de fournir des logements meublés de haute qualité qui offrent confort, sécurité et commodité à nos clients. Nous nous engageons à créer une expérience d\'hébergement exceptionnelle en combinant des équipements modernes, un service personnalisé et une attention aux détails.',
+    'about_vision_title' => 'Notre Vision',
+    'about_vision_text' => 'Devenir la référence en matière de location d\'appartements meublés, reconnue pour notre excellence, notre innovation et notre engagement envers la satisfaction client. Nous aspirons à créer des espaces qui deviennent de véritables "chez-soi" pour nos clients, qu\'ils séjournent pour quelques jours ou plusieurs mois.',
+
+    // Values
+    'about_values_subtitle' => 'Nos Principes',
+    'about_values_title' => 'Nos Valeurs',
+    'value_integrity' => 'Intégrité',
+    'value_integrity_desc' => 'Transparence et honnêteté dans toutes nos interactions',
+    'value_excellence' => 'Excellence',
+    'value_excellence_desc' => 'Standards élevés de qualité et de service',
+    'value_kindness' => 'Bienveillance',
+    'value_kindness_desc' => 'Attention et respect envers chaque client',
+    'value_innovation' => 'Innovation',
+    'value_innovation_desc' => 'Amélioration continue de nos services',
+    'value_commitment' => 'Engagement',
+    'value_commitment_desc' => 'Dévouement total à votre satisfaction',
+    'value_community' => 'Communauté',
+    'value_community_desc' => 'Création de liens durables avec nos clients',
+
+    // CTA
+    'about_cta_title' => 'Prêt à Réserver Votre Appartement?',
+    'about_cta_subtitle' => 'Découvrez nos appartements meublés et trouvez celui qui vous convient le mieux.',
+    'about_cta_button' => 'Voir les Appartements',
+
+    // Home page - About section
+    'about_description' => 'Depuis que j\'ai emménagé dans cet immeuble, ma vie a complètement changé. Les appartements sont non seulement élégamment meublés, mais ils offrent également un confort inégalé. Chaque détail a été pensé pour créer un espace accueillant et fonctionnel.',
+
+    // Home page - Apartments section
+    'our_plans' => 'Nos Plans',
+    'apartments_and_studios' => 'Les appartements et studio',
+    'studio' => 'Studio',
+    'apartments' => 'Appartements',
+    'studio_description_1' => 'Dès votre entrée, vous serez séduit par son ambiance chaleureuse. La cuisine entièrement équipée vous permettra de préparer vos repas dans un cadre agréable, tandis que le salon, avec ses meubles contemporains, invite à la détente après une longue journée. La salle de bain privative, avec ses finitions élégantes, ajoute une touche de luxe à votre quotidien.',
+    'studio_description_2' => 'De plus, le studio est équipé de la climatisation et d\'un accès Wi-Fi haut débit, pour un confort optimal.',
+    'apartment_description_1' => 'À votre arrivée, vous serez accueilli par un vaste salon baigné de lumière naturelle, idéal pour se détendre ou recevoir des amis. La cuisine ouverte, entièrement équipée avec des appareils modernes, vous invite à explorer vos talents culinaires. Les chambres, avec leurs lits confortables et leur décoration raffinée, offrent un havre de paix pour des nuits reposantes.',
+    'apartment_description_2' => 'L\'appartement dispose également de balcons privés, parfaits pour savourer votre café du matin ou apprécier un coucher de soleil. Avec des commodités telles que la climatisation, le Wi-Fi haut débit, et un accès sécurisé, votre confort est notre priorité.',
+    'floor_number' => 'N° Etage',
+    'room_number' => 'PIECE N°',
+    'price_label' => 'PRIX',
+    'price_month' => 'Fcfa/Mois',
+    'book_this_studio' => 'Réserver ce studio',
+    'book_this_apartment' => 'Réserver cet appartement',
+
+    // Home page - Contact section
+    'stay_in_touch' => 'Restons en contact',
+    'address_label' => 'Adresse',
+    'address_text' => 'Dragage, face du restaurant Canteens',
+    'availability_hours' => 'Heure de disponibilité',
+    'availability_text' => 'Lundi a Dimanche 24h/24',
+    'send_message_label' => 'Envoyez nous un message',
+    'send_message_text' => 'Nous sommes à votre disposition envoyez nous un mail :',
+    'form_name_placeholder' => 'Ecrit ici Jhonathan',
+    'form_email_placeholder' => 'Ecrit ton email',
+    'form_subject_placeholder' => 'J\'aimerais discuter',
+    'form_message_placeholder' => 'Ecris ton commentaire',
+    'send_button' => 'Envoyer',
 ];
