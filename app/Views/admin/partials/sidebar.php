@@ -62,7 +62,47 @@ $userRole = $session->get('user_role');
                         <span class="nxl-mtext">Paiements Mensuels</span>
                     </a>
                 </li>
-                
+
+                <li class="nxl-item nxl-caption">
+                    <label>Gestion du Stock</label>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/stock') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-package"></i></span>
+                        <span class="nxl-mtext">Tableau de Bord Stock</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/stock/produits') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-box"></i></span>
+                        <span class="nxl-mtext">Produits</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/stock/approvisionnements') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-truck"></i></span>
+                        <span class="nxl-mtext">Approvisionnements</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/stock/sorties') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-shopping-cart"></i></span>
+                        <span class="nxl-mtext">Sorties</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/stock/inventaires') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-clipboard"></i></span>
+                        <span class="nxl-mtext">Inventaires</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/stock/rapports') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-bar-chart"></i></span>
+                        <span class="nxl-mtext">Rapports Stock</span>
+                    </a>
+                </li>
+
                 <?php if ($userRole === 'admin'): ?>
                 <li class="nxl-item nxl-caption">
                     <label>Administration</label>

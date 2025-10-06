@@ -161,4 +161,50 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('paiements/generer-facture/(:num)', 'PaiementController::genererFacture/$1');
         $routes->get('paiements/get/(:num)', 'PaiementController::get/$1');
     });
+
+    // Routes pour le module Stock
+    $routes->group('stock', ['filter' => 'auth:stock'], function ($routes) {
+        // Dashboard Stock
+        $routes->get('/', 'StockController::index');
+        $routes->get('dashboard', 'StockController::index');
+
+        // Catégories
+        $routes->get('categories', 'StockController::categories');
+        $routes->post('categories/create', 'StockController::createCategorie');
+        $routes->get('categories/get/(:num)', 'StockController::getCategorie/$1');
+        $routes->post('categories/update/(:num)', 'StockController::updateCategorie/$1');
+        $routes->post('categories/toggle-status/(:num)', 'StockController::toggleCategorieStatus/$1');
+        $routes->delete('categories/delete/(:num)', 'StockController::deleteCategorie/$1');
+
+        // Produits
+        $routes->get('produits', 'StockController::produits');
+        $routes->post('produits/create', 'StockController::createProduit');
+        $routes->get('produits/get/(:num)', 'StockController::getProduit/$1');
+        $routes->post('produits/update/(:num)', 'StockController::updateProduit/$1');
+        $routes->post('produits/toggle-status/(:num)', 'StockController::toggleProduitStatus/$1');
+        $routes->delete('produits/delete/(:num)', 'StockController::deleteProduit/$1');
+
+        // Approvisionnements
+        $routes->get('approvisionnements', 'StockController::approvisionnements');
+        $routes->post('approvisionnements/create', 'StockController::createApprovisionnement');
+        $routes->get('approvisionnements/get/(:num)', 'StockController::getApprovisionnement/$1');
+
+        // Sorties
+        $routes->get('sorties', 'StockController::sorties');
+        $routes->post('sorties/create', 'StockController::createSortie');
+        $routes->get('sorties/get/(:num)', 'StockController::getSortie/$1');
+
+        // Inventaires
+        $routes->get('inventaires', 'StockController::inventaires');
+        $routes->post('inventaires/create', 'StockController::createInventaire');
+        $routes->get('inventaires/show/(:num)', 'StockController::showInventaire/$1');
+        $routes->post('inventaires/update-stock-physique', 'StockController::updateStockPhysique');
+        $routes->post('inventaires/terminer/(:num)', 'StockController::terminerInventaire/$1');
+        $routes->post('inventaires/valider/(:num)', 'StockController::validerInventaire/$1');
+
+        // Rapports
+        $routes->get('rapports', 'StockController::rapports');
+        $routes->get('rapports/imprimer-stock', 'StockController::imprimerStock');
+        $routes->get('rapports/imprimer-sorties', 'StockController::imprimerSorties');
+    });
 });

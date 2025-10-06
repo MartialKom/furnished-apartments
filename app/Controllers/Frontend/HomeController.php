@@ -3,9 +3,17 @@
 namespace App\Controllers\Frontend;
 
 use App\Controllers\BaseController;
+use App\Models\AppartementModel;
 
 class HomeController extends BaseController
 {
+    protected $appartementModel;
+
+    public function __construct()
+    {
+        $this->appartementModel = new AppartementModel();
+    }
+
     public function index()
     {
         return view('frontend/pages/home');
@@ -18,7 +26,19 @@ class HomeController extends BaseController
 
     public function apartments()
     {
-        return view('frontend/pages/apartments');
+        // Récupérer uniquement les appartements disponibles et meublés
+        $appartements = $this->appartementModel
+            ->where('statut', 'disponible')
+            ->where('type', 'meuble')
+            ->orderBy('tarifs', 'ASC')
+            ->findAll();
+
+        $data = [
+            'title' => 'Nos Appartements Meublés',
+            'appartements' => $appartements,
+        ];
+
+        return view('frontend/pages/apartments', $data);
     }
 
     public function apartmentDetails($id = null)

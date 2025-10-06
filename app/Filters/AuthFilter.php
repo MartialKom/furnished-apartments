@@ -55,9 +55,9 @@ class AuthFilter implements FilterInterface
             if ($userRole === 'gestionnaire') {
                 // Les gestionnaires peuvent accéder aux routes autorisées
                 $allowedRoutes = [
-                    'appartements', 'reservations', 'locataires', 'paiements'
+                    'appartements', 'reservations', 'locataires', 'paiements', 'stock'
                 ];
-                
+
                 if (in_array($requiredRole, $allowedRoutes)) {
                     return; // Autoriser l'accès
                 }
