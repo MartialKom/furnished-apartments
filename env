@@ -21,6 +21,11 @@
 #--------------------------------------------------------------------
 
   app.baseURL = 'https://nsenoutower.com/'
+SMTP_HOST = smtp-fr.securemail.pro
+SMTP_USER = contact@nsenoutower.com #administration@nsenoutower.com gestionnaire@nsenoutower.com
+SMTP_PASS = Nsenoutower@2025
+SMTP_PORT = 465
+SMTP_CRYPTO = ssl
 # If you have trouble with `.`, you could also use `_`.
 # app_baseURL = ''
 # app.forceGlobalSecureRequests = false
