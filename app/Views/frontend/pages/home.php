@@ -98,9 +98,7 @@
                             <h2><?= lang('Common.welcome_building') ?></h2>
                             <p><span></span><?= lang('Common.services_subtitle_desc') ?></p>
                         </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                            laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <p><?= lang('Common.about_description') ?></p>
                         <a href="<?= base_url('reservation') ?>" class="btn"><?= lang('Common.book_now_alt') ?></a>
                     </div>
                 </div>
@@ -305,8 +303,8 @@
         <div class="row justify-content-center">
             <div class="col-xl-8 col-lg-10">
                 <div class="section-title text-center pl-40 pr-40 mb-80 wow fadeInDown animated" data-animation="fadeInDown animated" data-delay=".2s">
-                    <span>Nos Plans</span>
-                    <h2> Les appartements et studio </h2>
+                    <span><?= lang('Common.our_plans') ?></span>
+                    <h2><?= lang('Common.apartments_and_studios') ?></h2>
                 </div>
             </div>
         </div>
@@ -317,8 +315,8 @@
             <div class="col-lg-6">
                 <nav>
                     <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link nav-link active" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="true">Studio</a>
-                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Appartemens</a>
+                        <a class="nav-item nav-link nav-link active" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="true"><?= lang('Common.studio') ?></a>
+                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false"><?= lang('Common.apartments') ?></a>
                     </div>
                 </nav>
             </div>
@@ -329,17 +327,17 @@
                     <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                         <div class="row">
                             <div class="col-lg-6">
-                                <p>Dès votre entrée, vous serez séduit par son ambiance chaleureuse. La cuisine entièrement équipée vous permettra de préparer vos repas dans un cadre agréable, tandis que le salon, avec ses meubles contemporains, invite à la détente après une longue journée. La salle de bain privative, avec ses finitions élégantes, ajoute une touche de luxe à votre quotidien.</p>
-                                <p>De plus, le studio est équipé de la climatisation et d'un accès Wi-Fi haut débit, pour un confort optimal.</p>
+                                <p><?= lang('Common.studio_description_1') ?></p>
+                                <p><?= lang('Common.studio_description_2') ?></p>
                                 <ul>
-                                    <li>N° Etage<span class="after"> 3</span></li>
-                                    <li>PIECE N°<span class="after"> 2</span></li>
-                                    <li>PRIX<span class="after"> 20000Fcfa/Month</span></li>
+                                    <li><?= lang('Common.floor_number') ?><span class="after"> 3</span></li>
+                                    <li><?= lang('Common.room_number') ?><span class="after"> 2</span></li>
+                                    <li><?= lang('Common.price_label') ?><span class="after"> 20000<?= lang('Common.price_month') ?></span></li>
                                 </ul>
                                 <div class="mt-30">
                                     <a href="<?= base_url('reservation') ?>" class="btn" style="background: #d29751; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
                                         <i class="fas fa-calendar-check" style="margin-right: 8px;"></i>
-                                        Réserver ce studio
+                                        <?= lang('Common.book_this_studio') ?>
                                     </a>
                                 </div>
                             </div>
@@ -354,17 +352,17 @@
                         <div class="row">
 
                             <div class="col-lg-6">
-                                <p>À votre arrivée, vous serez accueilli par un vaste salon baigné de lumière naturelle, idéal pour se détendre ou recevoir des amis. La cuisine ouverte, entièrement équipée avec des appareils modernes, vous invite à explorer vos talents culinaires. Les chambres, avec leurs lits confortables et leur décoration raffinée, offrent un havre de paix pour des nuits reposantes.</p>
-                                <p>L'appartement dispose également de balcons privés, parfaits pour savourer votre café du matin ou apprécier un coucher de soleil. Avec des commodités telles que la climatisation, le Wi-Fi haut débit, et un accès sécurisé, votre confort est notre priorité.</p>
+                                <p><?= lang('Common.apartment_description_1') ?></p>
+                                <p><?= lang('Common.apartment_description_2') ?></p>
                                 <ul>
-                                    <li>N° Etage<span class="after"> 2</span></li>
-                                    <li>PIECE N°<span class="after"> 4</span></li>
-                                    <li>PRIX<span class="after"> 25000Fcfa/Month</span></li>
+                                    <li><?= lang('Common.floor_number') ?><span class="after"> 2</span></li>
+                                    <li><?= lang('Common.room_number') ?><span class="after"> 4</span></li>
+                                    <li><?= lang('Common.price_label') ?><span class="after"> 25000<?= lang('Common.price_month') ?></span></li>
                                 </ul>
                                 <div class="mt-30">
                                     <a href="<?= base_url('reservation') ?>" class="btn" style="background: #d29751; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
                                         <i class="fas fa-calendar-check" style="margin-right: 8px;"></i>
-                                        Réserver cet appartement
+                                        <?= lang('Common.book_this_apartment') ?>
                                     </a>
                                 </div>
                             </div>
@@ -394,8 +392,8 @@
         <div class="row justify-content-center">
             <div class="col-xl-7 col-lg-8">
                 <div class="section-title text-center mb-80 wow fadeInDown animated" data-animation="fadeInDown animated" data-delay=".2s">
-                    <span>Contact</span>
-                    <h2>Restons en contact</h2>
+                    <span><?= lang('Common.nav_contact') ?></span>
+                    <h2><?= lang('Common.stay_in_touch') ?></h2>
                 </div>
             </div>
         </div>
@@ -406,23 +404,22 @@
                         <div class="f-cta-icon">
                             <i class="far fa-map"></i>
                         </div>
-                        <h5>Adresse</h5>
-                        <p>Dragage, face du restaurant Canteens <br></p>
+                        <h5><?= lang('Common.address_label') ?></h5>
+                        <p><?= lang('Common.address_text') ?> <br></p>
                     </div>
                     <div class="single-cta pb-30 mb-30 wow fadeInUp animated" data-animation="fadeInDown animated" data-delay=".2s">
                         <div class="f-cta-icon">
                             <i class="far fa-clock"></i>
                         </div>
-                        <h5>Heure de disponibilité</h5>
-                        <p>Lundi a Dimanche 24h/24 <br></p>
+                        <h5><?= lang('Common.availability_hours') ?></h5>
+                        <p><?= lang('Common.availability_text') ?> <br></p>
                     </div>
                     <div class="single-cta pb-30 mb-30 wow fadeInUp animated" data-animation="fadeInDown animated" data-delay=".2s">
                         <div class="f-cta-icon">
                             <i class="far fa-envelope-open"></i>
                         </div>
-                        <h5>Envoyez nous un message</h5>
-                        <p>Nous sommes à votre disposition
-                            envoyez nous un mail : <a href="#">support&#64;nsenou-tower.com</a></p>
+                        <h5><?= lang('Common.send_message_label') ?></h5>
+                        <p><?= lang('Common.send_message_text') ?> <a href="#">support&#64;nsenou-tower.com</a></p>
                     </div>
                 </div>
 
@@ -432,24 +429,24 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="contact-field p-relative c-name mb-40">
-                                <input type="text" placeholder="Ecrit ici Jhonathan">
+                                <input type="text" placeholder="<?= lang('Common.form_name_placeholder') ?>">
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="contact-field p-relative c-email mb-40">
-                                <input type="text" placeholder="Ecrit ton email">
+                                <input type="text" placeholder="<?= lang('Common.form_email_placeholder') ?>">
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="contact-field p-relative c-subject mb-40">
-                                <input type="text" placeholder="J'aimerais discuter">
+                                <input type="text" placeholder="<?= lang('Common.form_subject_placeholder') ?>">
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="contact-field p-relative c-message mb-45">
-                                <textarea name="message" id="message" cols="30" rows="10" placeholder="Ecris ton commentaire"></textarea>
+                                <textarea name="message" id="message" cols="30" rows="10" placeholder="<?= lang('Common.form_message_placeholder') ?>"></textarea>
                             </div>
-                            <button class="btn">Envoyer</button>
+                            <button class="btn"><?= lang('Common.send_button') ?></button>
                         </div>
                     </div>
 

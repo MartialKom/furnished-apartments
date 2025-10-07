@@ -37,7 +37,8 @@
                             <!-- Image -->
                             <div class="apartment-img">
                                 <?php
-                                $photos = json_decode($appartement['photos'], true);
+                                $photos = !empty($appartement['photos']) ? explode(',', $appartement['photos']) : [];
+                                $photos = array_filter($photos); // Supprimer les valeurs vides
                                 $firstPhoto = !empty($photos) ? base_url($photos[0]) : base_url('assets/frontend/images/default-apartment.jpg');
                                 ?>
                                 <img src="<?= $firstPhoto ?>" alt="<?= esc($appartement['adresse']) ?>" style="width: 100%; height: 250px; object-fit: cover;">
@@ -57,7 +58,9 @@
                                 <!-- Description (Extract from equipements or create short text) -->
                                 <p class="apartment-desc">
                                     <?php
-                                    $equipements = json_decode($appartement['equipements'], true);
+                                    $equipements = !empty($appartement['equipements']) ? explode(',', $appartement['equipements']) : [];
+                                    $equipements = array_map('trim', $equipements); // Supprimer les espaces
+                                    $equipements = array_filter($equipements); // Supprimer les valeurs vides
                                     if (!empty($equipements)) {
                                         echo 'Équipé de : ' . implode(', ', array_slice($equipements, 0, 3));
                                         if (count($equipements) > 3) {

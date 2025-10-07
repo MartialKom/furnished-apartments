@@ -199,4 +199,83 @@ return [
     'contact_us_link' => 'Contact us',
     'services_link' => 'Services',
     'copyright_text' => '© 2025 @ Nsenoutower All design by Tamaroas-Dev.',
+
+    // About page
+    'about_page_title' => 'About Us',
+    'about_breadcrumb' => 'About',
+    'about_who_title' => 'Who we are',
+    'about_welcome_title' => 'Welcome to Your Home Away From Home',
+    'about_intro_text_1' => 'We specialize in renting high-quality furnished apartments, offering our clients exceptional comfort and personalized service. Located in the most sought-after neighborhoods, our apartments are designed to meet the needs of business travelers, families, and anyone seeking quality accommodation.',
+    'about_intro_text_2' => 'Each apartment is equipped with everything you need to ensure a pleasant stay: high-speed WiFi, air conditioning, equipped kitchen, and much more. Our dedicated team is available 24/7 to ensure your satisfaction.',
+    'about_premium_location' => 'Premium Location',
+    'about_premium_location_desc' => 'In the heart of the best neighborhoods',
+    'about_service_24_7' => '24/7 Service',
+    'about_service_24_7_desc' => 'Customer support available at any time',
+    'about_years_experience' => 'Years of experience',
+
+    // Statistics
+    'stat_apartments' => 'Available Apartments',
+    'stat_clients' => 'Satisfied Clients',
+    'stat_experience' => 'Years of Experience',
+    'stat_satisfaction' => 'Satisfaction Rate',
+
+    // Mission & Vision
+    'about_mission_title' => 'Our Mission',
+    'about_mission_text' => 'Our mission is to provide high-quality furnished accommodations that offer comfort, security, and convenience to our clients. We are committed to creating an exceptional accommodation experience by combining modern amenities, personalized service, and attention to detail.',
+    'about_vision_title' => 'Our Vision',
+    'about_vision_text' => 'To become the reference in furnished apartment rentals, recognized for our excellence, innovation, and commitment to customer satisfaction. We aspire to create spaces that become true "homes away from home" for our clients, whether they stay for a few days or several months.',
+
+    // Values
+    'about_values_subtitle' => 'Our Principles',
+    'about_values_title' => 'Our Values',
+    'value_integrity' => 'Integrity',
+    'value_integrity_desc' => 'Transparency and honesty in all our interactions',
+    'value_excellence' => 'Excellence',
+    'value_excellence_desc' => 'High standards of quality and service',
+    'value_kindness' => 'Kindness',
+    'value_kindness_desc' => 'Care and respect for each client',
+    'value_innovation' => 'Innovation',
+    'value_innovation_desc' => 'Continuous improvement of our services',
+    'value_commitment' => 'Commitment',
+    'value_commitment_desc' => 'Total dedication to your satisfaction',
+    'value_community' => 'Community',
+    'value_community_desc' => 'Building lasting relationships with our clients',
+
+    // CTA
+    'about_cta_title' => 'Ready to Book Your Apartment?',
+    'about_cta_subtitle' => 'Discover our furnished apartments and find the one that suits you best.',
+    'about_cta_button' => 'View Apartments',
+
+    // Home page - About section
+    'about_description' => 'Since I moved into this building, my life has completely changed. The apartments are not only elegantly furnished, but they also offer unparalleled comfort. Every detail has been thought out to create a welcoming and functional space.',
+
+    // Home page - Apartments section
+    'our_plans' => 'Our Plans',
+    'apartments_and_studios' => 'Apartments and Studios',
+    'studio' => 'Studio',
+    'apartments' => 'Apartments',
+    'studio_description_1' => 'Upon entering, you will be seduced by its warm atmosphere. The fully equipped kitchen will allow you to prepare your meals in a pleasant setting, while the living room, with its contemporary furniture, invites you to relax after a long day. The private bathroom, with its elegant finishes, adds a touch of luxury to your daily life.',
+    'studio_description_2' => 'In addition, the studio is equipped with air conditioning and high-speed Wi-Fi access for optimal comfort.',
+    'apartment_description_1' => 'Upon arrival, you will be greeted by a spacious living room bathed in natural light, ideal for relaxing or entertaining friends. The open kitchen, fully equipped with modern appliances, invites you to explore your culinary talents. The bedrooms, with their comfortable beds and refined decoration, offer a haven of peace for restful nights.',
+    'apartment_description_2' => 'The apartment also has private balconies, perfect for enjoying your morning coffee or appreciating a sunset. With amenities such as air conditioning, high-speed Wi-Fi, and secure access, your comfort is our priority.',
+    'floor_number' => 'Floor No',
+    'room_number' => 'ROOM No',
+    'price_label' => 'PRICE',
+    'price_month' => 'Fcfa/Month',
+    'book_this_studio' => 'Book this studio',
+    'book_this_apartment' => 'Book this apartment',
+
+    // Home page - Contact section
+    'stay_in_touch' => 'Stay in touch',
+    'address_label' => 'Address',
+    'address_text' => 'Dragage, opposite Canteens restaurant',
+    'availability_hours' => 'Availability hours',
+    'availability_text' => 'Monday to Sunday 24/7',
+    'send_message_label' => 'Send us a message',
+    'send_message_text' => 'We are at your disposal send us an email:',
+    'form_name_placeholder' => 'Write here Jonathan',
+    'form_email_placeholder' => 'Write your email',
+    'form_subject_placeholder' => 'I would like to discuss',
+    'form_message_placeholder' => 'Write your comment',
+    'send_button' => 'Send',
 ];
