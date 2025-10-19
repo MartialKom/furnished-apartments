@@ -64,3 +64,69 @@
                 </div>
             </div>
         </footer>
+
+        <!-- Bouton WhatsApp flottant -->
+        <a href="https://wa.me/237671387969" target="_blank" class="whatsapp-float" id="whatsapp-btn">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+
+        <style>
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #128C7E;
+            transform: scale(1.1);
+            box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.4);
+            color: white;
+        }
+
+        .whatsapp-float i {
+            margin-top: 3px;
+        }
+
+        /* Animation de pulsation */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        .whatsapp-float {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 25px;
+            }
+        }
+        </style>
