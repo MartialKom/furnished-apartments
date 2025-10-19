@@ -28,6 +28,9 @@
                                 </ul>
                                 <div class="slider-btn mt-55">
                                     <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s"><?= lang('Common.book_now') ?></a>
+                                    <a href="tel:+237671387969" class="btn ss-btn ms-3" style="background: #25D366;" data-animation="fadeInRight" data-delay="1s">
+                                        <i class="fas fa-phone me-2"></i>+237 6 71 38 79 69
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -63,6 +66,9 @@
                                 </ul>
                                 <div class="slider-btn mt-55">
                                     <a href="<?= base_url('reservation') ?>" class="btn ss-btn" data-animation="fadeInRight" data-delay=".8s"><?= lang('Common.book_now') ?></a>
+                                    <a href="tel:+237671387969" class="btn ss-btn ms-3" style="background: #25D366;" data-animation="fadeInRight" data-delay="1s">
+                                        <i class="fas fa-phone me-2"></i>+237 6 71 38 79 69
+                                    </a>
                                 </div>
                             </div>
                         </div>

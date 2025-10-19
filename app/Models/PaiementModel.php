@@ -32,7 +32,7 @@ class PaiementModel extends Model
         'montant' => 'required|decimal',
         'date' => 'required|valid_date',
         'statut' => 'required|in_list[en_attente,paye,rembourse,annule]',
-        'locataire_id' => 'required|integer',
+        'locataire_id' => 'permit_empty|integer', // Optionnel car lié à la réservation
         'reservation_id' => 'required|integer'
     ];
     protected $validationMessages   = [];
@@ -46,12 +46,17 @@ class PaiementModel extends Model
 
     public function genererFacture($paiementId)
     {
-        $paiement = $this->select('paiements.*, locataires.nom as locataire_nom, locataires.email, reservations.dateDebut, reservations.dateFin, appartements.adresse')
-                         ->join('locataires', 'locataires.id = paiements.locataire_id')
+        $paiement = $this->select('paiements.*,
+                                   COALESCE(locataires.nom, reservations.client_nom) as locataire_nom,
+                                   COALESCE(locataires.email, reservations.client_email) as email,
+                                   reservations.date_debut as dateDebut,
+                                   reservations.date_fin as dateFin,
+                                   appartements.adresse')
                          ->join('reservations', 'reservations.id = paiements.reservation_id')
+                         ->join('locataires', 'locataires.id = paiements.locataire_id', 'left')
                          ->join('appartements', 'appartements.id = reservations.appartement_id')
                          ->find($paiementId);
-        
+
         return $paiement;
     }
 
@@ -67,8 +72,10 @@ class PaiementModel extends Model
 
     public function getPaiementsByReservation($reservationId)
     {
-        return $this->select('paiements.*, locataires.nom as locataire_nom')
-                    ->join('locataires', 'locataires.id = paiements.locataire_id')
+        return $this->select('paiements.*,
+                              COALESCE(locataires.nom, reservations.client_nom) as locataire_nom')
+                    ->join('reservations', 'reservations.id = paiements.reservation_id')
+                    ->join('locataires', 'locataires.id = paiements.locataire_id', 'left')
                     ->where('paiements.reservation_id', $reservationId)
                     ->orderBy('paiements.created_at', 'DESC')
                     ->findAll();

@@ -123,63 +123,159 @@
 $(document).ready(function() {
     $('#createCategorieForm').on('submit', function(e) {
         e.preventDefault();
+
+        const submitBtn = $(this).find('button[type="submit"]');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Création...');
+
         $.ajax({
             url: '<?= base_url('admin/stock/categories/create') ?>',
             method: 'POST',
             data: $(this).serialize(),
+            dataType: 'json',
             success: function(response) {
+                submitBtn.prop('disabled', false).html('Créer');
+
                 if (response.success) {
                     toastr.success(response.message);
+                    $('#createCategorieModal').modal('hide');
                     location.reload();
                 } else {
-                    toastr.error(response.message);
+                    // Afficher les erreurs de validation
+                    if (response.errors) {
+                        let errorMsg = '<ul class="mb-0">';
+                        for (let field in response.errors) {
+                            errorMsg += '<li>' + response.errors[field] + '</li>';
+                        }
+                        errorMsg += '</ul>';
+                        toastr.error(errorMsg);
+                    } else {
+                        toastr.error(response.message || 'Erreur lors de la création');
+                    }
                 }
+            },
+            error: function(xhr, status, error) {
+                submitBtn.prop('disabled', false).html('Créer');
+
+                console.error('Erreur AJAX:', xhr.responseText);
+
+                let errorMsg = 'Erreur lors de la création';
+
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    if (xhr.responseJSON.errors) {
+                        errorMsg += '<ul class="mb-0">';
+                        for (let field in xhr.responseJSON.errors) {
+                            errorMsg += '<li>' + xhr.responseJSON.errors[field] + '</li>';
+                        }
+                        errorMsg += '</ul>';
+                    }
+                } else if (xhr.status === 404) {
+                    errorMsg = 'Route non trouvée (404). Vérifiez les routes.';
+                } else if (xhr.status === 500) {
+                    errorMsg = 'Erreur serveur (500). Vérifiez les logs.';
+                } else {
+                    errorMsg += ' (Status: ' + xhr.status + ')';
+                }
+
+                toastr.error(errorMsg);
             }
         });
     });
 
     $('.btn-edit').on('click', function() {
         const id = $(this).data('id');
+        const btn = $(this);
+        btn.prop('disabled', true);
+
         $.ajax({
             url: '<?= base_url('admin/stock/categories/get') ?>/' + id,
             method: 'GET',
+            dataType: 'json',
             success: function(response) {
+                btn.prop('disabled', false);
+
                 if (response.success) {
                     $('#edit_categorie_id').val(response.data.id);
                     $('#edit_nom').val(response.data.nom);
                     $('#edit_description').val(response.data.description);
                     $('#editCategorieModal').modal('show');
+                } else {
+                    toastr.error(response.message || 'Catégorie introuvable');
                 }
+            },
+            error: function(xhr) {
+                btn.prop('disabled', false);
+                console.error('Erreur AJAX:', xhr.responseText);
+                toastr.error(xhr.responseJSON?.message || 'Erreur lors du chargement (Status: ' + xhr.status + ')');
             }
         });
     });
 
     $('#editCategorieForm').on('submit', function(e) {
         e.preventDefault();
+
+        const submitBtn = $(this).find('button[type="submit"]');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Enregistrement...');
+
         const id = $('#edit_categorie_id').val();
+
         $.ajax({
             url: '<?= base_url('admin/stock/categories/update') ?>/' + id,
             method: 'POST',
             data: $(this).serialize(),
+            dataType: 'json',
             success: function(response) {
+                submitBtn.prop('disabled', false).html('Enregistrer');
+
                 if (response.success) {
                     toastr.success(response.message);
+                    $('#editCategorieModal').modal('hide');
                     location.reload();
+                } else {
+                    if (response.errors) {
+                        let errorMsg = '<ul class="mb-0">';
+                        for (let field in response.errors) {
+                            errorMsg += '<li>' + response.errors[field] + '</li>';
+                        }
+                        errorMsg += '</ul>';
+                        toastr.error(errorMsg);
+                    } else {
+                        toastr.error(response.message || 'Erreur lors de la modification');
+                    }
                 }
+            },
+            error: function(xhr) {
+                submitBtn.prop('disabled', false).html('Enregistrer');
+                console.error('Erreur AJAX:', xhr.responseText);
+                toastr.error(xhr.responseJSON?.message || 'Erreur lors de la modification (Status: ' + xhr.status + ')');
             }
         });
     });
 
     $('.btn-toggle-status').on('click', function() {
         const id = $(this).data('id');
+        const btn = $(this);
+        btn.prop('disabled', true);
+
         $.ajax({
             url: '<?= base_url('admin/stock/categories/toggle-status') ?>/' + id,
             method: 'POST',
+            dataType: 'json',
             success: function(response) {
                 if (response.success) {
                     toastr.success(response.message);
                     location.reload();
+                } else {
+                    btn.prop('disabled', false);
+                    toastr.error(response.message || 'Erreur lors du changement de statut');
                 }
+            },
+            error: function(xhr) {
+                btn.prop('disabled', false);
+                console.error('Erreur AJAX:', xhr.responseText);
+                toastr.error(xhr.responseJSON?.message || 'Erreur lors du changement de statut (Status: ' + xhr.status + ')');
             }
         });
     });
@@ -187,16 +283,26 @@ $(document).ready(function() {
     $('.btn-delete').on('click', function() {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
             const id = $(this).data('id');
+            const btn = $(this);
+            btn.prop('disabled', true);
+
             $.ajax({
                 url: '<?= base_url('admin/stock/categories/delete') ?>/' + id,
                 method: 'DELETE',
+                dataType: 'json',
                 success: function(response) {
                     if (response.success) {
                         toastr.success(response.message);
                         location.reload();
                     } else {
-                        toastr.error(response.message);
+                        btn.prop('disabled', false);
+                        toastr.error(response.message || 'Erreur lors de la suppression');
                     }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false);
+                    console.error('Erreur AJAX:', xhr.responseText);
+                    toastr.error(xhr.responseJSON?.message || 'Erreur lors de la suppression (Status: ' + xhr.status + ')');
                 }
             });
         }

@@ -103,17 +103,6 @@ $userRole = $session->get('user_role');
                     </a>
                 </li>
 
-                <?php if ($userRole === 'admin'): ?>
-                <li class="nxl-item nxl-caption">
-                    <label>Administration</label>
-                </li>
-                <li class="nxl-item">
-                    <a href="<?= base_url('/admin/utilisateurs') ?>" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-user-check"></i></span>
-                        <span class="nxl-mtext">Utilisateurs</span>
-                    </a>
-                </li>
-                
                 <li class="nxl-item nxl-caption">
                     <label>Rapports</label>
                 </li>
@@ -129,15 +118,25 @@ $userRole = $session->get('user_role');
                         <span class="nxl-mtext">Rapports</span>
                     </a>
                 </li>
+
+                <?php if ($userRole === 'admin'): ?>
                 <li class="nxl-item">
                     <a href="<?= base_url('/admin/contrats-location') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-file-plus"></i></span>
                         <span class="nxl-mtext">Contrats de Location</span>
                     </a>
                 </li>
-                
+                <?php endif; ?>
+
+                <?php if ($userRole === 'admin'): ?>
                 <li class="nxl-item nxl-caption">
                     <label>Système</label>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/utilisateurs') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                        <span class="nxl-mtext">Utilisateurs</span>
+                    </a>
                 </li>
                 <li class="nxl-item">
                     <a href="<?= base_url('/admin/settings') ?>" class="nxl-link">
@@ -146,13 +145,6 @@ $userRole = $session->get('user_role');
                     </a>
                 </li>
                 <?php endif; ?>
-                
-                <li class="nxl-item">
-                    <a href="<?= base_url('/') ?>" class="nxl-link" target="_blank">
-                        <span class="nxl-micon"><i class="feather-external-link"></i></span>
-                        <span class="nxl-mtext">Voir le Site</span>
-                    </a>
-                </li>
             </ul>
         </div>
     </div>

@@ -198,8 +198,8 @@
                                     <p class="mb-2">Glissez vos photos ici ou <span class="text-primary">parcourez</span></p>
                                     <small class="text-muted">Formats acceptés: JPG, PNG, WebP (Max: 5MB chacune)</small>
                                 </div>
-                                <input type="file" id="photoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                             </div>
+                            <input type="file" id="photoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                             <div id="photoPreviewContainer" class="photo-preview-container mt-3"></div>
                             <input type="hidden" id="photos" name="photos">
                         </div>
@@ -300,8 +300,8 @@
                                     <p class="mb-2">Glissez vos photos ici ou <span class="text-primary">parcourez</span></p>
                                     <small class="text-muted">Formats acceptés: JPG, PNG, WebP (Max: 5MB chacune)</small>
                                 </div>
-                                <input type="file" id="editPhotoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                             </div>
+                            <input type="file" id="editPhotoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                             <div id="editPhotoPreviewContainer" class="photo-preview-container mt-3"></div>
                             <input type="hidden" id="editPhotos" name="photos">
                         </div>
@@ -455,7 +455,8 @@ $(document).ready(function() {
 
     dropZone.on('click', function(e) {
         e.preventDefault();
-        fileInput[0].click(); // Utiliser l'élément DOM natif
+        e.stopPropagation();
+        document.getElementById('photoFiles').click();
     });
 
     dropZone.on('dragover dragenter', function(e) {
@@ -593,7 +594,8 @@ $(document).ready(function() {
 
     editDropZone.on('click', function(e) {
         e.preventDefault();
-        editFileInput[0].click(); // Utiliser l'élément DOM natif
+        e.stopPropagation();
+        document.getElementById('editPhotoFiles').click();
     });
 
     // Mêmes événements drag & drop pour le formulaire de modification

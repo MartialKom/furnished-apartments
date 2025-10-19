@@ -84,18 +84,28 @@ class StockController extends BaseController
 
     public function createCategorie()
     {
-        if ($this->request->getMethod() === 'post') {
+        log_message('info', '=== DEBUT createCategorie ===');
+        log_message('info', 'Method: ' . $this->request->getMethod());
+        log_message('info', 'POST data: ' . json_encode($this->request->getPost()));
+
+        if (strtolower($this->request->getMethod()) === 'post') {
             $validation = \Config\Services::validation();
             $validation->setRules([
                 'nom' => 'required|min_length[3]|max_length[100]',
             ]);
 
+            log_message('info', 'Validation des données...');
+
             if (!$validation->withRequest($this->request)->run()) {
+                log_message('error', 'Validation échouée pour création catégorie: ' . json_encode($validation->getErrors()));
                 return $this->response->setJSON([
                     'success' => false,
+                    'message' => 'Validation échouée',
                     'errors' => $validation->getErrors()
                 ]);
             }
+
+            log_message('info', 'Validation réussie');
 
             $data = [
                 'nom' => $this->request->getPost('nom'),
@@ -103,18 +113,48 @@ class StockController extends BaseController
                 'actif' => 1,
             ];
 
-            if ($this->categorieModel->insert($data)) {
+            log_message('info', 'Tentative de création de catégorie: ' . json_encode($data));
+
+            try {
+                $categorieId = $this->categorieModel->insert($data);
+
+                log_message('info', 'Insert retourné: ' . var_export($categorieId, true));
+
+                if ($categorieId) {
+                    log_message('info', 'Catégorie créée avec succès, ID: ' . $categorieId);
+                    return $this->response->setJSON([
+                        'success' => true,
+                        'message' => 'Catégorie créée avec succès',
+                        'id' => $categorieId
+                    ]);
+                }
+
+                $errors = $this->categorieModel->errors();
+                log_message('error', 'Erreur model: ' . json_encode($errors));
+                log_message('error', 'Insert a échoué sans erreur explicite');
+
                 return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Catégorie créée avec succès'
+                    'success' => false,
+                    'message' => 'Erreur lors de la création: ' . (empty($errors) ? 'Erreur inconnue - vérifiez les logs' : implode(', ', $errors)),
+                    'errors' => $errors
+                ]);
+            } catch (\Exception $e) {
+                log_message('error', 'Exception lors de la création: ' . $e->getMessage());
+                log_message('error', 'Stack trace: ' . $e->getTraceAsString());
+
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Exception: ' . $e->getMessage(),
+                    'errors' => []
                 ]);
             }
-
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Erreur lors de la création'
-            ]);
         }
+
+        log_message('warning', 'Méthode HTTP incorrecte: ' . $this->request->getMethod());
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Méthode HTTP incorrecte'
+        ]);
     }
 
     public function getCategorie($id)
@@ -136,7 +176,7 @@ class StockController extends BaseController
 
     public function updateCategorie($id)
     {
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $validation = \Config\Services::validation();
             $validation->setRules([
                 'nom' => 'required|min_length[3]|max_length[100]',
@@ -241,7 +281,7 @@ class StockController extends BaseController
 
     public function createProduit()
     {
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'categorie_id' => $this->request->getPost('categorie_id'),
                 'nom' => $this->request->getPost('nom'),
@@ -287,7 +327,7 @@ class StockController extends BaseController
 
     public function updateProduit($id)
     {
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'categorie_id' => $this->request->getPost('categorie_id'),
                 'nom' => $this->request->getPost('nom'),
@@ -380,7 +420,7 @@ class StockController extends BaseController
 
     public function createApprovisionnement()
     {
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $db = \Config\Database::connect();
             $db->transStart();
 
@@ -475,7 +515,7 @@ class StockController extends BaseController
 
     public function createSortie()
     {
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $db = \Config\Database::connect();
             $db->transStart();
 
@@ -573,7 +613,7 @@ class StockController extends BaseController
 
     public function createInventaire()
     {
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $db = \Config\Database::connect();
             $db->transStart();
 
@@ -635,7 +675,7 @@ class StockController extends BaseController
 
     public function updateStockPhysique()
     {
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $inventaireId = $this->request->getPost('inventaire_id');
             $produitId = $this->request->getPost('produit_id');
             $stockPhysique = $this->request->getPost('stock_physique');

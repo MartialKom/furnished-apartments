@@ -79,7 +79,7 @@ class AuthFilter implements FilterInterface
         
         // Routes interdites aux gestionnaires
         $adminOnlyRoutes = [
-            'utilisateurs', 'settings', 'reports', 'analytics'
+            'utilisateurs', 'settings'
         ];
         
         if ($userRole === 'gestionnaire') {

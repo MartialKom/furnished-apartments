@@ -12,7 +12,7 @@ class ReservationModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['date_debut', 'date_fin', 'locataire_id', 'appartement_id', 'statut', 'montant_total', 'montant_paye', 'montant_restant', 'type_reservation', 'notes', 'reduction_pourcentage', 'montant_reduction', 'prix_original', 'motif_annulation'];
+    protected $allowedFields    = ['date_debut', 'date_fin', 'locataire_id', 'appartement_id', 'statut', 'montant_total', 'montant_paye', 'montant_restant', 'type_reservation', 'notes', 'reduction_pourcentage', 'montant_reduction', 'prix_original', 'motif_annulation', 'client_nom', 'client_email', 'client_telephone'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -31,18 +31,21 @@ class ReservationModel extends Model
     protected $validationRules      = [
         'date_debut' => 'required|valid_date',
         'date_fin' => 'required|valid_date',
-        'locataire_id' => 'required|integer',
+        'locataire_id' => 'permit_empty|integer',
         'appartement_id' => 'required|integer',
         'statut' => 'required|in_list[en_attente,confirmee,annulee,terminee]',
-        'montant_total' => 'required|decimal',
+        'montant_total' => 'permit_empty|decimal',
         'montant_paye' => 'permit_empty|decimal',
         'montant_restant' => 'permit_empty|decimal',
-        'type_reservation' => 'required|in_list[en_ligne,telephonique]',
+        'type_reservation' => 'permit_empty|in_list[en_ligne,telephonique]',
         'notes' => 'permit_empty|string',
         'reduction_pourcentage' => 'permit_empty|decimal',
         'montant_reduction' => 'permit_empty|decimal',
         'prix_original' => 'permit_empty|decimal',
-        'motif_annulation' => 'permit_empty|string'
+        'motif_annulation' => 'permit_empty|string',
+        'client_nom' => 'permit_empty|string|max_length[255]',
+        'client_email' => 'permit_empty|valid_email|max_length[255]',
+        'client_telephone' => 'permit_empty|string|max_length[50]'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -73,8 +76,11 @@ class ReservationModel extends Model
 
     public function getReservationsWithDetails()
     {
-        return $this->select('reservations.*, locataires.nom as locataire_nom, locataires.email, appartements.adresse')
-                    ->join('locataires', 'locataires.id = reservations.locataire_id')
+        return $this->select('reservations.*,
+                              COALESCE(locataires.nom, reservations.client_nom) as locataire_nom,
+                              COALESCE(locataires.email, reservations.client_email) as email,
+                              appartements.adresse')
+                    ->join('locataires', 'locataires.id = reservations.locataire_id', 'left')
                     ->join('appartements', 'appartements.id = reservations.appartement_id')
                     ->findAll();
     }
@@ -148,8 +154,13 @@ class ReservationModel extends Model
 
     public function getReservationsWithClientInfo()
     {
-        return $this->select('reservations.*, locataires.nom, locataires.email, locataires.telephone, appartements.adresse, appartements.tarifs')
-                    ->join('locataires', 'locataires.id = reservations.locataire_id')
+        return $this->select('reservations.*,
+                              COALESCE(locataires.nom, reservations.client_nom) as nom,
+                              COALESCE(locataires.email, reservations.client_email) as email,
+                              COALESCE(locataires.telephone, reservations.client_telephone) as telephone,
+                              appartements.adresse,
+                              appartements.tarifs')
+                    ->join('locataires', 'locataires.id = reservations.locataire_id', 'left')
                     ->join('appartements', 'appartements.id = reservations.appartement_id')
                     ->orderBy('reservations.created_at', 'DESC')
                     ->findAll();

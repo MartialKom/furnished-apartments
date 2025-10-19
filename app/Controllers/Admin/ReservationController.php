@@ -147,8 +147,13 @@ class ReservationController extends BaseController
         }
 
         $reservation = $this->reservationModel
-            ->select('reservations.*, locataires.nom, locataires.telephone, locataires.email, appartements.adresse, appartements.tarifs')
-            ->join('locataires', 'locataires.id = reservations.locataire_id')
+            ->select('reservations.*,
+                      COALESCE(locataires.nom, reservations.client_nom) as nom,
+                      COALESCE(locataires.telephone, reservations.client_telephone) as telephone,
+                      COALESCE(locataires.email, reservations.client_email) as email,
+                      appartements.adresse,
+                      appartements.tarifs')
+            ->join('locataires', 'locataires.id = reservations.locataire_id', 'left')
             ->join('appartements', 'appartements.id = reservations.appartement_id')
             ->find($id);
 
@@ -209,31 +214,21 @@ class ReservationController extends BaseController
 
         // Gérer la création ou sélection du locataire
         $locataireId = null;
+        $clientNom = null;
+        $clientEmail = null;
+        $clientTelephone = null;
+
         if ($clientType === 'nouveau') {
-            // Créer un nouveau locataire
-            $locataireData = [
-                'nom' => $this->request->getPost('client_nom'),
-                'email' => $this->request->getPost('client_email'),
-                'telephone' => $this->request->getPost('client_telephone')
-            ];
-            
-            // Vérifier si l'email existe déjà
-            $existingLocataire = $this->locataireModel->where('email', $locataireData['email'])->first();
+            // Stocker les informations client directement dans la réservation
+            $clientNom = $this->request->getPost('client_nom');
+            $clientEmail = $this->request->getPost('client_email');
+            $clientTelephone = $this->request->getPost('client_telephone');
+
+            // Vérifier si un locataire avec cet email existe déjà
+            $existingLocataire = $this->locataireModel->where('email', $clientEmail)->first();
             if ($existingLocataire) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Un locataire avec cet email existe déjà. Veuillez sélectionner "Client existant" ou utiliser un autre email.'
-                ]);
-            }
-            
-            $locataireId = $this->locataireModel->insert($locataireData);
-            if (!$locataireId) {
-                $errors = $this->locataireModel->errors();
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Erreur lors de la création du locataire.',
-                    'errors' => $errors
-                ]);
+                // Suggérer d'utiliser le locataire existant
+                log_message('info', 'Email ' . $clientEmail . ' déjà associé au locataire ID: ' . $existingLocataire['id']);
             }
         } else {
             $locataireId = $this->request->getPost('locataire_id');
@@ -242,7 +237,7 @@ class ReservationController extends BaseController
         // Calculer le prix total avec réduction
         $reductionPourcentage = $this->request->getPost('reduction_pourcentage') ?? 0;
         $prixCalcul = $this->reservationModel->calculerPrixTotal($appartementId, $dateDebut, $dateFin, $reductionPourcentage);
-        
+
         if (!$prixCalcul) {
             return $this->response->setJSON([
                 'success' => false,
@@ -252,6 +247,9 @@ class ReservationController extends BaseController
 
         $data = [
             'locataire_id' => $locataireId,
+            'client_nom' => $clientNom,
+            'client_email' => $clientEmail,
+            'client_telephone' => $clientTelephone,
             'appartement_id' => $appartementId,
             'date_debut' => $dateDebut,
             'date_fin' => $dateFin,
@@ -334,7 +332,7 @@ class ReservationController extends BaseController
 
         $paiementData = [
             'reservation_id' => $id,
-            'locataire_id' => $reservation['locataire_id'],
+            'locataire_id' => $reservation['locataire_id'] ?? null,
             'montant' => $montantPaiement,
             'date' => $this->request->getPost('date'),
             'statut' => 'paye'

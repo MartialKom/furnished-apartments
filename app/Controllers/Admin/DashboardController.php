@@ -59,11 +59,48 @@ class DashboardController extends BaseController
             'nouveaux_locataires' => $nouveauxLocataires
         ];
 
+        // Statistiques de ventes pour gestionnaire et admin
+        $paiementModel = new \App\Models\PaiementModel();
+        $paiementMensuelModel = new \App\Models\PaiementMensuelModel();
+
+        // Ventes du mois en cours (réservations)
+        $ventesMoisCourant = $paiementModel
+            ->select('SUM(montant) as total, COUNT(id) as nb_paiements')
+            ->where('statut', 'paye')
+            ->where('date >=', date('Y-m-01'))
+            ->where('date <=', date('Y-m-t'))
+            ->first();
+
+        // Loyers du mois en cours
+        $loyersMoisCourant = $paiementMensuelModel
+            ->select('SUM(montant_paye) as total, COUNT(id) as nb_paiements')
+            ->where('statut', 'paye')
+            ->where('date_paiement >=', date('Y-m-01'))
+            ->where('date_paiement <=', date('Y-m-t'))
+            ->first();
+
+        $stats['ventes_mois'] = [
+            'reservations' => $ventesMoisCourant['total'] ?? 0,
+            'nb_paiements_reservations' => $ventesMoisCourant['nb_paiements'] ?? 0,
+            'loyers' => $loyersMoisCourant['total'] ?? 0,
+            'nb_paiements_loyers' => $loyersMoisCourant['nb_paiements'] ?? 0,
+            'total' => ($ventesMoisCourant['total'] ?? 0) + ($loyersMoisCourant['total'] ?? 0),
+        ];
+
+        // Paiements en attente
+        $paiementsEnAttente = $paiementMensuelModel
+            ->select('SUM(montant_du - montant_paye) as total_attente, COUNT(id) as nb_attente')
+            ->where('statut', 'en_attente')
+            ->orWhere('statut', 'en_retard')
+            ->first();
+
+        $stats['paiements_attente'] = $paiementsEnAttente['total_attente'] ?? 0;
+        $stats['nb_paiements_attente'] = $paiementsEnAttente['nb_attente'] ?? 0;
+
         // Statistiques supplémentaires pour les admins uniquement
         if ($userRole === 'admin') {
             $utilisateurModel = new \App\Models\UtilisateurModel();
-            $paiementModel = new \App\Models\PaiementModel();
-            
+
             $stats['total_utilisateurs'] = $utilisateurModel->countAllResults();
             $stats['utilisateurs_actifs'] = $utilisateurModel->where('statut', 'actif')->countAllResults();
             $stats['total_paiements'] = $paiementModel->countAllResults();
@@ -82,7 +119,110 @@ class DashboardController extends BaseController
 
     public function analytics()
     {
-        return view('admin/pages/analytics');
+        $session = session();
+        $userRole = $session->get('user_role');
+
+        $paiementModel = new \App\Models\PaiementModel();
+        $paiementMensuelModel = new \App\Models\PaiementMensuelModel();
+
+        // === STATISTIQUES GLOBALES ===
+
+        // Taux d'occupation des appartements
+        $totalAppartements = $this->appartementModel->countAllResults();
+        $appartementsOccupes = $this->appartementModel->where('statut', 'occupe')->countAllResults();
+        $tauxOccupation = $totalAppartements > 0 ? ($appartementsOccupes / $totalAppartements) * 100 : 0;
+
+        // Taux de conversion des réservations
+        $totalReservations = $this->reservationModel->countAllResults();
+        $reservationsConfirmees = $this->reservationModel->where('statut', 'confirmee')->countAllResults();
+        $tauxConversion = $totalReservations > 0 ? ($reservationsConfirmees / $totalReservations) * 100 : 0;
+
+        // Revenu moyen par réservation
+        $revenuReservations = $paiementModel
+            ->select('AVG(paiements.montant) as revenu_moyen, SUM(paiements.montant) as revenu_total')
+            ->where('statut', 'paye')
+            ->first();
+
+        // Revenu moyen par contrat
+        $revenuContrats = $paiementMensuelModel
+            ->select('AVG(montant_paye) as revenu_moyen, SUM(montant_paye) as revenu_total')
+            ->where('statut', 'paye')
+            ->first();
+
+        // === TENDANCES SUR 6 MOIS ===
+        $tendances = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $mois = date('Y-m', strtotime("-$i months"));
+            $debutMois = $mois . '-01';
+            $finMois = date('Y-m-t', strtotime($debutMois));
+
+            // Réservations du mois
+            $reservationsMois = $this->reservationModel
+                ->where('created_at >=', $debutMois)
+                ->where('created_at <=', $finMois)
+                ->countAllResults();
+
+            // Revenus du mois (réservations + loyers)
+            $revenusReservations = $paiementModel
+                ->select('SUM(montant) as total')
+                ->where('statut', 'paye')
+                ->where('date >=', $debutMois)
+                ->where('date <=', $finMois)
+                ->first();
+
+            $revenusLoyers = $paiementMensuelModel
+                ->select('SUM(montant_paye) as total')
+                ->where('statut', 'paye')
+                ->where('date_paiement >=', $debutMois)
+                ->where('date_paiement <=', $finMois)
+                ->first();
+
+            $tendances[] = [
+                'mois' => $mois,
+                'mois_libelle' => strftime('%B %Y', strtotime($debutMois)),
+                'nb_reservations' => $reservationsMois,
+                'revenus' => ($revenusReservations['total'] ?? 0) + ($revenusLoyers['total'] ?? 0),
+            ];
+        }
+
+        // === TOP 5 APPARTEMENTS LES PLUS RENTABLES ===
+        $topAppartements = $this->reservationModel
+            ->select('appartements.adresse, COUNT(reservations.id) as nb_reservations, SUM(reservations.montant_total) as revenu_total')
+            ->join('appartements', 'appartements.id = reservations.appartement_id')
+            ->where('reservations.statut !=', 'annulee')
+            ->groupBy('appartements.id')
+            ->orderBy('revenu_total', 'DESC')
+            ->limit(5)
+            ->findAll();
+
+        // === PAIEMENTS EN RETARD ===
+        $paiementsRetard = $paiementMensuelModel
+            ->where('statut', 'en_retard')
+            ->orWhere('statut', 'partiellement_paye')
+            ->countAllResults();
+
+        $montantRetard = $paiementMensuelModel
+            ->select('SUM(montant_du - montant_paye) as total_retard')
+            ->where('statut', 'en_retard')
+            ->orWhere('statut', 'partiellement_paye')
+            ->first();
+
+        $data = [
+            'title' => 'Analytics Globale',
+            'user_role' => $userRole,
+            'taux_occupation' => round($tauxOccupation, 2),
+            'taux_conversion' => round($tauxConversion, 2),
+            'revenu_moyen_reservation' => $revenuReservations['revenu_moyen'] ?? 0,
+            'revenu_total_reservations' => $revenuReservations['revenu_total'] ?? 0,
+            'revenu_moyen_contrat' => $revenuContrats['revenu_moyen'] ?? 0,
+            'revenu_total_contrats' => $revenuContrats['revenu_total'] ?? 0,
+            'tendances' => $tendances,
+            'top_appartements' => $topAppartements,
+            'paiements_retard' => $paiementsRetard,
+            'montant_retard' => $montantRetard['total_retard'] ?? 0,
+        ];
+
+        return view('admin/pages/analytics', $data);
     }
 
     public function customers()
@@ -140,6 +280,79 @@ class DashboardController extends BaseController
 
     public function reports()
     {
-        return view('admin/pages/reports');
+        $session = session();
+        $userRole = $session->get('user_role');
+
+        // Période par défaut: mois en cours
+        $dateDebut = $this->request->getGet('date_debut') ?: date('Y-m-01');
+        $dateFin = $this->request->getGet('date_fin') ?: date('Y-m-t');
+
+        $paiementModel = new \App\Models\PaiementModel();
+        $paiementMensuelModel = new \App\Models\PaiementMensuelModel();
+        $contratModel = new \App\Models\ContratLocataireModel();
+
+        // === STATISTIQUES DE VENTES (RÉSERVATIONS) ===
+        $ventesReservations = $paiementModel
+            ->select('SUM(paiements.montant) as total_ventes, COUNT(DISTINCT paiements.reservation_id) as nb_reservations, COUNT(paiements.id) as nb_paiements')
+            ->join('reservations', 'reservations.id = paiements.reservation_id')
+            ->where('paiements.statut', 'paye')
+            ->where('paiements.date >=', $dateDebut)
+            ->where('paiements.date <=', $dateFin)
+            ->first();
+
+        // === STATISTIQUES LOYERS MENSUELS ===
+        $loyersMensuels = $paiementMensuelModel
+            ->select('SUM(montant_paye) as total_loyers, COUNT(id) as nb_paiements')
+            ->where('statut', 'paye')
+            ->where('date_paiement >=', $dateDebut)
+            ->where('date_paiement <=', $dateFin)
+            ->first();
+
+        // === RÉPARTITION PAR APPARTEMENT ===
+        $ventesParAppartement = $this->reservationModel
+            ->select('appartements.adresse, SUM(reservations.montant_total) as total_reservations, COUNT(reservations.id) as nb_reservations')
+            ->join('appartements', 'appartements.id = reservations.appartement_id')
+            ->where('reservations.created_at >=', $dateDebut)
+            ->where('reservations.created_at <=', $dateFin)
+            ->groupBy('appartements.id')
+            ->orderBy('total_reservations', 'DESC')
+            ->findAll();
+
+        // === ÉVOLUTION MENSUELLE ===
+        $evolutionMensuelle = $paiementModel
+            ->select('DATE_FORMAT(date, "%Y-%m") as mois, SUM(montant) as total')
+            ->where('statut', 'paye')
+            ->where('date >=', date('Y-01-01'))
+            ->where('date <=', date('Y-12-31'))
+            ->groupBy('mois')
+            ->orderBy('mois', 'ASC')
+            ->findAll();
+
+        // === CONTRATS ACTIFS ===
+        $contratsActifs = $contratModel
+            ->where('statut', 'actif')
+            ->countAllResults();
+
+        $data = [
+            'title' => 'Rapports Généraux',
+            'user_role' => $userRole,
+            'date_debut' => $dateDebut,
+            'date_fin' => $dateFin,
+            'ventes_reservations' => [
+                'total' => $ventesReservations['total_ventes'] ?? 0,
+                'nb_reservations' => $ventesReservations['nb_reservations'] ?? 0,
+                'nb_paiements' => $ventesReservations['nb_paiements'] ?? 0,
+            ],
+            'loyers_mensuels' => [
+                'total' => $loyersMensuels['total_loyers'] ?? 0,
+                'nb_paiements' => $loyersMensuels['nb_paiements'] ?? 0,
+            ],
+            'total_global' => ($ventesReservations['total_ventes'] ?? 0) + ($loyersMensuels['total_loyers'] ?? 0),
+            'ventes_par_appartement' => $ventesParAppartement,
+            'evolution_mensuelle' => $evolutionMensuelle,
+            'contrats_actifs' => $contratsActifs,
+        ];
+
+        return view('admin/pages/reports', $data);
     }
 }
