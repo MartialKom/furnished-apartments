@@ -124,6 +124,14 @@ class DashboardController extends BaseController
 
         $paiementModel = new \App\Models\PaiementModel();
         $paiementMensuelModel = new \App\Models\PaiementMensuelModel();
+        $rapportModel = new \App\Models\RapportModel();
+
+        // Période par défaut: 12 mois
+        $nombreMois = $this->request->getGet('periode') ?: 12;
+
+        // === CASH FLOW (CASH-IN vs CASH-OUT) ===
+        $cashFlow = $rapportModel->getResumeCashFlow($nombreMois);
+        $totauxPeriode = $rapportModel->getTotauxPeriode($nombreMois);
 
         // === STATISTIQUES GLOBALES ===
 
@@ -209,7 +217,14 @@ class DashboardController extends BaseController
 
         $data = [
             'title' => 'Analytics Globale',
+            'page_title' => 'Analytics',
+            'breadcrumbs' => '<li class="breadcrumb-item">Rapports & Analyse</li><li class="breadcrumb-item active">Analytics</li>',
             'user_role' => $userRole,
+            'periode_mois' => $nombreMois,
+            // Cash Flow
+            'cash_flow' => $cashFlow,
+            'totaux_periode' => $totauxPeriode,
+            // Stats globales
             'taux_occupation' => round($tauxOccupation, 2),
             'taux_conversion' => round($tauxConversion, 2),
             'revenu_moyen_reservation' => $revenuReservations['revenu_moyen'] ?? 0,

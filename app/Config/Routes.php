@@ -49,8 +49,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     
     // Routes réservées aux administrateurs uniquement
     $routes->group('', ['filter' => 'auth:admin'], function ($routes) {
-        $routes->get('analytics', 'DashboardController::analytics');
-        
         // User Management - Admin only
         $routes->get('utilisateurs', 'UtilisateurController::index');
         $routes->post('utilisateurs/create', 'UtilisateurController::create');
@@ -84,6 +82,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('projects/(:num)', 'DashboardController::viewProject/$1');
     });
     
+    // Routes accessibles aux gestionnaires et admins (Rapports & Analytics)
+    $routes->get('analytics', 'DashboardController::analytics');
+    $routes->get('rapports', 'RapportController::index');
+    $routes->post('rapports/create', 'RapportController::create');
+    $routes->get('rapports/get/(:num)', 'RapportController::get/$1');
+    $routes->post('rapports/update/(:num)', 'RapportController::update/$1');
+    $routes->delete('rapports/delete/(:num)', 'RapportController::delete/$1');
+
     // Routes accessibles aux gestionnaires et admins
     $routes->group('', ['filter' => 'auth:appartements'], function ($routes) {
         // Appartement Management
