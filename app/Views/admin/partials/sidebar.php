@@ -104,20 +104,22 @@ $userRole = $session->get('user_role');
                 </li>
 
                 <li class="nxl-item nxl-caption">
-                    <label>Rapports</label>
+                    <label>Rapports & Analyse</label>
                 </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/rapports') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-file-text"></i></span>
+                        <span class="nxl-mtext">Rapports</span>
+                    </a>
+                </li>
+                <?php if ($userRole === 'admin'): ?>
                 <li class="nxl-item">
                     <a href="<?= base_url('/admin/analytics') ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-bar-chart-2"></i></span>
                         <span class="nxl-mtext">Analytics</span>
                     </a>
                 </li>
-                <li class="nxl-item">
-                    <a href="<?= base_url('/admin/reports') ?>" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-file-text"></i></span>
-                        <span class="nxl-mtext">Rapports</span>
-                    </a>
-                </li>
+                <?php endif; ?>
 
                 <?php if ($userRole === 'admin'): ?>
                 <li class="nxl-item">
