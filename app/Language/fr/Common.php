@@ -160,6 +160,7 @@ return [
     'parking_access' => 'Accès au Parking',
     'pricing_label' => 'Prix',
     'per_day_short' => '/jrs',
+    'from' => 'à partir de',
     'years_experience' => 'ans d\'experience',
     'about_us_span' => 'A propos de nous',
     'welcome_building' => 'Bienvenue dans notre immeuble',

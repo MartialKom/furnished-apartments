@@ -160,6 +160,7 @@ return [
     'parking_access' => 'Parking Access',
     'pricing_label' => 'Price',
     'per_day_short' => '/day',
+    'from' => 'from',
     'years_experience' => 'years of experience',
     'about_us_span' => 'About us',
     'welcome_building' => 'Welcome to our building',
