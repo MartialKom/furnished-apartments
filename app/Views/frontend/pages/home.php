@@ -37,7 +37,7 @@
                         <div class="col-lg-4">
                             <div class="slider-price">
                                 <h3><?= lang('Common.pricing_label') ?>:</h3>
-                                <h2>Fcfa 20.000<?= lang('Common.per_day_short') ?></h2>
+                                <h2><?= lang('Common.from') ?> 40 000 Fcfa<?= lang('Common.per_day_short') ?></h2>
                             </div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                         <div class="col-lg-4">
                             <div class="slider-price">
                                 <h3><?= lang('Common.pricing_label') ?>:</h3>
-                                <h2>Fcfa 20.000<?= lang('Common.per_day_short') ?></h2>
+                                <h2><?= lang('Common.from') ?> 40 000 Fcfa<?= lang('Common.per_day_short') ?></h2>
                             </div>
                         </div>
                     </div>
@@ -258,7 +258,7 @@
                                 </ul>
                             </div>
                             <h3><?= lang('Common.pricing_label') ?>:</h3>
-                            <h2>FCFA 25 000 / jrs</h2>
+                            <h2><?= lang('Common.from') ?> 40 000 FCFA<?= lang('Common.per_day_short') ?></h2>
                             <div class="choose-btn mt-30">
                                 <a href="#" class="btn"><?= lang('Common.nav_contact') ?></a>
                             </div>
