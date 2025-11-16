@@ -26,6 +26,7 @@ SMTP_USER = contact@nsenoutower.com #administration@nsenoutower.com gestionnaire
 SMTP_PASS = Nsenoutower@2025
 SMTP_PORT = 465
 SMTP_CRYPTO = ssl
+SMTP_USER_GESTIONNAIRE = gestionnaire@nsenoutower.com
 # If you have trouble with `.`, you could also use `_`.
 # app_baseURL = ''
 # app.forceGlobalSecureRequests = false
