@@ -104,11 +104,13 @@
                                                     $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'bg-success',
                                                         'telephonique' => 'bg-info',
+                                                        'presentiel' => 'bg-primary',
                                                         default => 'bg-secondary'
                                                     };
                                                     $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'En ligne',
                                                         'telephonique' => 'Téléphonique',
+                                                        'presentiel' => 'Présentiel',
                                                         default => 'En ligne'
                                                     };
                                                     ?>
@@ -223,11 +225,13 @@
                                                     $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'bg-success',
                                                         'telephonique' => 'bg-info',
+                                                        'presentiel' => 'bg-primary',
                                                         default => 'bg-secondary'
                                                     };
                                                     $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'En ligne',
                                                         'telephonique' => 'Téléphonique',
+                                                        'presentiel' => 'Présentiel',
                                                         default => 'En ligne'
                                                     };
                                                     ?>
@@ -327,11 +331,13 @@
                                                     $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'bg-success',
                                                         'telephonique' => 'bg-info',
+                                                        'presentiel' => 'bg-primary',
                                                         default => 'bg-secondary'
                                                     };
                                                     $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'En ligne',
                                                         'telephonique' => 'Téléphonique',
+                                                        'presentiel' => 'Présentiel',
                                                         default => 'En ligne'
                                                     };
                                                     ?>
@@ -404,7 +410,7 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="<?= base_url('reservations/create') ?>" method="POST" id="createReservationForm">
+            <form action="<?= base_url('admin/reservations/create') ?>" method="POST" id="createReservationForm">
                 <?= csrf_field() ?>
                 <div class="modal-body">
                     <!-- Type de client -->
@@ -573,6 +579,7 @@
                                     <option value="">Sélectionner le type</option>
                                     <option value="en_ligne">En ligne</option>
                                     <option value="telephonique">Téléphonique</option>
+                                    <option value="presentiel">Présentiel (à l'accueil)</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -928,7 +935,7 @@ $(document).ready(function() {
         const formData = new FormData(this);
         
         $.ajax({
-            url: '<?= base_url("/admin/reservations/create") ?>',
+            url: '<?= base_url("admin/reservations/create") ?>',
             type: 'POST',
             data: formData,
             processData: false,

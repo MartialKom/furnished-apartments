@@ -80,6 +80,12 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('projects', 'DashboardController::projects');
         $routes->get('projects/create', 'DashboardController::createProject');
         $routes->get('projects/(:num)', 'DashboardController::viewProject/$1');
+
+        // Test Email - Admin only
+        $routes->get('test-email', 'TestEmailController::index');
+        $routes->post('test-email/send-test', 'TestEmailController::sendTest');
+        $routes->post('test-email/send-test-notification', 'TestEmailController::sendTestNotification');
+        $routes->get('test-email/show-config', 'TestEmailController::showConfig');
     });
     
     // Routes accessibles aux gestionnaires et admins (Rapports & Analytics)
@@ -89,6 +95,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->get('rapports/get/(:num)', 'RapportController::get/$1');
     $routes->post('rapports/update/(:num)', 'RapportController::update/$1');
     $routes->delete('rapports/delete/(:num)', 'RapportController::delete/$1');
+    $routes->get('rapports/download/(:num)', 'RapportController::downloadDocument/$1');
 
     // Routes accessibles aux gestionnaires et admins
     $routes->group('', ['filter' => 'auth:appartements'], function ($routes) {
@@ -133,7 +140,35 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('paiements-mensuels/contrat/(:num)', 'PaiementMensuelController::getPaiementsContrat/$1');
         $routes->get('paiements-mensuels/echeance/(:num)', 'PaiementMensuelController::getEcheanceDetails/$1');
         $routes->post('paiements-mensuels/rappel/(:num)', 'PaiementMensuelController::envoyerRappel/$1');
-        
+
+        // Factures d'eau
+        $routes->get('factures-eau', 'FactureEauController::index');
+        $routes->get('factures-eau/create', 'FactureEauController::create');
+        $routes->post('factures-eau/store', 'FactureEauController::store');
+        $routes->get('factures-eau/get/(:num)', 'FactureEauController::get/$1');
+        $routes->post('factures-eau/marquer-paye/(:num)', 'FactureEauController::marquerPaye/$1');
+        $routes->post('factures-eau/update/(:num)', 'FactureEauController::update/$1');
+        $routes->delete('factures-eau/delete/(:num)', 'FactureEauController::delete/$1');
+        $routes->post('factures-eau/generer-mois', 'FactureEauController::genererFacturesMois');
+        $routes->post('factures-eau/update-retards', 'FactureEauController::updateStatutsRetard');
+
+        // Gestion des voitures
+        $routes->get('voitures', 'VoitureController::index');
+        $routes->post('voitures/store', 'VoitureController::store');
+        $routes->get('voitures/get/(:num)', 'VoitureController::get/$1');
+        $routes->post('voitures/update/(:num)', 'VoitureController::update/$1');
+        $routes->delete('voitures/delete/(:num)', 'VoitureController::delete/$1');
+        $routes->post('voitures/changer-statut/(:num)', 'VoitureController::changerStatut/$1');
+
+        // Locations de voitures
+        $routes->get('locations-voitures', 'LocationVoitureController::index');
+        $routes->post('locations-voitures/store', 'LocationVoitureController::store');
+        $routes->get('locations-voitures/get/(:num)', 'LocationVoitureController::get/$1');
+        $routes->post('locations-voitures/demarrer/(:num)', 'LocationVoitureController::demarrer/$1');
+        $routes->post('locations-voitures/terminer/(:num)', 'LocationVoitureController::terminer/$1');
+        $routes->post('locations-voitures/annuler/(:num)', 'LocationVoitureController::annuler/$1');
+        $routes->post('locations-voitures/paiement/(:num)', 'LocationVoitureController::enregistrerPaiement/$1');
+
         // Reçus de paiement
         $routes->get('receipts/generate/(:num)', 'ReceiptController::generateReceipt/$1');
         $routes->get('receipts/multiple/(:num)/(:any)', 'ReceiptController::generateMultipleReceipt/$1/$2');

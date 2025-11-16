@@ -102,6 +102,30 @@ class ReservationController extends BaseController
 
         if ($reservationId) {
             log_message('info', 'Réservation créée avec succès, ID: ' . $reservationId);
+
+            // Récupérer les données complètes de la réservation et de l'appartement
+            $reservation = $this->reservationModel->find($reservationId);
+            $appartement = $this->appartementModel->find($data['appartement_id']);
+
+            // Envoyer les emails de notification
+            $notificationService = new \App\Libraries\NotificationService();
+
+            // Email au client
+            try {
+                $notificationService->envoyerConfirmationReservation($reservation, $appartement);
+                log_message('info', 'Email de confirmation envoyé au client: ' . $reservation['client_email']);
+            } catch (\Exception $e) {
+                log_message('error', 'Erreur envoi email client: ' . $e->getMessage());
+            }
+
+            // Email au gestionnaire
+            try {
+                $notificationService->envoyerNotificationNouvelleReservation($reservation, $appartement);
+                log_message('info', 'Email de notification envoyé au gestionnaire');
+            } catch (\Exception $e) {
+                log_message('error', 'Erreur envoi email gestionnaire: ' . $e->getMessage());
+            }
+
             return redirect()->to('/reservation')->with('success', 'Votre réservation a été créée avec succès ! Vous recevrez une confirmation par email.');
         } else {
             $errors = $this->reservationModel->errors();

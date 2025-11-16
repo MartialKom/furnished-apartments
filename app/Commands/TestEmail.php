@@ -37,7 +37,7 @@ class TestEmail extends BaseCommand
         $subject = "Test de configuration email - " . date('Y-m-d H:i:s');
         $message = "Ceci est un test de configuration email.\n\n";
         $message .= "Date: " . date('Y-m-d H:i:s') . "\n";
-        $message .= "Serveur: " . $_SERVER['SERVER_NAME'] ?? 'Local' . "\n";
+        $message .= "Serveur: " . ($_SERVER['SERVER_NAME'] ?? 'Local') . "\n";
         $message .= "Application: Système de gestion d'appartements\n\n";
         $message .= "Si vous recevez cet email, la configuration SMTP fonctionne correctement.";
         

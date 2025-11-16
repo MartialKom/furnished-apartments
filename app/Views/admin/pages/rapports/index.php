@@ -22,6 +22,7 @@
                                 <th class="border-0">Date</th>
                                 <th class="border-0">Auteur</th>
                                 <th class="border-0">Aperçu du rapport</th>
+                                <th class="border-0 text-center">Document</th>
                                 <th class="border-0 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -55,6 +56,17 @@
                                             </div>
                                         </td>
                                         <td class="text-center">
+                                            <?php if (!empty($rapport['document_path'])): ?>
+                                                <a href="<?= base_url('admin/rapports/download/' . $rapport['id']) ?>"
+                                                   class="btn btn-sm btn-outline-success"
+                                                   title="<?= esc($rapport['document_nom_original']) ?>">
+                                                    <i class="feather-file"></i>
+                                                </a>
+                                            <?php else: ?>
+                                                <span class="text-muted">-</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-sm btn-outline-info view-rapport"
                                                         data-id="<?= $rapport['id'] ?>"
@@ -79,7 +91,7 @@
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="4" class="text-center py-5">
+                                    <td colspan="5" class="text-center py-5">
                                         <i class="feather-file-text" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                         <p class="text-muted mt-2">Aucun rapport trouvé</p>
                                     </td>
@@ -117,6 +129,14 @@
                                       placeholder="Écrivez votre rapport ici..." required
                                       style="resize: vertical; font-size: 14px; line-height: 1.6;"></textarea>
                             <small class="text-muted">Minimum 10 caractères</small>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="document" class="form-label">
+                                <i class="feather-paperclip me-2"></i>Joindre un document (optionnel)
+                            </label>
+                            <input type="file" class="form-control" id="document" name="document"
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            <small class="text-muted">Formats acceptés: PDF, Word, Excel, Images (max 10 MB)</small>
                         </div>
                     </div>
                 </div>
@@ -156,6 +176,19 @@
                             <textarea class="form-control" id="edit_contenu" name="contenu" rows="12"
                                       required style="resize: vertical; font-size: 14px; line-height: 1.6;"></textarea>
                             <small class="text-muted">Minimum 10 caractères</small>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="edit_document" class="form-label">
+                                <i class="feather-paperclip me-2"></i>Remplacer le document (optionnel)
+                            </label>
+                            <input type="file" class="form-control" id="edit_document" name="document"
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            <small class="text-muted">Formats acceptés: PDF, Word, Excel, Images (max 10 MB)</small>
+                            <div id="current_document" class="mt-2" style="display: none;">
+                                <small class="text-info">
+                                    <i class="feather-file me-1"></i>Document actuel : <span id="current_document_name"></span>
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
