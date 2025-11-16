@@ -37,7 +37,7 @@ class ReservationModel extends Model
         'montant_total' => 'permit_empty|decimal',
         'montant_paye' => 'permit_empty|decimal',
         'montant_restant' => 'permit_empty|decimal',
-        'type_reservation' => 'permit_empty|in_list[en_ligne,telephonique]',
+        'type_reservation' => 'permit_empty|in_list[en_ligne,telephonique,presentiel]',
         'notes' => 'permit_empty|string',
         'reduction_pourcentage' => 'permit_empty|decimal',
         'montant_reduction' => 'permit_empty|decimal',
@@ -116,10 +116,26 @@ class ReservationModel extends Model
 
     public function creerReservationManuelle($data)
     {
+        log_message('info', '[ReservationModel] Début creerReservationManuelle');
+        log_message('info', '[ReservationModel] Données reçues: ' . json_encode($data));
+
         // Calculer automatiquement le montant restant
         $data['montant_restant'] = $data['montant_total'] - ($data['montant_paye'] ?? 0);
-        
-        return $this->insert($data);
+
+        log_message('info', '[ReservationModel] Montant restant calculé: ' . $data['montant_restant']);
+        log_message('info', '[ReservationModel] Tentative d\'insertion...');
+
+        $result = $this->insert($data);
+
+        if ($result) {
+            log_message('info', "[ReservationModel] Insertion réussie - ID: {$result}");
+        } else {
+            $errors = $this->errors();
+            log_message('error', '[ReservationModel] Insertion échouée - Erreurs: ' . json_encode($errors));
+            log_message('error', '[ReservationModel] Données qui ont échoué: ' . json_encode($data));
+        }
+
+        return $result;
     }
 
     public function calculerPrixTotal($appartementId, $dateDebut, $dateFin, $reductionPourcentage = 0)

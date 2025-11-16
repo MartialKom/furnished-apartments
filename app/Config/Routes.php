@@ -80,6 +80,12 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('projects', 'DashboardController::projects');
         $routes->get('projects/create', 'DashboardController::createProject');
         $routes->get('projects/(:num)', 'DashboardController::viewProject/$1');
+
+        // Test Email - Admin only
+        $routes->get('test-email', 'TestEmailController::index');
+        $routes->post('test-email/send-test', 'TestEmailController::sendTest');
+        $routes->post('test-email/send-test-notification', 'TestEmailController::sendTestNotification');
+        $routes->get('test-email/show-config', 'TestEmailController::showConfig');
     });
     
     // Routes accessibles aux gestionnaires et admins (Rapports & Analytics)
