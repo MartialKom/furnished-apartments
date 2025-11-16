@@ -95,6 +95,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->get('rapports/get/(:num)', 'RapportController::get/$1');
     $routes->post('rapports/update/(:num)', 'RapportController::update/$1');
     $routes->delete('rapports/delete/(:num)', 'RapportController::delete/$1');
+    $routes->get('rapports/download/(:num)', 'RapportController::downloadDocument/$1');
 
     // Routes accessibles aux gestionnaires et admins
     $routes->group('', ['filter' => 'auth:appartements'], function ($routes) {
@@ -150,7 +151,24 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->delete('factures-eau/delete/(:num)', 'FactureEauController::delete/$1');
         $routes->post('factures-eau/generer-mois', 'FactureEauController::genererFacturesMois');
         $routes->post('factures-eau/update-retards', 'FactureEauController::updateStatutsRetard');
-        
+
+        // Gestion des voitures
+        $routes->get('voitures', 'VoitureController::index');
+        $routes->post('voitures/store', 'VoitureController::store');
+        $routes->get('voitures/get/(:num)', 'VoitureController::get/$1');
+        $routes->post('voitures/update/(:num)', 'VoitureController::update/$1');
+        $routes->delete('voitures/delete/(:num)', 'VoitureController::delete/$1');
+        $routes->post('voitures/changer-statut/(:num)', 'VoitureController::changerStatut/$1');
+
+        // Locations de voitures
+        $routes->get('locations-voitures', 'LocationVoitureController::index');
+        $routes->post('locations-voitures/store', 'LocationVoitureController::store');
+        $routes->get('locations-voitures/get/(:num)', 'LocationVoitureController::get/$1');
+        $routes->post('locations-voitures/demarrer/(:num)', 'LocationVoitureController::demarrer/$1');
+        $routes->post('locations-voitures/terminer/(:num)', 'LocationVoitureController::terminer/$1');
+        $routes->post('locations-voitures/annuler/(:num)', 'LocationVoitureController::annuler/$1');
+        $routes->post('locations-voitures/paiement/(:num)', 'LocationVoitureController::enregistrerPaiement/$1');
+
         // Reçus de paiement
         $routes->get('receipts/generate/(:num)', 'ReceiptController::generateReceipt/$1');
         $routes->get('receipts/multiple/(:num)/(:any)', 'ReceiptController::generateMultipleReceipt/$1/$2');

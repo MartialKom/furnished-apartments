@@ -37,11 +37,22 @@ class FactureEauController extends BaseController
             $facturesParStatut[$facture['statut']][] = $facture;
         }
 
+        // Récupérer tous les contrats actifs pour le formulaire de création
+        $contrats = $this->contratModel
+            ->select('contrats_locataires.*,
+                      locataires.nom as locataire_nom,
+                      appartements.adresse as appartement_adresse')
+            ->join('locataires', 'locataires.id = contrats_locataires.locataire_id')
+            ->join('appartements', 'appartements.id = contrats_locataires.appartement_id')
+            ->where('contrats_locataires.statut', 'actif')
+            ->findAll();
+
         $data = [
             'title' => 'Gestion des Factures d\'Eau',
             'page_title' => 'Factures d\'Eau',
             'breadcrumbs' => '<li class="breadcrumb-item">Administration</li><li class="breadcrumb-item active">Factures d\'Eau</li>',
-            'factures' => $facturesParStatut
+            'factures' => $facturesParStatut,
+            'contrats' => $contrats
         ];
 
         return view('admin/pages/factures_eau/index', $data);
@@ -77,8 +88,11 @@ class FactureEauController extends BaseController
      */
     public function store()
     {
+        // Récupérer les données JSON
+        $json = $this->request->getJSON(true); // true pour retourner un array
+
         log_message('info', '=== DÉBUT CRÉATION FACTURE D\'EAU ===');
-        log_message('info', 'Données POST reçues: ' . json_encode($this->request->getPost()));
+        log_message('info', 'Données JSON reçues: ' . json_encode($json));
 
         $rules = [
             'contrat_id' => 'required|integer',
@@ -92,7 +106,8 @@ class FactureEauController extends BaseController
             'notes' => 'permit_empty|string'
         ];
 
-        if (!$this->validate($rules)) {
+        // Valider les données JSON
+        if (!$this->validate($rules, $json)) {
             $errors = $this->validator->getErrors();
             log_message('error', 'VALIDATION ÉCHOUÉE: ' . json_encode($errors));
             return $this->response->setJSON([
@@ -104,8 +119,8 @@ class FactureEauController extends BaseController
         log_message('info', 'Validation réussie');
 
         // Vérifier si une facture existe déjà pour ce contrat et ce mois
-        $contratId = $this->request->getPost('contrat_id');
-        $moisAnnee = $this->request->getPost('mois_annee');
+        $contratId = $json['contrat_id'] ?? null;
+        $moisAnnee = $json['mois_annee'] ?? null;
 
         $factureExistante = $this->factureEauModel
             ->where('contrat_id', $contratId)
@@ -123,14 +138,14 @@ class FactureEauController extends BaseController
         $data = [
             'contrat_id' => $contratId,
             'mois_annee' => $moisAnnee,
-            'montant' => $this->request->getPost('montant'),
-            'consommation_m3' => $this->request->getPost('consommation_m3'),
-            'index_precedent' => $this->request->getPost('index_precedent'),
-            'index_actuel' => $this->request->getPost('index_actuel'),
-            'date_emission' => $this->request->getPost('date_emission'),
-            'date_echeance' => $this->request->getPost('date_echeance'),
+            'montant' => $json['montant'] ?? null,
+            'consommation_m3' => $json['consommation_m3'] ?? null,
+            'index_precedent' => $json['index_precedent'] ?? null,
+            'index_actuel' => $json['index_actuel'] ?? null,
+            'date_emission' => $json['date_emission'] ?? null,
+            'date_echeance' => $json['date_echeance'] ?? null,
             'statut' => 'en_attente',
-            'notes' => $this->request->getPost('notes'),
+            'notes' => $json['notes'] ?? null,
             'enregistre_par' => session()->get('user_id')
         ];
 
@@ -213,6 +228,9 @@ class FactureEauController extends BaseController
             ]);
         }
 
+        // Récupérer les données JSON
+        $json = $this->request->getJSON(true);
+
         $rules = [
             'montant_paye' => 'required|decimal|greater_than[0]',
             'date_paiement' => 'required|valid_date',
@@ -220,7 +238,7 @@ class FactureEauController extends BaseController
             'reference_paiement' => 'permit_empty|string|max_length[255]'
         ];
 
-        if (!$this->validate($rules)) {
+        if (!$this->validate($rules, $json)) {
             return $this->response->setJSON([
                 'success' => false,
                 'errors' => $this->validator->getErrors()
@@ -235,7 +253,7 @@ class FactureEauController extends BaseController
             ]);
         }
 
-        $montantPaye = $this->request->getPost('montant_paye');
+        $montantPaye = $json['montant_paye'] ?? 0;
 
         // Vérifier que le montant payé ne dépasse pas le montant dû
         if ($montantPaye > $facture['montant']) {
@@ -247,9 +265,9 @@ class FactureEauController extends BaseController
 
         $data = [
             'montant_paye' => $montantPaye,
-            'date_paiement' => $this->request->getPost('date_paiement'),
-            'mode_paiement' => $this->request->getPost('mode_paiement'),
-            'reference_paiement' => $this->request->getPost('reference_paiement')
+            'date_paiement' => $json['date_paiement'] ?? null,
+            'mode_paiement' => $json['mode_paiement'] ?? null,
+            'reference_paiement' => $json['reference_paiement'] ?? null
         ];
 
         // Déterminer le statut en fonction du montant payé
@@ -284,6 +302,9 @@ class FactureEauController extends BaseController
             ]);
         }
 
+        // Récupérer les données JSON
+        $json = $this->request->getJSON(true);
+
         $rules = [
             'montant' => 'required|decimal|greater_than[0]',
             'consommation_m3' => 'permit_empty|decimal',
@@ -294,7 +315,7 @@ class FactureEauController extends BaseController
             'notes' => 'permit_empty|string'
         ];
 
-        if (!$this->validate($rules)) {
+        if (!$this->validate($rules, $json)) {
             return $this->response->setJSON([
                 'success' => false,
                 'errors' => $this->validator->getErrors()
@@ -318,13 +339,13 @@ class FactureEauController extends BaseController
         }
 
         $data = [
-            'montant' => $this->request->getPost('montant'),
-            'consommation_m3' => $this->request->getPost('consommation_m3'),
-            'index_precedent' => $this->request->getPost('index_precedent'),
-            'index_actuel' => $this->request->getPost('index_actuel'),
-            'date_emission' => $this->request->getPost('date_emission'),
-            'date_echeance' => $this->request->getPost('date_echeance'),
-            'notes' => $this->request->getPost('notes')
+            'montant' => $json['montant'] ?? null,
+            'consommation_m3' => $json['consommation_m3'] ?? null,
+            'index_precedent' => $json['index_precedent'] ?? null,
+            'index_actuel' => $json['index_actuel'] ?? null,
+            'date_emission' => $json['date_emission'] ?? null,
+            'date_echeance' => $json['date_echeance'] ?? null,
+            'notes' => $json['notes'] ?? null
         ];
 
         if ($this->factureEauModel->update($id, $data)) {

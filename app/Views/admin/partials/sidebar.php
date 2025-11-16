@@ -62,6 +62,28 @@ $userRole = $session->get('user_role');
                         <span class="nxl-mtext">Paiements Mensuels</span>
                     </a>
                 </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/factures-eau') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-droplet"></i></span>
+                        <span class="nxl-mtext">Factures d'Eau</span>
+                    </a>
+                </li>
+
+                <li class="nxl-item nxl-caption">
+                    <label>Location de Voitures</label>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/voitures') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-truck"></i></span>
+                        <span class="nxl-mtext">Parc Automobile</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a href="<?= base_url('/admin/locations-voitures') ?>" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-key"></i></span>
+                        <span class="nxl-mtext">Locations Voitures</span>
+                    </a>
+                </li>
 
                 <li class="nxl-item nxl-caption">
                     <label>Gestion du Stock</label>

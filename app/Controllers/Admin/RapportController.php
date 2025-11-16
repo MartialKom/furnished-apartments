@@ -55,6 +55,42 @@ class RapportController extends BaseController
             'contenu' => $this->request->getPost('contenu')
         ];
 
+        // Gérer l'upload de fichier si présent
+        $file = $this->request->getFile('document');
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Validation du fichier
+            $validationRule = [
+                'document' => [
+                    'rules' => 'uploaded[document]|max_size[document,10240]|ext_in[document,pdf,doc,docx,xls,xlsx,jpg,jpeg,png]',
+                    'errors' => [
+                        'uploaded' => 'Veuillez sélectionner un fichier.',
+                        'max_size' => 'Le fichier ne doit pas dépasser 10 MB.',
+                        'ext_in' => 'Le fichier doit être au format PDF, Word, Excel ou Image.'
+                    ]
+                ]
+            ];
+
+            if (!$this->validate($validationRule)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => $this->validator->getErrors()
+                ]);
+            }
+
+            // Créer le dossier s'il n'existe pas
+            $uploadPath = WRITEPATH . 'uploads/rapports/';
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            // Générer un nom de fichier unique
+            $newName = $file->getRandomName();
+            $file->move($uploadPath, $newName);
+
+            $data['document_path'] = 'rapports/' . $newName;
+            $data['document_nom_original'] = $file->getClientName();
+        }
+
         if ($this->rapportModel->insert($data)) {
             return $this->response->setJSON([
                 'success' => true,
@@ -141,6 +177,50 @@ class RapportController extends BaseController
             'contenu' => $this->request->getPost('contenu')
         ];
 
+        // Gérer l'upload de fichier si présent
+        $file = $this->request->getFile('document');
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Validation du fichier
+            $validationRule = [
+                'document' => [
+                    'rules' => 'uploaded[document]|max_size[document,10240]|ext_in[document,pdf,doc,docx,xls,xlsx,jpg,jpeg,png]',
+                    'errors' => [
+                        'uploaded' => 'Veuillez sélectionner un fichier.',
+                        'max_size' => 'Le fichier ne doit pas dépasser 10 MB.',
+                        'ext_in' => 'Le fichier doit être au format PDF, Word, Excel ou Image.'
+                    ]
+                ]
+            ];
+
+            if (!$this->validate($validationRule)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => $this->validator->getErrors()
+                ]);
+            }
+
+            // Supprimer l'ancien fichier si existe
+            if (!empty($rapport['document_path'])) {
+                $oldFile = WRITEPATH . 'uploads/' . $rapport['document_path'];
+                if (file_exists($oldFile)) {
+                    unlink($oldFile);
+                }
+            }
+
+            // Créer le dossier s'il n'existe pas
+            $uploadPath = WRITEPATH . 'uploads/rapports/';
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            // Générer un nom de fichier unique
+            $newName = $file->getRandomName();
+            $file->move($uploadPath, $newName);
+
+            $data['document_path'] = 'rapports/' . $newName;
+            $data['document_nom_original'] = $file->getClientName();
+        }
+
         if ($this->rapportModel->update($id, $data)) {
             return $this->response->setJSON([
                 'success' => true,
@@ -152,6 +232,28 @@ class RapportController extends BaseController
                 'message' => 'Erreur lors de la modification du rapport.'
             ]);
         }
+    }
+
+    /**
+     * Télécharger un document de rapport
+     */
+    public function downloadDocument($id = null)
+    {
+        if (!$id) {
+            return redirect()->back()->with('error', 'Rapport non trouvé.');
+        }
+
+        $rapport = $this->rapportModel->find($id);
+        if (!$rapport || empty($rapport['document_path'])) {
+            return redirect()->back()->with('error', 'Document non trouvé.');
+        }
+
+        $filePath = WRITEPATH . 'uploads/' . $rapport['document_path'];
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'Le fichier n\'existe plus.');
+        }
+
+        return $this->response->download($filePath, null)->setFileName($rapport['document_nom_original']);
     }
 
     /**
