@@ -139,6 +139,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('paiements-mensuels/contrat/(:num)', 'PaiementMensuelController::getPaiementsContrat/$1');
         $routes->get('paiements-mensuels/echeance/(:num)', 'PaiementMensuelController::getEcheanceDetails/$1');
         $routes->post('paiements-mensuels/rappel/(:num)', 'PaiementMensuelController::envoyerRappel/$1');
+
+        // Factures d'eau
+        $routes->get('factures-eau', 'FactureEauController::index');
+        $routes->get('factures-eau/create', 'FactureEauController::create');
+        $routes->post('factures-eau/store', 'FactureEauController::store');
+        $routes->get('factures-eau/get/(:num)', 'FactureEauController::get/$1');
+        $routes->post('factures-eau/marquer-paye/(:num)', 'FactureEauController::marquerPaye/$1');
+        $routes->post('factures-eau/update/(:num)', 'FactureEauController::update/$1');
+        $routes->delete('factures-eau/delete/(:num)', 'FactureEauController::delete/$1');
+        $routes->post('factures-eau/generer-mois', 'FactureEauController::genererFacturesMois');
+        $routes->post('factures-eau/update-retards', 'FactureEauController::updateStatutsRetard');
         
         // Reçus de paiement
         $routes->get('receipts/generate/(:num)', 'ReceiptController::generateReceipt/$1');
