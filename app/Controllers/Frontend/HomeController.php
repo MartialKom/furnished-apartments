@@ -4,14 +4,17 @@ namespace App\Controllers\Frontend;
 
 use App\Controllers\BaseController;
 use App\Models\AppartementModel;
+use App\Models\VoitureModel;
 
 class HomeController extends BaseController
 {
     protected $appartementModel;
+    protected $voitureModel;
 
     public function __construct()
     {
         $this->appartementModel = new AppartementModel();
+        $this->voitureModel = new VoitureModel();
     }
 
     public function index()
@@ -45,6 +48,38 @@ class HomeController extends BaseController
     {
         $data['apartment_id'] = $id;
         return view('frontend/pages/apartment_details', $data);
+    }
+
+    public function cars()
+    {
+        // Récupérer uniquement les voitures disponibles
+        $voitures = $this->voitureModel
+            ->where('statut', 'disponible')
+            ->orderBy('tarif_journalier', 'ASC')
+            ->findAll();
+
+        $data = [
+            'title' => 'Location de Voitures',
+            'voitures' => $voitures,
+        ];
+
+        return view('frontend/pages/cars', $data);
+    }
+
+    public function carDetails($id = null)
+    {
+        $voiture = $this->voitureModel->find($id);
+
+        if (!$voiture) {
+            return redirect()->to('/cars')->with('error', 'Voiture non trouvée');
+        }
+
+        $data = [
+            'title' => $voiture['marque'] . ' ' . $voiture['modele'],
+            'voiture' => $voiture
+        ];
+
+        return view('frontend/pages/car_details', $data);
     }
 
     public function services()

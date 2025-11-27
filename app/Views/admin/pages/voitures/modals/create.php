@@ -81,9 +81,20 @@
                             <input type="number" class="form-control" id="kilometrage" name="kilometrage" min="0" required>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="photo" class="form-label">Photo URL</label>
-                            <input type="text" class="form-control" id="photo" name="photo">
+                        <div class="col-md-12 mb-3">
+                            <label for="photoFiles" class="form-label">Photos (Maximum 3)</label>
+                            <div class="border rounded p-3" style="background-color: #f8f9fa;">
+                                <div class="d-flex align-items-center">
+                                    <button type="button" class="btn btn-sm btn-primary me-3" onclick="document.getElementById('photoFiles').click()">
+                                        <i class="feather-upload me-2"></i>Choisir les photos
+                                    </button>
+                                    <small class="text-muted">JPG, PNG, WEBP (Max 5MB par photo)</small>
+                                </div>
+                                <div id="photoPreviewContainer" class="mt-3" style="display: none;">
+                                    <div id="photoPreviewList" class="d-flex gap-2 flex-wrap"></div>
+                                </div>
+                            </div>
+                            <input type="file" id="photoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                         </div>
 
                         <!-- Tarification -->
@@ -135,6 +146,68 @@
 </div>
 
 <script>
+// Prévisualisation des photos
+let selectedPhotos = [];
+
+document.getElementById('photoFiles').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+
+    if (files.length > 3) {
+        alert('Vous ne pouvez télécharger que 3 photos maximum');
+        e.target.value = '';
+        return;
+    }
+
+    selectedPhotos = files;
+    displayPhotoPreview(files);
+});
+
+function displayPhotoPreview(files) {
+    const container = document.getElementById('photoPreviewContainer');
+    const list = document.getElementById('photoPreviewList');
+
+    if (files.length === 0) {
+        container.style.display = 'none';
+        list.innerHTML = '';
+        return;
+    }
+
+    container.style.display = 'block';
+    list.innerHTML = '';
+
+    files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.className = 'position-relative';
+            div.style.width = '100px';
+            div.style.height = '100px';
+            div.innerHTML = `
+                <img src="${e.target.result}" class="img-thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" onclick="removePhoto(${index})" style="padding: 2px 6px;">
+                    <i class="feather-x" style="font-size: 12px;"></i>
+                </button>
+            `;
+            list.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removePhoto(index) {
+    const dt = new DataTransfer();
+    const input = document.getElementById('photoFiles');
+    const files = Array.from(input.files);
+
+    files.forEach((file, i) => {
+        if (i !== index) dt.items.add(file);
+    });
+
+    input.files = dt.files;
+    selectedPhotos = Array.from(dt.files);
+    displayPhotoPreview(selectedPhotos);
+}
+
 function submitCreateVoiture() {
     const form = document.getElementById('createVoitureForm');
 
@@ -144,24 +217,25 @@ function submitCreateVoiture() {
     }
 
     const formData = new FormData(form);
-    const data = {};
 
-    formData.forEach((value, key) => {
-        if (value !== '') {
-            data[key] = value;
-        }
-    });
+    // Ajouter les fichiers photos
+    const photoInput = document.getElementById('photoFiles');
+    if (photoInput.files.length > 0) {
+        // Supprimer l'ancien champ photoFiles[] s'il existe
+        formData.delete('photoFiles[]');
 
-    // Statut par défaut
-    data.statut = 'disponible';
+        // Ajouter chaque fichier individuellement
+        Array.from(photoInput.files).forEach(file => {
+            formData.append('photoFiles[]', file);
+        });
+    }
 
     fetch('<?= base_url('admin/voitures/store') ?>', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
         },
-        body: JSON.stringify(data)
+        body: formData
     })
     .then(response => response.json())
     .then(data => {

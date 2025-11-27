@@ -12,6 +12,8 @@ $routes->group('', ['namespace' => 'App\Controllers\Frontend'], function ($route
     $routes->get('/about', 'HomeController::about');
     $routes->get('/apartments', 'HomeController::apartments');
     $routes->get('/apartments/(:num)', 'HomeController::apartmentDetails/$1');
+    $routes->get('/cars', 'HomeController::cars');
+    $routes->get('/cars/(:num)', 'HomeController::carDetails/$1');
     $routes->get('/services', 'HomeController::services');
     $routes->get('/gallery', 'HomeController::gallery');
     $routes->get('/pricing', 'HomeController::pricing');
