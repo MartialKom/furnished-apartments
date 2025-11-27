@@ -49,10 +49,7 @@ class VoitureController extends BaseController
      */
     public function store()
     {
-        $json = $this->request->getJSON(true);
-
         log_message('info', '=== DÉBUT CRÉATION VOITURE ===');
-        log_message('info', 'Données JSON reçues: ' . json_encode($json));
 
         $rules = [
             'marque' => 'required|string|max_length[100]',
@@ -65,7 +62,7 @@ class VoitureController extends BaseController
             'transmission' => 'required|in_list[manuelle,automatique]'
         ];
 
-        if (!$this->validate($rules, $json)) {
+        if (!$this->validate($rules)) {
             $errors = $this->validator->getErrors();
             log_message('error', 'VALIDATION ÉCHOUÉE: ' . json_encode($errors));
             return $this->response->setJSON([
@@ -74,23 +71,63 @@ class VoitureController extends BaseController
             ]);
         }
 
+        // Gérer l'upload des photos
+        $uploadedPhotos = [];
+        $photoFiles = $this->request->getFiles();
+
+        if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
+            foreach ($photoFiles['photoFiles'] as $file) {
+                if ($file && $file->isValid() && !$file->hasMoved()) {
+                    // Vérifier le type de fichier
+                    if (!in_array($file->getClientMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Format de fichier non autorisé: ' . $file->getClientName()
+                        ]);
+                    }
+
+                    // Vérifier la taille (5MB max)
+                    if ($file->getSizeByUnit('mb') > 5) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Fichier trop volumineux: ' . $file->getClientName() . ' (max 5MB)'
+                        ]);
+                    }
+
+                    // Générer un nom unique
+                    $newName = $file->getRandomName();
+
+                    // Déplacer le fichier
+                    if ($file->move(FCPATH . 'uploads/voitures/', $newName)) {
+                        $uploadedPhotos[] = 'uploads/voitures/' . $newName;
+                    } else {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Erreur lors de l\'upload de: ' . $file->getClientName()
+                        ]);
+                    }
+                }
+            }
+        }
+
         $data = [
-            'marque' => $json['marque'] ?? null,
-            'modele' => $json['modele'] ?? null,
-            'annee' => $json['annee'] ?? null,
-            'immatriculation' => $json['immatriculation'] ?? null,
-            'couleur' => $json['couleur'] ?? null,
-            'nombre_places' => $json['nombre_places'] ?? 5,
-            'type_carburant' => $json['type_carburant'] ?? 'essence',
-            'transmission' => $json['transmission'] ?? 'manuelle',
-            'kilometrage' => $json['kilometrage'] ?? 0,
-            'tarif_journalier' => $json['tarif_journalier'] ?? null,
-            'caution' => $json['caution'] ?? 0,
+            'marque' => $this->request->getPost('marque'),
+            'modele' => $this->request->getPost('modele'),
+            'annee' => $this->request->getPost('annee'),
+            'immatriculation' => $this->request->getPost('immatriculation'),
+            'couleur' => $this->request->getPost('couleur'),
+            'nombre_places' => $this->request->getPost('nombre_places') ?? 5,
+            'type_carburant' => $this->request->getPost('type_carburant') ?? 'essence',
+            'transmission' => $this->request->getPost('transmission') ?? 'manuelle',
+            'kilometrage' => $this->request->getPost('kilometrage') ?? 0,
+            'tarif_journalier' => $this->request->getPost('tarif_journalier'),
+            'caution' => $this->request->getPost('caution') ?? 0,
             'statut' => 'disponible',
-            'numero_chassis' => $json['numero_chassis'] ?? null,
-            'assurance_expire_le' => $json['assurance_expire_le'] ?? null,
-            'visite_technique_expire_le' => $json['visite_technique_expire_le'] ?? null,
-            'notes' => $json['notes'] ?? null
+            'photos' => implode(',', $uploadedPhotos),
+            'numero_chassis' => $this->request->getPost('numero_chassis'),
+            'assurance_expire_le' => $this->request->getPost('assurance_expire_le'),
+            'visite_technique_expire_le' => $this->request->getPost('visite_technique_expire_le'),
+            'notes' => $this->request->getPost('notes')
         ];
 
         try {
@@ -159,7 +196,13 @@ class VoitureController extends BaseController
             ]);
         }
 
-        $json = $this->request->getJSON(true);
+        $voiture = $this->voitureModel->find($id);
+        if (!$voiture) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Voiture non trouvée.'
+            ]);
+        }
 
         $rules = [
             'marque' => 'required|string|max_length[100]',
@@ -169,34 +212,73 @@ class VoitureController extends BaseController
             'nombre_places' => 'required|integer|greater_than[0]'
         ];
 
-        if (!$this->validate($rules, $json)) {
+        if (!$this->validate($rules)) {
             return $this->response->setJSON([
                 'success' => false,
                 'errors' => $this->validator->getErrors()
             ]);
         }
 
-        $data = [
-            'marque' => $json['marque'] ?? null,
-            'modele' => $json['modele'] ?? null,
-            'annee' => $json['annee'] ?? null,
-            'couleur' => $json['couleur'] ?? null,
-            'nombre_places' => $json['nombre_places'] ?? null,
-            'type_carburant' => $json['type_carburant'] ?? null,
-            'transmission' => $json['transmission'] ?? null,
-            'kilometrage' => $json['kilometrage'] ?? null,
-            'tarif_journalier' => $json['tarif_journalier'] ?? null,
-            'caution' => $json['caution'] ?? null,
-            'statut' => $json['statut'] ?? null,
-            'assurance_expire_le' => $json['assurance_expire_le'] ?? null,
-            'visite_technique_expire_le' => $json['visite_technique_expire_le'] ?? null,
-            'notes' => $json['notes'] ?? null
-        ];
+        // Récupérer les photos existantes
+        $existingPhotos = explode(',', $voiture['photos'] ?? '');
+        $existingPhotos = array_filter($existingPhotos); // Supprimer les valeurs vides
 
-        // Enlever les valeurs null
-        $data = array_filter($data, function($value) {
-            return $value !== null;
-        });
+        // Gérer l'upload des nouvelles photos
+        $uploadedPhotos = [];
+        $photoFiles = $this->request->getFiles();
+
+        if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
+            foreach ($photoFiles['photoFiles'] as $file) {
+                if ($file && $file->isValid() && !$file->hasMoved()) {
+                    // Vérifications comme dans store()
+                    if (!in_array($file->getClientMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Format de fichier non autorisé: ' . $file->getClientName()
+                        ]);
+                    }
+
+                    if ($file->getSizeByUnit('mb') > 5) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Fichier trop volumineux: ' . $file->getClientName() . ' (max 5MB)'
+                        ]);
+                    }
+
+                    $newName = $file->getRandomName();
+
+                    if ($file->move(FCPATH . 'uploads/voitures/', $newName)) {
+                        $uploadedPhotos[] = 'uploads/voitures/' . $newName;
+                    } else {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Erreur lors de l\'upload de: ' . $file->getClientName()
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // Combiner photos existantes et nouvelles
+        $allPhotos = array_merge($existingPhotos, $uploadedPhotos);
+
+        $data = [
+            'marque' => $this->request->getPost('marque'),
+            'modele' => $this->request->getPost('modele'),
+            'annee' => $this->request->getPost('annee'),
+            'couleur' => $this->request->getPost('couleur'),
+            'nombre_places' => $this->request->getPost('nombre_places'),
+            'type_carburant' => $this->request->getPost('type_carburant'),
+            'transmission' => $this->request->getPost('transmission'),
+            'kilometrage' => $this->request->getPost('kilometrage'),
+            'tarif_journalier' => $this->request->getPost('tarif_journalier'),
+            'caution' => $this->request->getPost('caution'),
+            'statut' => $this->request->getPost('statut'),
+            'photos' => implode(',', $allPhotos),
+            'assurance_expire_le' => $this->request->getPost('assurance_expire_le'),
+            'visite_technique_expire_le' => $this->request->getPost('visite_technique_expire_le'),
+            'notes' => $this->request->getPost('notes')
+        ];
 
         if ($this->voitureModel->update($id, $data)) {
             return $this->response->setJSON([

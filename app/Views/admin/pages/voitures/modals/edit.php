@@ -94,8 +94,20 @@
                         </div>
 
                         <div class="col-md-12 mb-3">
-                            <label for="edit_photo" class="form-label">Photo URL</label>
-                            <input type="text" class="form-control" id="edit_photo" name="photo">
+                            <label for="editPhotoFiles" class="form-label">Photos (Maximum 3 au total)</label>
+                            <div class="border rounded p-3" style="background-color: #f8f9fa;">
+                                <div id="editExistingPhotos" class="mb-3"></div>
+                                <div class="d-flex align-items-center">
+                                    <button type="button" class="btn btn-sm btn-primary me-3" onclick="document.getElementById('editPhotoFiles').click()">
+                                        <i class="feather-upload me-2"></i>Ajouter des photos
+                                    </button>
+                                    <small class="text-muted">JPG, PNG, WEBP (Max 5MB par photo)</small>
+                                </div>
+                                <div id="editPhotoPreviewContainer" class="mt-3" style="display: none;">
+                                    <div id="editPhotoPreviewList" class="d-flex gap-2 flex-wrap"></div>
+                                </div>
+                            </div>
+                            <input type="file" id="editPhotoFiles" name="photoFiles[]" multiple accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                         </div>
 
                         <!-- Tarification -->
@@ -147,8 +159,79 @@
 </div>
 
 <script>
+// Variables pour l'édition
+let editSelectedPhotos = [];
+let editExistingPhotosData = [];
+
+// Gestion de l'upload de nouvelles photos pour l'édition
+document.getElementById('editPhotoFiles').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    const totalPhotos = editExistingPhotosData.length + files.length;
+
+    if (totalPhotos > 3) {
+        alert('Vous ne pouvez avoir que 3 photos maximum au total');
+        e.target.value = '';
+        return;
+    }
+
+    editSelectedPhotos = files;
+    displayEditPhotoPreview(files);
+});
+
+function displayEditPhotoPreview(files) {
+    const container = document.getElementById('editPhotoPreviewContainer');
+    const list = document.getElementById('editPhotoPreviewList');
+
+    if (files.length === 0) {
+        container.style.display = 'none';
+        list.innerHTML = '';
+        return;
+    }
+
+    container.style.display = 'block';
+    list.innerHTML = '';
+
+    files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.className = 'position-relative';
+            div.style.width = '100px';
+            div.style.height = '100px';
+            div.innerHTML = `
+                <img src="${e.target.result}" class="img-thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" onclick="removeEditPhoto(${index})" style="padding: 2px 6px;">
+                    <i class="feather-x" style="font-size: 12px;"></i>
+                </button>
+            `;
+            list.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeEditPhoto(index) {
+    const dt = new DataTransfer();
+    const input = document.getElementById('editPhotoFiles');
+    const files = Array.from(input.files);
+
+    files.forEach((file, i) => {
+        if (i !== index) dt.items.add(file);
+    });
+
+    input.files = dt.files;
+    editSelectedPhotos = Array.from(dt.files);
+    displayEditPhotoPreview(editSelectedPhotos);
+}
+
 function modifierVoiture(id) {
     const modal = new bootstrap.Modal(document.getElementById('editVoitureModal'));
+
+    // Réinitialiser les photos
+    editExistingPhotosData = [];
+    editSelectedPhotos = [];
+    document.getElementById('editPhotoFiles').value = '';
+    document.getElementById('editPhotoPreviewContainer').style.display = 'none';
 
     // Récupérer les données de la voiture
     fetch(`<?= base_url('admin/voitures/get') ?>/${id}`, {
@@ -175,12 +258,19 @@ function modifierVoiture(id) {
             document.getElementById('edit_transmission').value = voiture.transmission;
             document.getElementById('edit_kilometrage').value = voiture.kilometrage;
             document.getElementById('edit_statut').value = voiture.statut;
-            document.getElementById('edit_photo').value = voiture.photo || '';
             document.getElementById('edit_tarif_journalier').value = voiture.tarif_journalier;
             document.getElementById('edit_caution').value = voiture.caution || '';
             document.getElementById('edit_assurance_expire_le').value = voiture.assurance_expire_le || '';
             document.getElementById('edit_visite_technique_expire_le').value = voiture.visite_technique_expire_le || '';
             document.getElementById('edit_notes').value = voiture.notes || '';
+
+            // Afficher les photos existantes
+            if (voiture.photos) {
+                editExistingPhotosData = voiture.photos.split(',').filter(p => p.trim() !== '');
+                displayExistingPhotos(editExistingPhotosData);
+            } else {
+                document.getElementById('editExistingPhotos').innerHTML = '';
+            }
 
             modal.show();
         } else {
@@ -193,6 +283,29 @@ function modifierVoiture(id) {
     });
 }
 
+function displayExistingPhotos(photos) {
+    const container = document.getElementById('editExistingPhotos');
+
+    if (photos.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = '<label class="form-label">Photos existantes:</label><div class="d-flex gap-2 flex-wrap" id="existingPhotosList"></div>';
+    const list = document.getElementById('existingPhotosList');
+
+    photos.forEach((photo, index) => {
+        const div = document.createElement('div');
+        div.className = 'position-relative';
+        div.style.width = '100px';
+        div.style.height = '100px';
+        div.innerHTML = `
+            <img src="<?= base_url() ?>/${photo}" class="img-thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+        `;
+        list.appendChild(div);
+    });
+}
+
 function submitEditVoiture() {
     const form = document.getElementById('editVoitureForm');
 
@@ -202,23 +315,23 @@ function submitEditVoiture() {
     }
 
     const formData = new FormData(form);
-    const data = {};
-
-    formData.forEach((value, key) => {
-        if (value !== '' && key !== 'id') {
-            data[key] = value;
-        }
-    });
-
     const voitureId = document.getElementById('edit_voiture_id').value;
+
+    // Ajouter les nouveaux fichiers photos
+    const photoInput = document.getElementById('editPhotoFiles');
+    if (photoInput.files.length > 0) {
+        formData.delete('photoFiles[]');
+        Array.from(photoInput.files).forEach(file => {
+            formData.append('photoFiles[]', file);
+        });
+    }
 
     fetch(`<?= base_url('admin/voitures/update') ?>/${voitureId}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
         },
-        body: JSON.stringify(data)
+        body: formData
     })
     .then(response => response.json())
     .then(data => {

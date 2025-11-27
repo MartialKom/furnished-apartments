@@ -16,6 +16,7 @@
                                             <li class="has-sub"><a href="<?= base_url('/') ?>" ><?= lang('Common.nav_home') ?></a></li>
                                             <li><a href="<?= base_url('about') ?>"><?= lang('Common.nav_about') ?></a></li>
                                             <li><a href="<?= base_url('apartments') ?>"><?= lang('Common.nav_apartments') ?></a></li>
+                                            <li><a href="<?= base_url('cars') ?>">Location de Voitures</a></li>
                                             <li class="has-sub">
                                                 <a href="javascript:void(0)" class="top-btn" style="display: flex; align-items: center;">
                                                     <?php $currentLang = session()->get('language') ?? 'fr'; ?>
