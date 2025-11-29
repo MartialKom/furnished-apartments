@@ -208,9 +208,17 @@
                     <!-- Bouton de contact/réservation -->
                     <div class="action-buttons">
                         <?php if ($voiture['statut'] === 'disponible'): ?>
-                            <a href="<?= base_url('/contact') ?>?car=<?= $voiture['id'] ?>" class="btn btn-primary w-100"
-                               style="background: #d29751; border: none; color: white; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: 500; text-decoration: none; display: block; text-align: center; margin-bottom: 10px;">
-                                <i class="fas fa-car"></i> Réserver cette voiture
+                            <?php
+                            // Préparer le message WhatsApp avec les détails de la voiture
+                            $whatsappMessage = "Bonjour, je suis intéressé(e) par la location de la voiture " .
+                                             $voiture['marque'] . " " . $voiture['modele'] . " (" . $voiture['annee'] . "). " .
+                                             "Tarif: " . number_format($voiture['tarif_journalier'], 0, ',', ' ') . " FCFA/jour. " .
+                                             "Pouvez-vous me donner plus d'informations ?";
+                            $whatsappUrl = "https://wa.me/237671387969?text=" . urlencode($whatsappMessage);
+                            ?>
+                            <a href="<?= $whatsappUrl ?>" target="_blank" class="btn btn-primary w-100"
+                               style="background: #25D366; border: none; color: white; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: 500; text-decoration: none; display: block; text-align: center; margin-bottom: 10px;">
+                                <i class="fab fa-whatsapp"></i> Réserver via WhatsApp
                             </a>
                         <?php else: ?>
                             <button class="btn btn-secondary w-100" disabled
