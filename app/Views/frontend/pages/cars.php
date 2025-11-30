@@ -107,7 +107,7 @@
                         <i class="fas fa-car" style="font-size: 4rem; color: #d29751; margin-bottom: 20px;"></i>
                         <h3 style="color: #666;">Aucune voiture disponible pour le moment</h3>
                         <p style="color: #999;">Vérifiez à nouveau plus tard ou contactez-nous pour plus d'informations.</p>
-                        <a href="<?= base_url('/contact') ?>" class="btn mt-3" style="background: #d29751; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none;">
+                        <a href="<?= base_url('/#contact') ?>" class="btn mt-3" style="background: #d29751; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none;">
                             Nous contacter
                         </a>
                     </div>
