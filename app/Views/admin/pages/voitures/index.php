@@ -49,9 +49,20 @@
             <div class="tab-pane fade show active" id="disponible" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['disponible'])): ?>
-                        <?php foreach ($voitures['disponible'] as $voiture): ?>
+                        <?php foreach ($voitures['disponible'] as $voiture):
+                            // Extraire la première photo
+                            $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
+                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
+                        ?>
                             <div class="col-md-6 col-lg-4 mb-4">
                                 <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
+                                    <?php if ($firstPhoto): ?>
+                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                    <?php else: ?>
+                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
+                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    <?php endif; ?>
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <h5 class="mb-0"><?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?></h5>
@@ -99,9 +110,20 @@
             <div class="tab-pane fade" id="louee" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['louee'])): ?>
-                        <?php foreach ($voitures['louee'] as $voiture): ?>
+                        <?php foreach ($voitures['louee'] as $voiture):
+                            // Extraire la première photo
+                            $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
+                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
+                        ?>
                             <div class="col-md-6 col-lg-4 mb-4">
                                 <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
+                                    <?php if ($firstPhoto): ?>
+                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                    <?php else: ?>
+                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
+                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    <?php endif; ?>
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <h5 class="mb-0"><?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?></h5>
@@ -138,9 +160,20 @@
             <div class="tab-pane fade" id="maintenance" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['maintenance'])): ?>
-                        <?php foreach ($voitures['maintenance'] as $voiture): ?>
+                        <?php foreach ($voitures['maintenance'] as $voiture):
+                            // Extraire la première photo
+                            $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
+                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
+                        ?>
                             <div class="col-md-6 col-lg-4 mb-4">
                                 <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
+                                    <?php if ($firstPhoto): ?>
+                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                    <?php else: ?>
+                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
+                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    <?php endif; ?>
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <h5 class="mb-0"><?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?></h5>
@@ -171,9 +204,20 @@
             <div class="tab-pane fade" id="indisponible" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['indisponible'])): ?>
-                        <?php foreach ($voitures['indisponible'] as $voiture): ?>
+                        <?php foreach ($voitures['indisponible'] as $voiture):
+                            // Extraire la première photo
+                            $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
+                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
+                        ?>
                             <div class="col-md-6 col-lg-4 mb-4">
                                 <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
+                                    <?php if ($firstPhoto): ?>
+                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                    <?php else: ?>
+                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
+                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    <?php endif; ?>
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <h5 class="mb-0"><?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?></h5>

@@ -120,7 +120,7 @@ class LocationVoitureModel extends Model
                               voitures.modele as voiture_modele,
                               voitures.immatriculation,
                               voitures.tarif_journalier as tarif_voiture,
-                              voitures.photo')
+                              voitures.photos')
                     ->join('voitures', 'voitures.id = locations_voitures.voiture_id')
                     ->join('locataires', 'locataires.id = locations_voitures.locataire_id', 'left')
                     ->orderBy('locations_voitures.created_at', 'DESC')
