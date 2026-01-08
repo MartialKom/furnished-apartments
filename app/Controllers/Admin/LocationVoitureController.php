@@ -68,6 +68,7 @@ class LocationVoitureController extends BaseController
 
         $rules = [
             'voiture_id' => 'required|integer',
+            'type_location' => 'required|in_list[jour,heure]',
             'date_debut' => 'required|valid_date',
             'date_fin_prevue' => 'required|valid_date',
             'client_permis' => 'permit_empty|string|max_length[100]'
@@ -106,38 +107,81 @@ class LocationVoitureController extends BaseController
 
         // Récupérer le tarif de la voiture
         $voiture = $this->voitureModel->find($voitureId);
-        $tarifJournalier = $voiture['tarif_journalier'];
         $caution = $voiture['caution'];
+        $typeLocation = $json['type_location'] ?? 'jour';
 
-        // Calculer nombre de jours
+        // Calculer selon le type de location
         $debut = new \DateTime($dateDebut);
         $fin = new \DateTime($dateFin);
-        $nombreJours = $debut->diff($fin)->days + 1;
 
-        // Calculer montant total
-        $montantTotal = $tarifJournalier * $nombreJours;
+        if ($typeLocation === 'heure') {
+            // Location horaire
+            $tarifHoraire = $voiture['tarif_horaire'] ?? ($voiture['tarif_journalier'] / 24);
+            $diff = $debut->diff($fin);
+            $dureeHeures = ($diff->days * 24) + $diff->h;
+
+            // Si la durée est inférieure à 1h, compter 1h minimum
+            if ($dureeHeures < 1) {
+                $dureeHeures = 1;
+            }
+
+            $montantTotal = $tarifHoraire * $dureeHeures;
+
+            $data = [
+                'voiture_id' => $voitureId,
+                'type_location' => 'heure',
+                'locataire_id' => $clientType === 'existant' ? ($json['locataire_id'] ?? null) : null,
+                'client_nom' => $clientType === 'nouveau' ? ($json['client_nom'] ?? null) : null,
+                'client_email' => $clientType === 'nouveau' ? ($json['client_email'] ?? null) : null,
+                'client_telephone' => $clientType === 'nouveau' ? ($json['client_telephone'] ?? null) : null,
+                'client_permis' => $json['client_permis'] ?? null,
+                'date_debut' => $dateDebut,
+                'date_fin_prevue' => $dateFin,
+                'duree_heures' => $dureeHeures,
+                'tarif_horaire' => $tarifHoraire,
+                'montant_total' => $montantTotal,
+                'caution_versee' => $json['caution_versee'] ?? $caution,
+                'montant_paye' => floatval($json['montant_paye'] ?? 0),
+                'montant_restant' => $montantTotal - floatval($json['montant_paye'] ?? 0),
+                'mode_paiement' => $json['mode_paiement'] ?? null,
+                'notes' => $json['notes'] ?? null,
+                'kilometrage_depart' => $json['kilometrage_depart'] ?? null,
+                'etat_depart' => $json['etat_depart'] ?? 'Bon état',
+                'statut' => 'en_cours', // Démarrage automatique
+                'enregistre_par' => session()->get('user_id')
+            ];
+        } else {
+            // Location journalière
+            $tarifJournalier = $voiture['tarif_journalier'];
+            $nombreJours = $debut->diff($fin)->days + 1;
+            $montantTotal = $tarifJournalier * $nombreJours;
+
+            $data = [
+                'voiture_id' => $voitureId,
+                'type_location' => 'jour',
+                'locataire_id' => $clientType === 'existant' ? ($json['locataire_id'] ?? null) : null,
+                'client_nom' => $clientType === 'nouveau' ? ($json['client_nom'] ?? null) : null,
+                'client_email' => $clientType === 'nouveau' ? ($json['client_email'] ?? null) : null,
+                'client_telephone' => $clientType === 'nouveau' ? ($json['client_telephone'] ?? null) : null,
+                'client_permis' => $json['client_permis'] ?? null,
+                'date_debut' => $dateDebut,
+                'date_fin_prevue' => $dateFin,
+                'nombre_jours' => $nombreJours,
+                'tarif_journalier' => $tarifJournalier,
+                'montant_total' => $montantTotal,
+                'caution_versee' => $json['caution_versee'] ?? $caution,
+                'montant_paye' => floatval($json['montant_paye'] ?? 0),
+                'montant_restant' => $montantTotal - floatval($json['montant_paye'] ?? 0),
+                'mode_paiement' => $json['mode_paiement'] ?? null,
+                'notes' => $json['notes'] ?? null,
+                'kilometrage_depart' => $json['kilometrage_depart'] ?? null,
+                'etat_depart' => $json['etat_depart'] ?? 'Bon état',
+                'statut' => 'en_cours', // Démarrage automatique
+                'enregistre_par' => session()->get('user_id')
+            ];
+        }
+
         $montantPaye = floatval($json['montant_paye'] ?? 0);
-
-        $data = [
-            'voiture_id' => $voitureId,
-            'locataire_id' => $clientType === 'existant' ? ($json['locataire_id'] ?? null) : null,
-            'client_nom' => $clientType === 'nouveau' ? ($json['client_nom'] ?? null) : null,
-            'client_email' => $clientType === 'nouveau' ? ($json['client_email'] ?? null) : null,
-            'client_telephone' => $clientType === 'nouveau' ? ($json['client_telephone'] ?? null) : null,
-            'client_permis' => $json['client_permis'] ?? null,
-            'date_debut' => $dateDebut,
-            'date_fin_prevue' => $dateFin,
-            'nombre_jours' => $nombreJours,
-            'tarif_journalier' => $tarifJournalier,
-            'montant_total' => $montantTotal,
-            'caution_versee' => $json['caution_versee'] ?? $caution,
-            'montant_paye' => $montantPaye,
-            'montant_restant' => $montantTotal - $montantPaye,
-            'mode_paiement' => $json['mode_paiement'] ?? null,
-            'notes' => $json['notes'] ?? null,
-            'statut' => 'en_attente',
-            'enregistre_par' => session()->get('user_id')
-        ];
 
         try {
             $locationId = $this->locationModel->creerLocation($data);

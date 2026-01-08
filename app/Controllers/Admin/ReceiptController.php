@@ -9,6 +9,7 @@ use App\Models\LocataireModel;
 use App\Models\AppartementModel;
 use App\Models\UtilisateurModel;
 use App\Models\StructureParamModel;
+use App\Libraries\PdfGenerator;
 
 class ReceiptController extends BaseController
 {
@@ -136,6 +137,7 @@ class ReceiptController extends BaseController
             'structure_adresse' => $structureParams['structure_address'],
             'structure_telephone' => $structureParams['structure_phone'],
             'structure_email' => $structureParams['structure_email'],
+            'structure_logo' => $structureParams['structure_logo'] ?? '',
             
             // Informations locataire
             'locataire_nom' => $locataire['nom'],
@@ -209,6 +211,7 @@ class ReceiptController extends BaseController
             'structure_adresse' => $structureParams['structure_address'],
             'structure_telephone' => $structureParams['structure_phone'],
             'structure_email' => $structureParams['structure_email'],
+            'structure_logo' => $structureParams['structure_logo'] ?? '',
             
             // Informations locataire
             'locataire_nom' => $locataire['nom'],
@@ -321,5 +324,34 @@ class ReceiptController extends BaseController
         $receiptData = $this->calculateReceiptData($paiement, $contrat, $locataire, $appartement, $gestionnaire);
 
         return view('admin/receipts/receipt', $receiptData);
+    }
+
+    /**
+     * Télécharger le reçu en PDF
+     */
+    public function downloadReceiptPDF($paiementId, $mode = 'I')
+    {
+        $paiement = $this->paiementModel->find($paiementId);
+
+        if (!$paiement) {
+            return redirect()->back()->with('error', 'Paiement introuvable.');
+        }
+
+        $contrat = $this->contratModel->getContratDetails($paiement['contrat_id']);
+        $locataire = $this->locataireModel->find($contrat['locataire_id']);
+        $appartement = $this->appartementModel->find($contrat['appartement_id']);
+
+        $gestionnaire = null;
+        if (!empty($paiement['enregistre_par'])) {
+            $gestionnaire = $this->utilisateurModel->find($paiement['enregistre_par']);
+        }
+
+        $receiptData = $this->calculateReceiptData($paiement, $contrat, $locataire, $appartement, $gestionnaire);
+
+        // Générer le PDF
+        $pdfGenerator = new PdfGenerator();
+        $filename = 'Recu_' . $receiptData['numero_receipt'] . '.pdf';
+
+        return $pdfGenerator->generate('admin/receipts/receipt', $receiptData, $filename, $mode);
     }
 }

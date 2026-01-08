@@ -145,7 +145,9 @@ class StructureParamModel extends Model
             'structure_logo' => $this->getParam('structure_logo', ''),
             'structure_rc' => $this->getParam('structure_rc', ''),
             'structure_nif' => $this->getParam('structure_nif', ''),
-            'structure_legal_form' => $this->getParam('structure_legal_form', 'SARL')
+            'structure_legal_form' => $this->getParam('structure_legal_form', 'SARL'),
+            'default_nationality' => $this->getParam('default_nationality', 'Ivoirienne'),
+            'default_id_type' => $this->getParam('default_id_type', 'CNI')
         ];
 
         return $structureParams;
@@ -175,5 +177,58 @@ class StructureParamModel extends Model
                     ->distinct()
                     ->orderBy('param_group')
                     ->findAll();
+    }
+
+    /**
+     * Obtenir les paramètres SMTP depuis BD avec fallback .env
+     */
+    public function getSmtpParams()
+    {
+        return [
+            'smtp_host' => $this->getParam('smtp_host') ?: getenv('SMTP_HOST'),
+            'smtp_port' => $this->getParam('smtp_port') ?: getenv('SMTP_PORT'),
+            'smtp_user' => $this->getParam('smtp_user') ?: getenv('SMTP_USER'),
+            'smtp_pass' => $this->getParam('smtp_pass') ?: getenv('SMTP_PASS'),
+            'smtp_crypto' => $this->getParam('smtp_crypto') ?: getenv('SMTP_CRYPTO'),
+            'smtp_from_email' => $this->getParam('smtp_from_email') ?: getenv('SMTP_USER'),
+            'smtp_from_name' => $this->getParam('smtp_from_name') ?: 'T-Lodge',
+            'smtp_timeout' => $this->getParam('smtp_timeout') ?: 60,
+        ];
+    }
+
+    /**
+     * Obtenir le logo encodé en Base64
+     */
+    public function getLogoBase64()
+    {
+        $logoPath = $this->getParam('structure_logo');
+        if (empty($logoPath)) {
+            return null;
+        }
+
+        $fullPath = FCPATH . $logoPath;
+        if (!file_exists($fullPath)) {
+            return null;
+        }
+
+        $imageData = file_get_contents($fullPath);
+        if ($imageData === false) {
+            return null;
+        }
+
+        $base64 = base64_encode($imageData);
+        $mimeType = mime_content_type($fullPath);
+
+        return "data:$mimeType;base64,$base64";
+    }
+
+    /**
+     * Mettre à jour paramètres SMTP
+     */
+    public function updateSmtpParams($params)
+    {
+        // Note: Pour l'instant, stockage en clair du mot de passe
+        // Amélioration future : Chiffrer le mot de passe avec CodeIgniter Encryption
+        return $this->updateBatchParams($params);
     }
 }

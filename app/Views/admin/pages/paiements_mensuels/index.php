@@ -11,7 +11,7 @@
                 </h5>
                 <div class="btn-group">
                     <a href="<?= base_url('admin/paiements-mensuels/dashboard') ?>" class="btn btn-primary">
-                        <i class="feather-bar-chart-2 me-2"></i>Dashboard
+                        <i class="feather-bar-chart-2 me-2"></i>Tableau de Bord
                     </a>
                     <a href="<?= base_url('admin/contrats') ?>" class="btn btn-secondary">
                         <i class="feather-file-text me-2"></i>Contrats
@@ -22,62 +22,70 @@
             <!-- Statistiques rapides -->
             <div class="row mb-4">
                 <div class="col-md-3">
-                    <div class="card bg-primary text-white">
+                    <div class="card text-white" style="background: linear-gradient(135deg, #d29751 0%, #b8834a 100%); border: none; box-shadow: 0 4px 12px rgba(210, 151, 81, 0.3);">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
-                                    <h6 class="card-title mb-0">Échéances Proches</h6>
-                                    <h4 class="mb-0"><?= count($echeances_proches) ?></h4>
+                                    <h6 class="card-title mb-0 fw-semibold">Échéances Proches</h6>
+                                    <h4 class="mb-0 fw-bold mt-2"><?= count($echeances_proches) ?></h4>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <i class="feather-calendar" style="font-size: 2rem;"></i>
+                                    <div class="avatar-text avatar-lg text-white" style="background: rgba(255,255,255,0.2);">
+                                        <i class="feather-calendar"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-danger text-white">
+                    <div class="card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border: none; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
-                                    <h6 class="card-title mb-0">Retards</h6>
-                                    <h4 class="mb-0"><?= count($retards) ?></h4>
+                                    <h6 class="card-title mb-0 fw-semibold">Retards</h6>
+                                    <h4 class="mb-0 fw-bold mt-2"><?= count($retards) ?></h4>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <i class="feather-alert-triangle" style="font-size: 2rem;"></i>
+                                    <div class="avatar-text avatar-lg text-white" style="background: rgba(255,255,255,0.2);">
+                                        <i class="feather-alert-triangle"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-success text-white">
+                    <div class="card text-white" style="background: linear-gradient(135deg, #28a745 0%, #218838 100%); border: none; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
-                                    <h6 class="card-title mb-0">Paiements Aujourd'hui</h6>
-                                    <h4 class="mb-0"><?= count(array_filter($echeances_proches, function($e) { return date('Y-m-d', strtotime($e['date_echeance'])) === date('Y-m-d'); })) ?></h4>
+                                    <h6 class="card-title mb-0 fw-semibold">Paiements Aujourd'hui</h6>
+                                    <h4 class="mb-0 fw-bold mt-2"><?= count(array_filter($echeances_proches, function($e) { return date('Y-m-d', strtotime($e['date_echeance'])) === date('Y-m-d'); })) ?></h4>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <i class="feather-check-circle" style="font-size: 2rem;"></i>
+                                    <div class="avatar-text avatar-lg text-white" style="background: rgba(255,255,255,0.2);">
+                                        <i class="feather-check-circle"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-info text-white">
+                    <div class="card" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #dee2e6; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
-                                    <h6 class="card-title mb-0">Actions</h6>
-                                    <button class="btn btn-light btn-sm" onclick="verifierEcheances()">
+                                    <h6 class="card-title mb-0 fw-semibold" style="color: #d29751;">Actions</h6>
+                                    <button class="btn btn-sm mt-2 text-white" style="background: #d29751; border: none;" onclick="verifierEcheances()">
                                         <i class="feather-refresh-cw me-1"></i>Vérifier
                                     </button>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <i class="feather-settings" style="font-size: 2rem;"></i>
+                                    <div class="avatar-text avatar-lg text-white" style="background: #d29751;">
+                                        <i class="feather-settings"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -91,8 +99,8 @@
         <!-- Échéances proches -->
         <div class="col-md-6">
             <div class="card" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
-                <div class="card-header bg-warning text-dark">
-                    <h6 class="mb-0">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #d29751 0%, #b8834a 100%); border-radius: 10px 10px 0 0;">
+                    <h6 class="mb-0 fw-semibold">
                         <i class="feather-calendar me-2"></i>
                         Échéances Proches (5 jours)
                     </h6>

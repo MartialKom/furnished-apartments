@@ -24,7 +24,7 @@ class ReservationController extends BaseController
     public function index()
     {
         $data = [
-            'title' => 'Réservation - Furnished Apartments',
+            'title' => 'Réservation - T-Lodge',
             'description' => 'Réservez votre appartement meublé',
             'appartements' => $this->appartementModel->where('statut', 'disponible')->findAll()
         ];

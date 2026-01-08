@@ -4,11 +4,11 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="<?= isset($description) ? $description : 'Admin Dashboard - NSENOU TOWER' ?>" />
+    <meta name="description" content="<?= isset($description) ? $description : 'Tableau de Bord Admin - T-Lodge' ?>" />
     <meta name="keyword" content="" />
-    <meta name="author" content="Furnished Apartments" />
-    
-    <title><?= isset($title) ? $title : 'Admin Dashboard - NsenouTower' ?></title>
+    <meta name="author" content="T-Lodge" />
+
+    <title><?= isset($title) ? $title : 'Tableau de Bord Admin - T-Lodge' ?></title>
     
     <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/admin/images/favicon.ico') ?>" />
     
@@ -18,7 +18,9 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/vendors.min.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/daterangepicker.min.css') ?>" />
-    
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/select2.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/select2-theme.min.css') ?>" />
+
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/theme.min.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/status-badges.css') ?>" />
@@ -124,10 +126,10 @@
             <div class="page-header">
                 <div class="page-header-left d-flex align-items-center">
                     <div class="page-header-title">
-                        <h5 class="m-b-10"><?= isset($page_title) ? $page_title : 'Dashboard' ?></h5>
+                        <h5 class="m-b-10"><?= isset($page_title) ? $page_title : 'Tableau de Bord' ?></h5>
                     </div>
                     <ul class="breadcrumb">
-                        <?= isset($breadcrumbs) ? $breadcrumbs : '<li class="breadcrumb-item">Dashboard</li>' ?>
+                        <?= isset($breadcrumbs) ? $breadcrumbs : '<li class="breadcrumb-item">Tableau de Bord</li>' ?>
                     </ul>
                 </div>
                 <div class="page-header-right ms-auto">
@@ -164,9 +166,18 @@
     
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    
+
     <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
+
+    <!-- Moment.js (required for daterangepicker) -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+
+    <!-- Select2 -->
+    <script src="<?= base_url('assets/admin/js/select2.min.js') ?>"></script>
+
+    <!-- Daterangepicker (requires moment.js) -->
     <script src="<?= base_url('assets/admin/js/daterangepicker.min.js') ?>"></script>
+
     <script src="<?= base_url('assets/admin/js/apexcharts.min.js') ?>"></script>
     <script src="<?= base_url('assets/admin/js/circle-progress.min.js') ?>"></script>
     
@@ -195,8 +206,10 @@
             "hideMethod": "fadeOut"
         };
     </script>
-    
-    
+
+    <!-- Modales de détails réutilisables -->
+    <?= view('admin/components/details_modals') ?>
+
     <?= $this->renderSection('scripts') ?>
 </body>
 </html>

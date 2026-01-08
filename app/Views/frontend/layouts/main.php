@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><?= isset($title) ? $title : 'Furnished Apartments - Premium Real Estate' ?></title>
-    <meta name="description" content="<?= isset($description) ? $description : 'Premium furnished apartments for rent' ?>">
+    <title><?= isset($title) ? $title : 'T-Lodge - Premium Furnished Apartments' ?></title>
+    <meta name="description" content="<?= isset($description) ? $description : 'T-Lodge - Premium furnished apartments for rent' ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/frontend/images/favicon.ico') ?>">
 

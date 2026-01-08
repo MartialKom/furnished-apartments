@@ -12,7 +12,7 @@ class UtilisateurModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nom', 'prenom', 'nomUtilisateur', 'telephone', 'email', 'role', 'motDePasse', 'statut'];
+    protected $allowedFields    = ['nom', 'prenom', 'nomUtilisateur', 'telephone', 'email', 'role', 'role_id', 'motDePasse', 'statut'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -34,7 +34,8 @@ class UtilisateurModel extends Model
         'nomUtilisateur' => 'required|string|max_length[50]|is_unique[utilisateurs.nomUtilisateur,id,{id}]',
         'telephone' => 'required|string|max_length[20]|is_unique[utilisateurs.telephone,id,{id}]',
         'email' => 'permit_empty|valid_email|max_length[150]',
-        'role' => 'required|in_list[admin,gestionnaire]',
+        'role' => 'permit_empty|in_list[admin,gestionnaire]', // Kept for backward compatibility
+        'role_id' => 'permit_empty|integer',
         'motDePasse' => 'required|string|min_length[6]',
         'statut' => 'permit_empty|in_list[actif,inactif]'
     ];
@@ -82,4 +83,52 @@ class UtilisateurModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    /**
+     * Get user with role and permissions
+     *
+     * @param int $userId The user ID
+     * @return array|null User data with role and permissions, or null if not found
+     */
+    public function getUserWithPermissions(int $userId): ?array
+    {
+        $user = $this->find($userId);
+        if (!$user) {
+            return null;
+        }
+
+        // Initialize default values
+        $user['role_data'] = null;
+        $user['permissions'] = [];
+
+        // Get role and permissions if user has a role assigned
+        if (!empty($user['role_id'])) {
+            $roleModel = new RoleModel();
+            $role = $roleModel->getRoleWithPermissions($user['role_id']);
+
+            if ($role) {
+                $user['role_data'] = $role;
+                $user['permissions'] = array_column($role['permissions'] ?? [], 'code');
+            }
+        }
+
+        return $user;
+    }
+
+    /**
+     * Get user's role
+     *
+     * @param int $userId The user ID
+     * @return array|null Role data or null if not found
+     */
+    public function getUserRole(int $userId): ?array
+    {
+        $user = $this->find($userId);
+        if (!$user || empty($user['role_id'])) {
+            return null;
+        }
+
+        $roleModel = new RoleModel();
+        return $roleModel->find($user['role_id']);
+    }
 }

@@ -26,7 +26,13 @@
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
-        
+
+        .company-logo {
+            max-width: 150px;
+            max-height: 80px;
+            margin-bottom: 15px;
+        }
+
         .contract-title {
             font-size: 24px;
             font-weight: bold;
@@ -118,6 +124,9 @@
 <body>
     <div class="contract-container">
         <div class="contract-header">
+            <?php if (!empty($structure_logo) && file_exists(FCPATH . $structure_logo)): ?>
+                <img src="<?= base_url($structure_logo) ?>" alt="Logo" class="company-logo">
+            <?php endif; ?>
             <div class="contract-title"><?= esc($structure_name) ?></div>
             <div><?= esc($structure_address) ?></div>
             <div>Tél: <?= esc($structure_phone) ?> | Email: <?= esc($structure_email) ?></div>
@@ -138,7 +147,7 @@
                 
                 <p><strong>ET</strong></p>
                 
-                <p><strong>LE PRENEUR :</strong> <strong><?= esc($locataire['nom']) ?></strong>, de nationalité ivoirienne, né(e) le [DATE_NAISSANCE], demeurant [ADRESSE_ACTUELLE], titulaire de la carte d'identité nationale N° [NUMERO_CNI], téléphone <?= esc($locataire['telephone']) ?>, email <?= esc($locataire['email']) ?>.</p>
+                <p><strong>LE PRENEUR :</strong> <strong><?= esc($locataire['nom']) ?></strong>, de nationalité <?= esc($locataire['nationalite'] ?? 'non renseignée') ?>, né(e) le <?= $locataire['date_naissance'] ? date('d/m/Y', strtotime($locataire['date_naissance'])) : 'non renseignée' ?><?= !empty($locataire['lieu_naissance']) ? ' à ' . esc($locataire['lieu_naissance']) : '' ?>, titulaire de la carte d'identité nationale N° <?= esc($locataire['numero_piece'] ?? 'non renseigné') ?>, téléphone <?= esc($locataire['telephone']) ?>, email <?= esc($locataire['email']) ?>.</p>
                 
                 <p><strong>D'AUTRE PART,</strong></p>
             </div>
@@ -151,7 +160,7 @@
                 <p><strong>Article 1 - OBJET DU CONTRAT</strong></p>
                 <p>Le présent contrat a pour objet la location de l'appartement situé à l'adresse suivante :</p>
                 <p class="highlight"><?= esc($appartement['adresse']) ?></p>
-                <p>Appartement de type <strong><?= esc(ucfirst($appartement['type'])) ?></strong>, d'une superficie de [SUPERFICIE] m².</p>
+                <p>Appartement de type <strong><?= esc(ucfirst($appartement['type'])) ?></strong><?= !empty($appartement['superficie']) ? ', d\'une superficie de ' . esc($appartement['superficie']) . ' m²' : '' ?>.</p>
             </div>
         </div>
 
@@ -195,7 +204,7 @@
                     <li>Occuper personnellement les lieux et ne pas les sous-louer sans autorisation écrite du bailleur</li>
                     <li>Entretenir l'appartement et effectuer les réparations locatives</li>
                     <li>Respecter le règlement intérieur de l'immeuble</li>
-                    <li>Donner un préavis de [DURÉE_PRÉAVIS] mois avant de quitter les lieux</li>
+                    <li>Donner un préavis de 1 mois avant de quitter les lieux</li>
                     <li>Permettre au bailleur de visiter l'appartement avec préavis de 24h</li>
                 </ol>
             </div>
@@ -219,7 +228,7 @@
             <div class="contract-text">
                 <p>Le contrat peut être résilié :</p>
                 <ul>
-                    <li>Par le preneur avec un préavis de [DURÉE_PRÉAVIS] mois</li>
+                    <li>Par le preneur avec un préavis de 1 mois</li>
                     <li>Par le bailleur pour non-paiement du loyer après mise en demeure</li>
                     <li>D'un commun accord entre les parties</li>
                 </ul>

@@ -49,18 +49,23 @@
             <div class="tab-pane fade show active" id="disponible" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['disponible'])): ?>
-                        <?php foreach ($voitures['disponible'] as $voiture):
-                            // Extraire la première photo
+                        <?php foreach ($voitures['disponible'] as $voiture): ?>
+                            <?php
+                            // Récupérer la première photo
                             $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
-                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
-                        ?>
+                            $premierePhoto = !empty($photos) ? trim($photos[0]) : '';
+                            ?>
                             <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
-                                    <?php if ($firstPhoto): ?>
-                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
+                                    <?php if ($premierePhoto): ?>
+                                        <div style="height: 200px; overflow: hidden; background: #f8f9fa;">
+                                            <img src="<?= base_url($premierePhoto) ?>"
+                                                 alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>"
+                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
                                     <?php else: ?>
-                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
-                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        <div style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                                            <i class="feather-truck" style="font-size: 4rem; color: white; opacity: 0.5;"></i>
                                         </div>
                                     <?php endif; ?>
                                     <div class="card-body">
@@ -110,18 +115,23 @@
             <div class="tab-pane fade" id="louee" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['louee'])): ?>
-                        <?php foreach ($voitures['louee'] as $voiture):
-                            // Extraire la première photo
+                        <?php foreach ($voitures['louee'] as $voiture): ?>
+                            <?php
+                            // Récupérer la première photo
                             $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
-                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
-                        ?>
+                            $premierePhoto = !empty($photos) ? trim($photos[0]) : '';
+                            ?>
                             <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
-                                    <?php if ($firstPhoto): ?>
-                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
+                                    <?php if ($premierePhoto): ?>
+                                        <div style="height: 200px; overflow: hidden; background: #f8f9fa;">
+                                            <img src="<?= base_url($premierePhoto) ?>"
+                                                 alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>"
+                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
                                     <?php else: ?>
-                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
-                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        <div style="height: 200px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center;">
+                                            <i class="feather-truck" style="font-size: 4rem; color: white; opacity: 0.5;"></i>
                                         </div>
                                     <?php endif; ?>
                                     <div class="card-body">
@@ -160,18 +170,23 @@
             <div class="tab-pane fade" id="maintenance" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['maintenance'])): ?>
-                        <?php foreach ($voitures['maintenance'] as $voiture):
-                            // Extraire la première photo
+                        <?php foreach ($voitures['maintenance'] as $voiture): ?>
+                            <?php
+                            // Récupérer la première photo
                             $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
-                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
-                        ?>
+                            $premierePhoto = !empty($photos) ? trim($photos[0]) : '';
+                            ?>
                             <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
-                                    <?php if ($firstPhoto): ?>
-                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
+                                    <?php if ($premierePhoto): ?>
+                                        <div style="height: 200px; overflow: hidden; background: #f8f9fa;">
+                                            <img src="<?= base_url($premierePhoto) ?>"
+                                                 alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>"
+                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
                                     <?php else: ?>
-                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
-                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        <div style="height: 200px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center;">
+                                            <i class="feather-truck" style="font-size: 4rem; color: white; opacity: 0.5;"></i>
                                         </div>
                                     <?php endif; ?>
                                     <div class="card-body">
@@ -204,18 +219,23 @@
             <div class="tab-pane fade" id="indisponible" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($voitures['indisponible'])): ?>
-                        <?php foreach ($voitures['indisponible'] as $voiture):
-                            // Extraire la première photo
+                        <?php foreach ($voitures['indisponible'] as $voiture): ?>
+                            <?php
+                            // Récupérer la première photo
                             $photos = !empty($voiture['photos']) ? explode(',', $voiture['photos']) : [];
-                            $firstPhoto = !empty($photos) ? trim($photos[0]) : '';
-                        ?>
+                            $premierePhoto = !empty($photos) ? trim($photos[0]) : '';
+                            ?>
                             <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
-                                    <?php if ($firstPhoto): ?>
-                                        <img src="<?= base_url($firstPhoto) ?>" class="card-img-top" alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
+                                    <?php if ($premierePhoto): ?>
+                                        <div style="height: 200px; overflow: hidden; background: #f8f9fa; position: relative;">
+                                            <img src="<?= base_url($premierePhoto) ?>"
+                                                 alt="<?= esc($voiture['marque']) ?> <?= esc($voiture['modele']) ?>"
+                                                 style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(50%);">
+                                        </div>
                                     <?php else: ?>
-                                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px 10px 0 0;">
-                                            <i class="feather-truck text-white" style="font-size: 3rem;"></i>
+                                        <div style="height: 200px; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); display: flex; align-items: center; justify-content: center;">
+                                            <i class="feather-truck" style="font-size: 4rem; color: white; opacity: 0.5;"></i>
                                         </div>
                                     <?php endif; ?>
                                     <div class="card-body">

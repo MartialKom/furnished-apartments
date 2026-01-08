@@ -10,6 +10,8 @@ class NotificationService
     protected $config;
 
     protected $structureParams;
+    protected $logoBase64;
+    protected $structureParamModel;
 
     public function __construct()
     {
@@ -17,8 +19,11 @@ class NotificationService
         $this->config = config('Email');
 
         // Charger les paramètres de la structure
-        $structureModel = new \App\Models\StructureParamModel();
-        $this->structureParams = $structureModel->getStructureParams();
+        $this->structureParamModel = new \App\Models\StructureParamModel();
+        $this->structureParams = $this->structureParamModel->getStructureParams();
+
+        // Charger le logo encodé en Base64
+        $this->logoBase64 = $this->structureParamModel->getLogoBase64();
     }
     
     /**
@@ -26,9 +31,24 @@ class NotificationService
      */
     public function isEmailConfigured()
     {
-        return !empty($this->config->SMTPHost) &&
-               !empty($this->config->SMTPUser) &&
-               !empty($this->config->SMTPPass);
+        // Vérifier paramètres depuis BD d'abord
+        $smtpParams = $this->structureParamModel->getSmtpParams();
+
+        if (!empty($smtpParams['smtp_host']) &&
+            !empty($smtpParams['smtp_user']) &&
+            !empty($smtpParams['smtp_pass'])) {
+            return true;
+        }
+
+        // Fallback: vérifier config chargée (qui inclut déjà le fallback .env)
+        if (!empty($this->config->SMTPHost) &&
+            !empty($this->config->SMTPUser) &&
+            !empty($this->config->SMTPPass)) {
+            return true;
+        }
+
+        log_message('warning', 'Configuration SMTP non trouvée ni en BD ni dans .env');
+        return false;
     }
 
     /**
@@ -274,7 +294,7 @@ class NotificationService
     /**
      * Générer le message d'échéance pour le locataire
      */
-    private function genererMessageEcheance($locataire, $echeance, $contrat)
+    public function genererMessageEcheance($locataire, $echeance, $contrat)
     {
         $joursRestants = (strtotime($echeance['date_echeance']) - time()) / (60 * 60 * 24);
         $joursRestants = ceil($joursRestants);
@@ -603,6 +623,13 @@ class NotificationService
         $html .= '<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>';
         $html .= '<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">';
         $html .= '<div style="max-width: 600px; margin: 20px auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">';
+
+        // Ajouter le logo s'il est disponible
+        if ($this->logoBase64) {
+            $html .= '<div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-bottom: 3px solid #d29751;">';
+            $html .= '<img src="' . $this->logoBase64 . '" alt="' . esc($this->structureParams['structure_name']) . '" style="max-width: 200px; height: auto;">';
+            $html .= '</div>';
+        }
 
         return $html;
     }

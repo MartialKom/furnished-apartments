@@ -12,7 +12,26 @@ class ReservationModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['date_debut', 'date_fin', 'locataire_id', 'appartement_id', 'statut', 'montant_total', 'montant_paye', 'montant_restant', 'type_reservation', 'notes', 'reduction_pourcentage', 'montant_reduction', 'prix_original', 'motif_annulation', 'client_nom', 'client_email', 'client_telephone'];
+    protected $allowedFields    = [
+        'date_debut',
+        'date_fin',
+        'locataire_id',
+        'appartement_id',
+        'statut',
+        'montant_total',
+        'montant_paye',
+        'montant_restant',
+        'mode_paiement',
+        'type_reservation',
+        'notes',
+        'reduction_pourcentage',
+        'montant_reduction',
+        'prix_original',
+        'motif_annulation',
+        'client_nom',
+        'client_email',
+        'client_telephone'
+    ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -33,10 +52,11 @@ class ReservationModel extends Model
         'date_fin' => 'required|valid_date',
         'locataire_id' => 'permit_empty|integer',
         'appartement_id' => 'required|integer',
-        'statut' => 'required|in_list[en_attente,confirmee,annulee,terminee]',
+        'statut' => 'required|in_list[en_attente,confirmee,en_cours,terminee,annulee]',
         'montant_total' => 'permit_empty|decimal',
         'montant_paye' => 'permit_empty|decimal',
         'montant_restant' => 'permit_empty|decimal',
+        'mode_paiement' => 'required|in_list[especes,orange_money,momo,carte_bancaire,virement]',
         'type_reservation' => 'permit_empty|in_list[en_ligne,telephonique,presentiel]',
         'notes' => 'permit_empty|string',
         'reduction_pourcentage' => 'permit_empty|decimal',
@@ -180,6 +200,30 @@ class ReservationModel extends Model
                     ->join('appartements', 'appartements.id = reservations.appartement_id')
                     ->orderBy('reservations.created_at', 'DESC')
                     ->findAll();
+    }
+
+    /**
+     * Met à jour automatiquement les statuts des réservations en fonction des dates
+     * - Passe de 'confirmee' à 'en_cours' si la date de début est atteinte
+     * - Passe de 'en_cours' à 'terminee' si la date de fin est dépassée
+     */
+    public function mettreAJourStatutsAutomatiques()
+    {
+        $dateActuelle = date('Y-m-d');
+
+        // Passer les réservations confirmées en 'en_cours' si la date de début est atteinte ou dépassée
+        $this->where('statut', 'confirmee')
+             ->where('date_debut <=', $dateActuelle)
+             ->set(['statut' => 'en_cours'])
+             ->update();
+
+        // Passer les réservations en cours en 'terminee' si la date de fin est dépassée
+        $this->where('statut', 'en_cours')
+             ->where('date_fin <', $dateActuelle)
+             ->set(['statut' => 'terminee'])
+             ->update();
+
+        return true;
     }
 
     // Callbacks

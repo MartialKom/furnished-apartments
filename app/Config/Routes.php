@@ -6,9 +6,12 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+// Route par défaut - Page d'accueil frontend
+$routes->get('/', 'Frontend\HomeController::index');
+
 // Frontend Routes
 $routes->group('', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
-    $routes->get('/', 'HomeController::index');
+    $routes->get('/home', 'HomeController::index');
     $routes->get('/about', 'HomeController::about');
     $routes->get('/apartments', 'HomeController::apartments');
     $routes->get('/apartments/(:num)', 'HomeController::apartmentDetails/$1');
@@ -25,10 +28,16 @@ $routes->group('', ['namespace' => 'App\Controllers\Frontend'], function ($route
 });
 
 // Admin Authentication Routes
-$routes->group('admin/auth', ['namespace' => 'App\Controllers'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
+    // Raccourci pour le login admin
     $routes->get('login', 'AuthController::login');
-    $routes->post('attempt-login', 'AuthController::attemptLogin');
-    $routes->get('logout', 'AuthController::logout');
+
+    // Routes d'authentification
+    $routes->group('auth', function ($routes) {
+        $routes->get('login', 'AuthController::login');
+        $routes->post('attempt-login', 'AuthController::attemptLogin');
+        $routes->get('logout', 'AuthController::logout');
+    });
 });
 
 // Language Routes
@@ -58,7 +67,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('utilisateurs/update/(:num)', 'UtilisateurController::update/$1');
         $routes->post('utilisateurs/toggle-status/(:num)', 'UtilisateurController::toggleStatus/$1');
         $routes->delete('utilisateurs/delete/(:num)', 'UtilisateurController::delete/$1');
-        
+
+        // Role Management - Admin only
+        $routes->get('roles', 'RoleController::index');
+        $routes->get('roles/create', 'RoleController::create');
+        $routes->post('roles/store', 'RoleController::store');
+        $routes->get('roles/edit/(:num)', 'RoleController::edit/$1');
+        $routes->post('roles/update/(:num)', 'RoleController::update/$1');
+        $routes->delete('roles/delete/(:num)', 'RoleController::delete/$1');
+        $routes->get('roles/get/(:num)', 'RoleController::get/$1');
+        $routes->post('roles/toggle-status/(:num)', 'RoleController::toggleStatus/$1');
+
         // Reports - Admin only
         $routes->get('reports', 'DashboardController::reports');
         $routes->get('reports/sales', 'DashboardController::reports');
@@ -67,7 +86,15 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         
         // Settings - Admin only
         $routes->get('settings', 'ParametresController::index');
-        
+        $routes->get('parametres', 'ParametresController::index');
+        $routes->post('parametres/update', 'ParametresController::update');
+        $routes->post('parametres/deleteLogo', 'ParametresController::deleteLogo');
+        $routes->post('parametres/add-param', 'ParametresController::addParam');
+        $routes->delete('parametres/delete/(:num)', 'ParametresController::deleteParam/$1');
+        $routes->get('parametres/get/(:any)', 'ParametresController::getParam/$1');
+        $routes->post('parametres/test-smtp', 'ParametresController::testSmtp');
+        $routes->get('parametres/preview-email', 'ParametresController::previewEmail');
+
         // Customers - Admin only
         $routes->get('customers', 'DashboardController::customers');
         $routes->get('customers/create', 'DashboardController::createCustomer');
@@ -109,6 +136,12 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('appartements/toggle-status/(:num)', 'AppartementController::toggleStatus/$1');
         $routes->post('appartements/toggle-type/(:num)', 'AppartementController::toggleType/$1');
         $routes->delete('appartements/delete/(:num)', 'AppartementController::delete/$1');
+
+        // Calendrier des occupations
+        $routes->get('calendrier', 'CalendrierController::index');
+        $routes->get('calendrier/evenements', 'CalendrierController::getEvenements');
+        $routes->get('calendrier/details', 'CalendrierController::getDetailsEvenement');
+        $routes->get('calendrier/statistiques', 'CalendrierController::getStatistiques');
     });
     
     $routes->group('', ['filter' => 'auth:reservations'], function ($routes) {
@@ -142,12 +175,15 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('paiements-mensuels/contrat/(:num)', 'PaiementMensuelController::getPaiementsContrat/$1');
         $routes->get('paiements-mensuels/echeance/(:num)', 'PaiementMensuelController::getEcheanceDetails/$1');
         $routes->post('paiements-mensuels/rappel/(:num)', 'PaiementMensuelController::envoyerRappel/$1');
+        $routes->post('paiements-mensuels/rappels-groupes', 'PaiementMensuelController::envoyerRappelsGroupes');
+        $routes->post('paiements-mensuels/rappels-retard', 'PaiementMensuelController::envoyerRappelsRetard');
 
         // Factures d'eau
         $routes->get('factures-eau', 'FactureEauController::index');
         $routes->get('factures-eau/create', 'FactureEauController::create');
         $routes->post('factures-eau/store', 'FactureEauController::store');
         $routes->get('factures-eau/get/(:num)', 'FactureEauController::get/$1');
+        $routes->get('factures-eau/generer-facture/(:num)', 'FactureEauController::genererFacture/$1');
         $routes->post('factures-eau/marquer-paye/(:num)', 'FactureEauController::marquerPaye/$1');
         $routes->post('factures-eau/update/(:num)', 'FactureEauController::update/$1');
         $routes->delete('factures-eau/delete/(:num)', 'FactureEauController::delete/$1');
@@ -174,17 +210,15 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         // Reçus de paiement
         $routes->get('receipts/generate/(:num)', 'ReceiptController::generateReceipt/$1');
         $routes->get('receipts/multiple/(:num)/(:any)', 'ReceiptController::generateMultipleReceipt/$1/$2');
-        
+        $routes->get('receipts/pdf/(:num)', 'ReceiptController::downloadReceiptPDF/$1');
+        $routes->get('receipts/pdf/(:num)/(:alpha)', 'ReceiptController::downloadReceiptPDF/$1/$2');
+
         // Contrats de location (Admin uniquement)
         $routes->get('contrats-location', 'ContratController::listContrats');
         $routes->get('contrats-location/generate/(:num)', 'ContratController::generateContrat/$1');
-        
-        // Paramètres de la structure (Admin uniquement)
-        $routes->get('parametres', 'ParametresController::index');
-        $routes->post('parametres/update', 'ParametresController::update');
-        $routes->post('parametres/add-param', 'ParametresController::addParam');
-        $routes->delete('parametres/delete/(:num)', 'ParametresController::deleteParam/$1');
-        $routes->get('parametres/get/(:any)', 'ParametresController::getParam/$1');
+        $routes->get('contrats-location/pdf/(:num)', 'ContratController::downloadContratPDF/$1');
+        $routes->get('contrats-location/pdf/(:num)/(:alpha)', 'ContratController::downloadContratPDF/$1/$2');
+
         $routes->get('receipts/view/(:num)', 'ReceiptController::viewReceipt/$1');
     });
     
@@ -193,6 +227,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('locataires', 'LocataireController::index');
         $routes->post('locataires/create', 'LocataireController::create');
         $routes->get('locataires/get/(:num)', 'LocataireController::get/$1');
+        $routes->get('locataires/search', 'LocataireController::search');
         $routes->post('locataires/update/(:num)', 'LocataireController::update/$1');
         $routes->delete('locataires/delete/(:num)', 'LocataireController::delete/$1');
     });
@@ -202,6 +237,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('paiements', 'PaiementController::index');
         $routes->post('paiements/update-statut/(:num)', 'PaiementController::updateStatut/$1');
         $routes->get('paiements/generer-facture/(:num)', 'PaiementController::genererFacture/$1');
+        $routes->get('paiements/facture-pdf/(:num)', 'PaiementController::downloadFacturePDF/$1');
+        $routes->get('paiements/facture-pdf/(:num)/(:alpha)', 'PaiementController::downloadFacturePDF/$1/$2');
         $routes->get('paiements/get/(:num)', 'PaiementController::get/$1');
     });
 

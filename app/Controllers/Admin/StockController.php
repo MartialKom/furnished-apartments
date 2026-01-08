@@ -10,6 +10,7 @@ use App\Models\StockSortieModel;
 use App\Models\StockInventaireModel;
 use App\Models\StockInventaireDetailModel;
 use App\Models\AppartementModel;
+use App\Models\StructureParamModel;
 
 class StockController extends BaseController
 {
@@ -20,6 +21,7 @@ class StockController extends BaseController
     protected $inventaireModel;
     protected $inventaireDetailModel;
     protected $appartementModel;
+    protected $structureParamModel;
 
     public function __construct()
     {
@@ -30,6 +32,7 @@ class StockController extends BaseController
         $this->inventaireModel = new StockInventaireModel();
         $this->inventaireDetailModel = new StockInventaireDetailModel();
         $this->appartementModel = new AppartementModel();
+        $this->structureParamModel = new StructureParamModel();
     }
 
     // =====================================================
@@ -754,12 +757,18 @@ class StockController extends BaseController
     public function imprimerStock()
     {
         $produits = $this->produitModel->getProduitsAvecCategorie();
+        $structureParams = $this->structureParamModel->getStructureParams();
 
         $data = [
             'title' => 'État du Stock',
             'date' => date('d/m/Y'),
             'produits' => $produits,
             'valeur_totale' => $this->produitModel->getValeurTotaleStock(),
+            'structure_nom' => $structureParams['structure_name'],
+            'structure_adresse' => $structureParams['structure_address'],
+            'structure_telephone' => $structureParams['structure_phone'],
+            'structure_email' => $structureParams['structure_email'],
+            'structure_logo' => $structureParams['structure_logo'],
         ];
 
         return view('admin/pages/stock/rapports/print_stock', $data);
@@ -771,6 +780,7 @@ class StockController extends BaseController
         $dateFin = $this->request->getGet('date_fin') ?: date('Y-m-t');
 
         $sorties = $this->sortieModel->getSortiesPeriode($dateDebut, $dateFin);
+        $structureParams = $this->structureParamModel->getStructureParams();
 
         $data = [
             'title' => 'Historique des Sorties',
@@ -778,6 +788,11 @@ class StockController extends BaseController
             'date_fin' => $dateFin,
             'sorties' => $sorties,
             'statistiques' => $this->sortieModel->getStatistiques($dateDebut, $dateFin),
+            'structure_nom' => $structureParams['structure_name'],
+            'structure_adresse' => $structureParams['structure_address'],
+            'structure_telephone' => $structureParams['structure_phone'],
+            'structure_email' => $structureParams['structure_email'],
+            'structure_logo' => $structureParams['structure_logo'],
         ];
 
         return view('admin/pages/stock/rapports/print_sorties', $data);

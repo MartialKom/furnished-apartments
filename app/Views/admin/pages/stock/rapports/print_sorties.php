@@ -167,8 +167,16 @@
     <button class="print-btn no-print" onclick="window.print()">🖨️ Imprimer</button>
 
     <div class="header">
+        <?php if (!empty($structure_logo) && file_exists(FCPATH . $structure_logo)): ?>
+            <img src="<?= base_url($structure_logo) ?>" alt="Logo" style="max-height: 60px; margin-bottom: 10px;">
+        <?php endif; ?>
         <h1>📤 HISTORIQUE DES SORTIES DE STOCK</h1>
-        <div class="subtitle">NSENOU TOWER - Appartements Meublés</div>
+        <div class="subtitle"><?= esc($structure_nom) ?></div>
+        <div class="subtitle" style="font-size: 11px; margin-top: 3px;">
+            <?= esc($structure_adresse) ?> |
+            <?= esc($structure_telephone) ?> |
+            <?= esc($structure_email) ?>
+        </div>
     </div>
 
     <div class="info-section">
@@ -255,7 +263,8 @@
 
     <div class="footer">
         <p>Document généré le <?= date('d/m/Y à H:i') ?></p>
-        <p>NSENOU TOWER - Système de Gestion de Stock</p>
+        <p><?= esc($structure_nom) ?> - Système de Gestion de Stock</p>
+        <p><?= esc($structure_adresse) ?> | <?= esc($structure_telephone) ?> | <?= esc($structure_email) ?></p>
     </div>
 
     <script>
