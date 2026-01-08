@@ -1,30 +1,28 @@
-<?= $this->extend('frontend/layouts/main') ?>
+<?= $this->extend('auth/layouts/auth_layout') ?>
 
 <?= $this->section('content') ?>
 
-<!-- Login Section -->
-<section class="breadcrumb-area" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 100px 0;">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xl-6 col-lg-8 col-md-10">
-                <div class="login-form-wrapper" style="background: #fff; padding: 50px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
-                    <div class="text-center mb-4">
-                        <h2 style="color: #d29751; font-weight: 600; margin-bottom: 10px;">Connexion</h2>
-                        <p style="color: #6e6e6e; font-size: 16px;">Accès réservé aux gestionnaires et administrateurs</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-5 col-lg-6 col-md-8">
+            <div class="login-form-wrapper" style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 50px; border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.3);">
+                <div class="text-center mb-4">
+                    <h2 style="color: #d29751; font-weight: 600; margin-bottom: 10px;">Connexion</h2>
+                    <p style="color: #6e6e6e; font-size: 16px;">Accès réservé aux gestionnaires et administrateurs</p>
+                </div>
+
+                <!-- Messages de succès/erreur -->
+                <?php if (session()->getFlashdata('success')): ?>
+                    <div class="alert alert-success" style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <i class="fas fa-check-circle"></i> <?= session()->getFlashdata('success') ?>
                     </div>
+                <?php endif; ?>
 
-                    <!-- Messages de succès/erreur -->
-                    <?php if (session()->getFlashdata('success')): ?>
-                        <div class="alert alert-success" style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                            <i class="fas fa-check-circle"></i> <?= session()->getFlashdata('success') ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (session()->getFlashdata('error')): ?>
-                        <div class="alert alert-danger" style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                            <i class="fas fa-exclamation-circle"></i> <?= session()->getFlashdata('error') ?>
-                        </div>
-                    <?php endif; ?>
+                <?php if (session()->getFlashdata('error')): ?>
+                    <div class="alert alert-danger" style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <i class="fas fa-exclamation-circle"></i> <?= session()->getFlashdata('error') ?>
+                    </div>
+                <?php endif; ?>
 
                     <!-- Formulaire de connexion -->
                     <form action="<?= base_url('admin/auth/attempt-login') ?>" method="POST" class="login-form">
@@ -96,16 +94,16 @@
                         <p style="color: #6e6e6e; font-size: 14px; margin-bottom: 15px;">
                             Vous n'avez pas accès ? Contactez votre administrateur.
                         </p>
-                        <a href="<?= base_url('/') ?>" style="color: #d29751; text-decoration: none; font-weight: 500;">
+                        <!-- <a href="<?= base_url('/home') ?>" style="color: #d29751; text-decoration: none; font-weight: 500;">
                             <i class="fas fa-arrow-left" style="margin-right: 5px;"></i>
                             Retour à l'accueil
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 
 <style>
 /* Styles personnalisés pour le formulaire de connexion */
@@ -121,19 +119,29 @@
     box-shadow: 0 5px 15px rgba(210, 151, 81, 0.3) !important;
 }
 
-.login-form-wrapper {
-    animation: fadeInUp 0.6s ease-out;
-}
-
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(30px) scale(0.95);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
+}
+
+/* Effet de flottement subtil */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.login-form-wrapper {
+    animation: fadeInUp 0.6s ease-out, float 6s ease-in-out infinite 1s;
 }
 
 .alert {

@@ -194,7 +194,7 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-3">
-                    <a href="<?= base_url('/admin/apartments/create') ?>" class="btn text-white" style="background: #d29751; border: none; transition: all 0.3s ease;" 
+                    <a href="<?= base_url('/admin/appartements?action=create') ?>" class="btn text-white" style="background: #d29751; border: none; transition: all 0.3s ease;"
                        onmouseover="this.style.background='#b8834a'" onmouseout="this.style.background='#d29751'">
                         <i class="feather-plus me-2"></i>Ajouter un Appartement
                     </a>

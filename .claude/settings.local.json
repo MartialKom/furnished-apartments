@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cat:*)"
+      "Bash(mysql:*)",
+      "Bash(php spark:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": []

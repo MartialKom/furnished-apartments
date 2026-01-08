@@ -5,7 +5,7 @@
                         <div class="row align-items-center">
                             <div class="col-xl-2 col-lg-2">
                                 <div class="logo">
-                                    <a href="index.html"><img src="<?= base_url('assets/frontend/images/logo/nsenou.png') ?>" alt="logo"></a>
+                                    <a href="<?= base_url('/home') ?>"><img src="<?= base_url('assets/frontend/images/logo/nsenou.png') ?>" alt="logo"></a>
                                 </div>
                             </div>
                             <div class="col-xl-10 col-lg-9">
@@ -13,7 +13,7 @@
                                 <div class="main-menu text-right <text-xl-right></text-xl-right>">
                                     <nav id="mobile-menu">
                                         <ul>
-                                            <li class="has-sub"><a href="<?= base_url('/') ?>" ><?= lang('Common.nav_home') ?></a></li>
+                                            <li class="has-sub"><a href="<?= base_url('/home') ?>" ><?= lang('Common.nav_home') ?></a></li>
                                             <li><a href="<?= base_url('about') ?>"><?= lang('Common.nav_about') ?></a></li>
                                             <li><a href="<?= base_url('apartments') ?>"><?= lang('Common.nav_apartments') ?></a></li>
                                             <li><a href="<?= base_url('cars') ?>">Location de Voitures</a></li>

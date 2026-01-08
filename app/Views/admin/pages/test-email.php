@@ -9,7 +9,7 @@
                 <h4 class="page-title">Test d'envoi d'email</h4>
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="<?= base_url('admin/dashboard') ?>">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= base_url('admin/dashboard') ?>">Tableau de Bord</a></li>
                         <li class="breadcrumb-item active">Test Email</li>
                     </ol>
                 </div>

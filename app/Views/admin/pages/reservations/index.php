@@ -18,19 +18,31 @@
         <ul class="nav nav-tabs mb-4" id="reservationTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="attente-tab" data-bs-toggle="tab" data-bs-target="#attente" type="button" role="tab">
-                    <i class="feather-clock me-2"></i>En attente 
+                    <i class="feather-clock me-2"></i>En attente
                     <span class="badge bg-warning text-dark ms-2"><?= count($reservations['en_attente']) ?></span>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="confirmee-tab" data-bs-toggle="tab" data-bs-target="#confirmee" type="button" role="tab">
-                    <i class="feather-check-circle me-2"></i>Confirmées 
+                    <i class="feather-check-circle me-2"></i>Confirmées
                     <span class="badge bg-success ms-2"><?= count($reservations['confirmee']) ?></span>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
+                <button class="nav-link" id="encours-tab" data-bs-toggle="tab" data-bs-target="#encours" type="button" role="tab">
+                    <i class="feather-play-circle me-2"></i>En cours
+                    <span class="badge bg-info ms-2"><?= count($reservations['en_cours']) ?></span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="terminee-tab" data-bs-toggle="tab" data-bs-target="#terminee" type="button" role="tab">
+                    <i class="feather-check me-2"></i>Terminées
+                    <span class="badge bg-secondary ms-2"><?= count($reservations['terminee']) ?></span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
                 <button class="nav-link" id="annulee-tab" data-bs-toggle="tab" data-bs-target="#annulee" type="button" role="tab">
-                    <i class="feather-x-circle me-2"></i>Annulées 
+                    <i class="feather-x-circle me-2"></i>Annulées
                     <span class="badge bg-danger ms-2"><?= count($reservations['annulee']) ?></span>
                 </button>
             </li>
@@ -53,6 +65,7 @@
                                         <th class="border-0">Montant</th>
                                         <th class="border-0">Réduction</th>
                                         <th class="border-0">Paiements</th>
+                                        <th class="border-0">Mode paiement</th>
                                         <th class="border-0">Type</th>
                                         <th class="border-0">Date demande</th>
                                         <th class="border-0 text-center">Actions</th>
@@ -98,6 +111,27 @@
                                                         <div class="fw-semibold text-primary"><?= number_format($reservation['montant_paye'] ?? 0, 0, ',', ' ') ?> FCFA</div>
                                                         <div class="text-muted small">Restant: <?= number_format($reservation['montant_restant'] ?? $reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $modePaiementClass = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'bg-secondary',
+                                                        'orange_money' => 'bg-warning text-dark',
+                                                        'momo' => 'bg-info',
+                                                        'carte_bancaire' => 'bg-primary',
+                                                        'virement' => 'bg-success',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $modePaiementText = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'Espèces',
+                                                        'orange_money' => 'Orange Money',
+                                                        'momo' => 'MOMO',
+                                                        'carte_bancaire' => 'Carte bancaire',
+                                                        'virement' => 'Virement',
+                                                        default => 'Espèces'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $modePaiementClass ?>"><?= $modePaiementText ?></span>
                                                 </td>
                                                 <td>
                                                     <?php
@@ -147,7 +181,7 @@
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="9" class="text-center py-5">
+                                            <td colspan="10" class="text-center py-5">
                                                 <i class="feather-clock" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                                 <p class="text-muted mt-2">Aucune réservation en attente</p>
                                             </td>
@@ -174,6 +208,7 @@
                                         <th class="border-0">Montant</th>
                                         <th class="border-0">Réduction</th>
                                         <th class="border-0">Paiements</th>
+                                        <th class="border-0">Mode paiement</th>
                                         <th class="border-0">Type</th>
                                         <th class="border-0">Date confirmation</th>
                                         <th class="border-0 text-center">Actions</th>
@@ -222,6 +257,27 @@
                                                 </td>
                                                 <td>
                                                     <?php
+                                                    $modePaiementClass = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'bg-secondary',
+                                                        'orange_money' => 'bg-warning text-dark',
+                                                        'momo' => 'bg-info',
+                                                        'carte_bancaire' => 'bg-primary',
+                                                        'virement' => 'bg-success',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $modePaiementText = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'Espèces',
+                                                        'orange_money' => 'Orange Money',
+                                                        'momo' => 'MOMO',
+                                                        'carte_bancaire' => 'Carte bancaire',
+                                                        'virement' => 'Virement',
+                                                        default => 'Espèces'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $modePaiementClass ?>"><?= $modePaiementText ?></span>
+                                                </td>
+                                                <td>
+                                                    <?php
                                                     $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'bg-success',
                                                         'telephonique' => 'bg-info',
@@ -242,17 +298,17 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group" role="group">
-                                                        <button type="button" class="btn btn-sm btn-primary add-payment" 
+                                                        <button type="button" class="btn btn-sm btn-primary add-payment"
                                                                 data-reservation-id="<?= $reservation['id'] ?>"
                                                                 data-bs-toggle="tooltip" title="Ajouter un paiement">
                                                             <i class="feather-credit-card"></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-sm btn-info view-payments" 
+                                                        <button type="button" class="btn btn-sm btn-info view-payments"
                                                                 data-reservation-id="<?= $reservation['id'] ?>"
                                                                 data-bs-toggle="tooltip" title="Voir les paiements">
                                                             <i class="feather-eye"></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-sm btn-danger cancel-reservation" 
+                                                        <button type="button" class="btn btn-sm btn-danger cancel-reservation"
                                                                 data-reservation-id="<?= $reservation['id'] ?>"
                                                                 data-bs-toggle="tooltip" title="Annuler">
                                                             <i class="feather-x"></i>
@@ -263,9 +319,260 @@
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="9" class="text-center py-5">
+                                            <td colspan="10" class="text-center py-5">
                                                 <i class="feather-check-circle" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                                 <p class="text-muted mt-2">Aucune réservation confirmée</p>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet En cours -->
+            <div class="tab-pane fade" id="encours" role="tabpanel">
+                <div class="card" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead style="background: #f8f9fa;">
+                                    <tr>
+                                        <th class="border-0">Locataire</th>
+                                        <th class="border-0">Appartement</th>
+                                        <th class="border-0">Période</th>
+                                        <th class="border-0">Montant</th>
+                                        <th class="border-0">Réduction</th>
+                                        <th class="border-0">Paiements</th>
+                                        <th class="border-0">Mode paiement</th>
+                                        <th class="border-0">Type</th>
+                                        <th class="border-0">Date début</th>
+                                        <th class="border-0 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($reservations['en_cours'])): ?>
+                                        <?php foreach ($reservations['en_cours'] as $reservation): ?>
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold"><?= esc($reservation['nom']) ?></div>
+                                                        <small class="text-muted"><?= esc($reservation['telephone']) ?></small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-medium"><?= esc($reservation['adresse']) ?></div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <small class="text-muted">Du</small> <?= date('d/m/Y', strtotime($reservation['date_debut'])) ?><br>
+                                                        <small class="text-muted">Au</small> <?= date('d/m/Y', strtotime($reservation['date_fin'])) ?>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-bold text-success"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                        <small class="text-muted">Total</small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php if (isset($reservation['reduction_pourcentage']) && $reservation['reduction_pourcentage'] > 0): ?>
+                                                        <div>
+                                                            <span class="badge bg-warning text-dark">-<?= $reservation['reduction_pourcentage'] ?>%</span>
+                                                            <div class="text-muted small"><?= number_format($reservation['montant_reduction'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">Aucune</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold text-primary"><?= number_format($reservation['montant_paye'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        <div class="text-muted small">Restant: <?= number_format($reservation['montant_restant'] ?? $reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $modePaiementClass = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'bg-secondary',
+                                                        'orange_money' => 'bg-warning text-dark',
+                                                        'momo' => 'bg-info',
+                                                        'carte_bancaire' => 'bg-primary',
+                                                        'virement' => 'bg-success',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $modePaiementText = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'Espèces',
+                                                        'orange_money' => 'Orange Money',
+                                                        'momo' => 'MOMO',
+                                                        'carte_bancaire' => 'Carte bancaire',
+                                                        'virement' => 'Virement',
+                                                        default => 'Espèces'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $modePaiementClass ?>"><?= $modePaiementText ?></span>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'bg-success',
+                                                        'telephonique' => 'bg-info',
+                                                        'presentiel' => 'bg-primary',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'En ligne',
+                                                        'telephonique' => 'Téléphonique',
+                                                        'presentiel' => 'Présentiel',
+                                                        default => 'En ligne'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $typeClass ?>"><?= $typeText ?></span>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted"><?= date('d/m/Y', strtotime($reservation['date_debut'])) ?></small>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-sm btn-primary add-payment"
+                                                                data-reservation-id="<?= $reservation['id'] ?>"
+                                                                data-bs-toggle="tooltip" title="Ajouter un paiement">
+                                                            <i class="feather-credit-card"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-info view-payments"
+                                                                data-reservation-id="<?= $reservation['id'] ?>"
+                                                                data-bs-toggle="tooltip" title="Voir les paiements">
+                                                            <i class="feather-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="10" class="text-center py-5">
+                                                <i class="feather-play-circle" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
+                                                <p class="text-muted mt-2">Aucune réservation en cours</p>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Terminées -->
+            <div class="tab-pane fade" id="terminee" role="tabpanel">
+                <div class="card" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead style="background: #f8f9fa;">
+                                    <tr>
+                                        <th class="border-0">Locataire</th>
+                                        <th class="border-0">Appartement</th>
+                                        <th class="border-0">Période</th>
+                                        <th class="border-0">Montant</th>
+                                        <th class="border-0">Réduction</th>
+                                        <th class="border-0">Paiements</th>
+                                        <th class="border-0">Mode paiement</th>
+                                        <th class="border-0">Type</th>
+                                        <th class="border-0">Date fin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($reservations['terminee'])): ?>
+                                        <?php foreach ($reservations['terminee'] as $reservation): ?>
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold"><?= esc($reservation['nom']) ?></div>
+                                                        <small class="text-muted"><?= esc($reservation['telephone']) ?></small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-medium"><?= esc($reservation['adresse']) ?></div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <small class="text-muted">Du</small> <?= date('d/m/Y', strtotime($reservation['date_debut'])) ?><br>
+                                                        <small class="text-muted">Au</small> <?= date('d/m/Y', strtotime($reservation['date_fin'])) ?>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-bold text-success"><?= number_format($reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                        <small class="text-muted">Total</small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php if (isset($reservation['reduction_pourcentage']) && $reservation['reduction_pourcentage'] > 0): ?>
+                                                        <div>
+                                                            <span class="badge bg-warning text-dark">-<?= $reservation['reduction_pourcentage'] ?>%</span>
+                                                            <div class="text-muted small"><?= number_format($reservation['montant_reduction'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">Aucune</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <div class="fw-semibold text-primary"><?= number_format($reservation['montant_paye'] ?? 0, 0, ',', ' ') ?> FCFA</div>
+                                                        <div class="text-muted small">Restant: <?= number_format($reservation['montant_restant'] ?? $reservation['montant_total'], 0, ',', ' ') ?> FCFA</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $modePaiementClass = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'bg-secondary',
+                                                        'orange_money' => 'bg-warning text-dark',
+                                                        'momo' => 'bg-info',
+                                                        'carte_bancaire' => 'bg-primary',
+                                                        'virement' => 'bg-success',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $modePaiementText = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'Espèces',
+                                                        'orange_money' => 'Orange Money',
+                                                        'momo' => 'MOMO',
+                                                        'carte_bancaire' => 'Carte bancaire',
+                                                        'virement' => 'Virement',
+                                                        default => 'Espèces'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $modePaiementClass ?>"><?= $modePaiementText ?></span>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'bg-success',
+                                                        'telephonique' => 'bg-info',
+                                                        'presentiel' => 'bg-primary',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $typeText = match($reservation['type_reservation'] ?? 'en_ligne') {
+                                                        'en_ligne' => 'En ligne',
+                                                        'telephonique' => 'Téléphonique',
+                                                        'presentiel' => 'Présentiel',
+                                                        default => 'En ligne'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $typeClass ?>"><?= $typeText ?></span>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted"><?= date('d/m/Y', strtotime($reservation['date_fin'])) ?></small>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="9" class="text-center py-5">
+                                                <i class="feather-check" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
+                                                <p class="text-muted mt-2">Aucune réservation terminée</p>
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -290,6 +597,7 @@
                                         <th class="border-0">Montant</th>
                                         <th class="border-0">Réduction</th>
                                         <th class="border-0">Paiements</th>
+                                        <th class="border-0">Mode paiement</th>
                                         <th class="border-0">Type</th>
                                         <th class="border-0">Motif d'annulation</th>
                                         <th class="border-0">Date annulation</th>
@@ -328,6 +636,27 @@
                                                 </td>
                                                 <td>
                                                     <?php
+                                                    $modePaiementClass = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'bg-secondary',
+                                                        'orange_money' => 'bg-warning text-dark',
+                                                        'momo' => 'bg-info',
+                                                        'carte_bancaire' => 'bg-primary',
+                                                        'virement' => 'bg-success',
+                                                        default => 'bg-secondary'
+                                                    };
+                                                    $modePaiementText = match($reservation['mode_paiement'] ?? 'especes') {
+                                                        'especes' => 'Espèces',
+                                                        'orange_money' => 'Orange Money',
+                                                        'momo' => 'MOMO',
+                                                        'carte_bancaire' => 'Carte bancaire',
+                                                        'virement' => 'Virement',
+                                                        default => 'Espèces'
+                                                    };
+                                                    ?>
+                                                    <span class="badge <?= $modePaiementClass ?>"><?= $modePaiementText ?></span>
+                                                </td>
+                                                <td>
+                                                    <?php
                                                     $typeClass = match($reservation['type_reservation'] ?? 'en_ligne') {
                                                         'en_ligne' => 'bg-success',
                                                         'telephonique' => 'bg-info',
@@ -353,7 +682,7 @@
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="9" class="text-center py-5">
+                                            <td colspan="10" class="text-center py-5">
                                                 <i class="feather-x-circle" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
                                                 <p class="text-muted mt-2">Aucune réservation annulée</p>
                                             </td>
@@ -439,17 +768,11 @@
                     <!-- Section Client existant -->
                     <div id="client-existant-section">
                         <div class="mb-3">
-                            <label for="locataire_id" class="form-label">Sélectionner un locataire <span class="text-danger">*</span></label>
-                            <select class="form-select" id="locataire_id" name="locataire_id">
-                                <option value="">Sélectionner un locataire</option>
-                                <?php 
-                                $locataireModel = new \App\Models\LocataireModel();
-                                $locataires = $locataireModel->findAll();
-                                foreach ($locataires as $locataire): 
-                                ?>
-                                    <option value="<?= $locataire['id'] ?>"><?= esc($locataire['nom']) ?> - <?= esc($locataire['email']) ?></option>
-                                <?php endforeach; ?>
+                            <label for="locataire_id" class="form-label">Rechercher un locataire <span class="text-danger">*</span></label>
+                            <select class="form-select select2-ajax" id="locataire_id" name="locataire_id" style="width: 100%;">
+                                <option value="">Tapez pour rechercher un client...</option>
                             </select>
+                            <small class="form-text text-muted">Tapez le nom, l'email ou le téléphone du client</small>
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -502,17 +825,26 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="mb-3">
-                                <label for="date_debut" class="form-label">Date de début <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="date_debut" name="date_debut" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="date_fin" class="form-label">Date de fin <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="date_fin" name="date_fin" required>
+                                <label for="daterange" class="form-label">
+                                    <i class="feather-calendar me-1"></i>
+                                    Période de réservation <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="feather-calendar"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="daterange" name="daterange" required
+                                           placeholder="Cliquez pour sélectionner les dates"
+                                           style="background-color: white; cursor: pointer;"
+                                           autocomplete="off">
+                                </div>
+                                <input type="hidden" id="date_debut" name="date_debut" required>
+                                <input type="hidden" id="date_fin" name="date_fin" required>
+                                <small class="form-text text-muted">
+                                    <i class="feather-info"></i> Cliquez sur le champ pour ouvrir le calendrier
+                                </small>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -570,6 +902,20 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="mode_paiement" class="form-label">Mode de paiement <span class="text-danger">*</span></label>
+                                <select class="form-select" id="mode_paiement" name="mode_paiement" required>
+                                    <option value="">Sélectionner le mode</option>
+                                    <option value="especes">Espèces</option>
+                                    <option value="orange_money">Orange Money</option>
+                                    <option value="momo">Mobile Money (MOMO)</option>
+                                    <option value="carte_bancaire">Carte bancaire</option>
+                                    <option value="virement">Virement bancaire</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -623,6 +969,18 @@
                     <div class="mb-3">
                         <label for="payment_date" class="form-label">Date du paiement <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" id="payment_date" name="date" required value="<?= date('Y-m-d') ?>">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_mode" class="form-label">Mode de paiement <span class="text-danger">*</span></label>
+                        <select class="form-select" id="payment_mode" name="mode_paiement" required>
+                            <option value="">Sélectionner le mode</option>
+                            <option value="especes">Espèces</option>
+                            <option value="orange_money">Orange Money</option>
+                            <option value="momo">Mobile Money (MOMO)</option>
+                            <option value="carte_bancaire">Carte bancaire</option>
+                            <option value="virement">Virement bancaire</option>
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="alert alert-info">
@@ -696,6 +1054,102 @@
     transition: all 0.3s ease;
 }
 
+/* Daterangepicker fixes */
+.daterangepicker {
+    z-index: 99999 !important;
+    font-family: inherit;
+}
+
+.daterangepicker .ranges li.active {
+    background-color: #d29751 !important;
+}
+
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+    background-color: #d29751 !important;
+}
+
+.daterangepicker .btn-primary {
+    background-color: #d29751 !important;
+    border-color: #d29751 !important;
+}
+
+.daterangepicker .btn-primary:hover {
+    background-color: #b8834a !important;
+    border-color: #b8834a !important;
+}
+
+#daterange {
+    cursor: pointer !important;
+}
+
+#daterange:focus {
+    border-color: #d29751 !important;
+    box-shadow: 0 0 0 0.2rem rgba(210, 151, 81, 0.25) !important;
+}
+
+/* Select2 dans modal fix */
+.select2-container .select2-dropdown,
+.select2-container--bootstrap-5 .select2-dropdown {
+    z-index: 99999 !important;
+}
+
+.select2-container .select2-selection--single,
+.select2-container--bootstrap-5 .select2-selection--single {
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.select2-container .select2-selection__rendered,
+.select2-container--bootstrap-5 .select2-selection__rendered {
+    padding-left: 12px !important;
+    padding-right: 40px !important;
+    line-height: 36px !important;
+    color: #212529 !important;
+    font-weight: 500 !important;
+}
+
+.select2-container .select2-selection__placeholder,
+.select2-container--bootstrap-5 .select2-selection__placeholder {
+    color: #6c757d !important;
+    font-weight: 400 !important;
+}
+
+.select2-container .select2-search__field,
+.select2-container--bootstrap-5 .select2-search__field {
+    outline: none !important;
+    height: 36px !important;
+}
+
+.select2-container.select2-container--focus .select2-selection,
+.select2-container.select2-container--open .select2-selection,
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+    border-color: #d29751 !important;
+    box-shadow: 0 0 0 0.2rem rgba(210, 151, 81, 0.25) !important;
+}
+
+/* Améliorer l'affichage des résultats */
+.select2-result-locataire__title {
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.select2-result-locataire__description {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* S'assurer que le texte sélectionné est visible */
+.select2-selection__rendered {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* Modal fixes are handled in modal-fix.css */
 </style>
 
@@ -705,6 +1159,224 @@ $(document).ready(function() {
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Fix pour permettre le focus dans les Select2 à l'intérieur des modals Bootstrap 5
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+    });
+
+    // Empêcher le modal de bloquer le focus sur Select2
+    $('#createReservationModal').on('shown.bs.modal', function() {
+        // Réinitialiser Select2 si nécessaire
+        if ($('#locataire_id').hasClass('select2-hidden-accessible')) {
+            $('#locataire_id').select2('destroy');
+        }
+
+        // Initialiser à nouveau Select2 quand le modal est ouvert
+        initSelect2ForLocataires();
+    });
+
+    // Fonction d'initialisation de Select2 pour les locataires
+    function initSelect2ForLocataires() {
+    $('#locataire_id').select2({
+        theme: 'bootstrap-5',
+        dropdownParent: $('#createReservationModal'),
+        placeholder: 'Tapez pour rechercher un client...',
+        allowClear: true,
+        minimumInputLength: 2,
+        language: {
+            inputTooShort: function() {
+                return "Tapez au moins 2 caractères pour rechercher...";
+            },
+            searching: function() {
+                return "Recherche en cours...";
+            },
+            noResults: function() {
+                return "Aucun client trouvé";
+            }
+        },
+        ajax: {
+            url: '<?= base_url('admin/locataires/search') ?>',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    term: params.term, // Terme de recherche
+                    page: params.page || 1
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.results
+                };
+            },
+            cache: true
+        },
+        templateResult: formatLocataireResult,
+        templateSelection: formatLocataireSelection
+    });
+    }
+
+    // Initialiser Select2 au chargement de la page
+    initSelect2ForLocataires();
+
+    // Gérer l'événement de sélection pour afficher les infos dans la console (debug)
+    $('#locataire_id').on('select2:select', function(e) {
+        var data = e.params.data;
+        console.log('Client sélectionné:', data);
+
+        // S'assurer que le champ affiche bien le nom
+        if (data && data.nom) {
+            // Le formatter devrait gérer ça automatiquement
+            console.log('Affichage:', data.nom + ' (' + data.telephone + ')');
+        }
+    });
+
+    // Formatter pour les résultats de recherche
+    function formatLocataireResult(locataire) {
+        if (locataire.loading) {
+            return locataire.text;
+        }
+
+        var $container = $(
+            "<div class='select2-result-locataire clearfix'>" +
+                "<div class='select2-result-locataire__meta'>" +
+                    "<div class='select2-result-locataire__title'></div>" +
+                    "<div class='select2-result-locataire__description'></div>" +
+                "</div>" +
+            "</div>"
+        );
+
+        $container.find(".select2-result-locataire__title").text(locataire.nom || locataire.text);
+        $container.find(".select2-result-locataire__description").html(
+            '<small>' + (locataire.email || '') + ' • ' + (locataire.telephone || '') + '</small>'
+        );
+
+        return $container;
+    }
+
+    // Formatter pour la sélection
+    function formatLocataireSelection(locataire) {
+        // Si c'est le placeholder
+        if (!locataire.id) {
+            return locataire.text;
+        }
+
+        // Afficher le nom du client sélectionné avec ses coordonnées
+        if (locataire.nom) {
+            return locataire.nom + ' (' + (locataire.telephone || '') + ')';
+        }
+
+        // Fallback sur le texte par défaut
+        return locataire.text || 'Client sélectionné';
+    }
+
+    // Vérifier que daterangepicker est disponible
+    if (typeof $.fn.daterangepicker === 'undefined') {
+        console.error('Daterangepicker plugin not loaded!');
+        showToast('error', 'Le calendrier n\'est pas chargé correctement. Veuillez recharger la page.');
+        return;
+    }
+
+    console.log('Initializing daterangepicker...');
+
+    // Configurer moment.js en français
+    if (typeof moment !== 'undefined') {
+        moment.locale('fr', {
+            months: 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
+            monthsShort: 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
+            weekdays: 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
+            weekdaysShort: 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
+            weekdaysMin: 'Di_Lu_Ma_Me_Je_Ve_Sa'.split('_'),
+            longDateFormat: {
+                LT: 'HH:mm',
+                LTS: 'HH:mm:ss',
+                L: 'DD/MM/YYYY',
+                LL: 'D MMMM YYYY',
+                LLL: 'D MMMM YYYY HH:mm',
+                LLLL: 'dddd D MMMM YYYY HH:mm'
+            },
+            week: {
+                dow: 1,
+                doy: 4
+            }
+        });
+    }
+
+    // Initialiser le daterangepicker pour les dates de réservation
+    try {
+        $('#daterange').daterangepicker({
+            locale: {
+                format: 'DD/MM/YYYY',
+                separator: ' - ',
+                applyLabel: 'Appliquer',
+                cancelLabel: 'Annuler',
+                fromLabel: 'De',
+                toLabel: 'À',
+                customRangeLabel: 'Personnalisé',
+                weekLabel: 'S',
+                daysOfWeek: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+                monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                firstDay: 1
+            },
+            // Pas de restriction de date pour permettre l'enregistrement de données historiques
+            autoApply: false,
+            showDropdowns: true,
+            autoUpdateInput: false,
+            opens: 'center',
+            drops: 'auto',
+            buttonClasses: 'btn btn-sm',
+            applyButtonClasses: 'btn-primary',
+            cancelClass: 'btn-secondary'
+        });
+
+        console.log('Daterangepicker initialized successfully');
+
+        // Forcer l'ouverture au clic (au cas où readonly causerait un problème)
+        $('#daterange, .input-group-text').on('click', function(e) {
+            e.preventDefault();
+            console.log('Daterange clicked, opening calendar...');
+            $('#daterange').data('daterangepicker').show();
+        });
+
+        // Empêcher la saisie manuelle
+        $('#daterange').on('keydown', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+    } catch (error) {
+        console.error('Error initializing daterangepicker:', error);
+        showToast('error', 'Erreur lors de l\'initialisation du calendrier');
+    }
+
+    // Mettre à jour les champs quand une plage de dates est sélectionnée
+    $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+        console.log('Date range applied:', picker.startDate.format('DD/MM/YYYY'), '-', picker.endDate.format('DD/MM/YYYY'));
+        var startDate = picker.startDate.format('YYYY-MM-DD');
+        var endDate = picker.endDate.format('YYYY-MM-DD');
+        var displayDate = picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY');
+
+        $(this).val(displayDate);
+        $('#date_debut').val(startDate);
+        $('#date_fin').val(endDate);
+
+        // Calculer le nombre de jours
+        var days = picker.endDate.diff(picker.startDate, 'days') + 1;
+
+        // Afficher un indicateur visuel
+        if (days > 0) {
+            $(this).css('border-color', '#28a745');
+        }
+    });
+
+    // Réinitialiser si l'utilisateur annule
+    $('#daterange').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+        $('#date_debut').val('');
+        $('#date_fin').val('');
+        $(this).css('border-color', '');
     });
 
     // Modal fixes are now handled globally in main layout
@@ -810,8 +1482,8 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     let html = '<div class="table-responsive"><table class="table table-hover">';
-                    html += '<thead><tr><th>Date</th><th>Montant</th><th>Statut</th></tr></thead><tbody>';
-                    
+                    html += '<thead><tr><th>Date</th><th>Montant</th><th>Statut</th><th class="text-center">Actions</th></tr></thead><tbody>';
+
                     if (response.paiements && response.paiements.length > 0) {
                         response.paiements.forEach(function(paiement) {
                             const statutClass = paiement.statut === 'paye' ? 'bg-success' : 'bg-warning';
@@ -819,14 +1491,31 @@ $(document).ready(function() {
                                 <td>${new Date(paiement.date).toLocaleDateString('fr-FR')}</td>
                                 <td class="fw-bold">${new Intl.NumberFormat('fr-FR').format(paiement.montant)} FCFA</td>
                                 <td><span class="badge ${statutClass}">${paiement.statut}</span></td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="<?= base_url('admin/paiements/generer-facture') ?>/${paiement.id}"
+                                           class="btn btn-sm btn-primary"
+                                           target="_blank"
+                                           data-bs-toggle="tooltip"
+                                           title="Imprimer la facture">
+                                            <i class="feather-printer"></i>
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>`;
                         });
                     } else {
-                        html += '<tr><td colspan="3" class="text-center text-muted">Aucun paiement enregistré</td></tr>';
+                        html += '<tr><td colspan="4" class="text-center text-muted">Aucun paiement enregistré</td></tr>';
                     }
-                    
+
                     html += '</tbody></table></div>';
                     $('#paymentsList').html(html);
+
+                    // Réinitialiser les tooltips
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
                 } else {
                     $('#paymentsList').html('<div class="alert alert-danger">Erreur lors du chargement des paiements.</div>');
                 }
@@ -856,6 +1545,14 @@ $(document).ready(function() {
                 if (response.success) {
                     $('#addPaymentModal').modal('hide');
                     showToast('success', response.message);
+
+                    // Ouvrir automatiquement la facture pour impression
+                    if (response.paiement_id) {
+                        const factureUrl = `<?= base_url('admin/paiements/generer-facture') ?>/${response.paiement_id}`;
+                        window.open(factureUrl, '_blank');
+                    }
+
+                    // Recharger la page après un court délai
                     setTimeout(function() {
                         location.reload();
                     }, 1500);
@@ -944,6 +1641,14 @@ $(document).ready(function() {
                 if (response.success) {
                     $('#createReservationModal').modal('hide');
                     showToast('success', response.message);
+
+                    // Ouvrir automatiquement la facture si un paiement a été effectué
+                    if (response.paiement_id) {
+                        const factureUrl = `<?= base_url('admin/paiements/generer-facture') ?>/${response.paiement_id}`;
+                        window.open(factureUrl, '_blank');
+                    }
+
+                    // Recharger la page après un court délai
                     setTimeout(function() {
                         location.reload();
                     }, 1500);

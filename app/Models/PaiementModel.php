@@ -12,7 +12,7 @@ class PaiementModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['montant', 'date', 'statut', 'locataire_id', 'reservation_id'];
+    protected $allowedFields    = ['montant', 'date', 'statut', 'locataire_id', 'reservation_id', 'mode_paiement'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

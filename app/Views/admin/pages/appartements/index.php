@@ -2,6 +2,65 @@
 
 <?= $this->section('content') ?>
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="<?= base_url('assets/admin/css/dataTables.bs5.min.css') ?>">
+
+<style>
+    /* Styles personnalisés pour DataTables */
+    div.dataTables_wrapper div.dataTables_length select {
+        padding: 5px 10px !important;
+        border-radius: 5px !important;
+        border: 1px solid #e9ecef !important;
+        width: auto !important;
+        display: inline-block !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter input {
+        padding: 5px 15px !important;
+        border-radius: 5px !important;
+        border: 1px solid #e9ecef !important;
+        margin-left: 10px !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+        margin: 10px 0 !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_paginate .paginate_button.page-item.active .page-link {
+        background-color: #d29751 !important;
+        border-color: #d29751 !important;
+        color: white !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_paginate .paginate_button.page-item .page-link:hover {
+        background-color: #b8834a !important;
+        border-color: #b8834a !important;
+        color: white !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_paginate .paginate_button.page-item .page-link {
+        border-radius: 5px !important;
+        margin: 0 2px !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_info {
+        padding-top: 15px !important;
+        color: #6c757d !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_length,
+    div.dataTables_wrapper div.dataTables_filter {
+        margin-bottom: 15px !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter label,
+    div.dataTables_wrapper div.dataTables_length label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+</style>
+
 <div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -21,11 +80,11 @@
                         <thead style="background: #f8f9fa;">
                             <tr>
                                 <th class="border-0">Adresse</th>
+                                <th class="border-0">Catégorie</th>
                                 <th class="border-0">Type</th>
-                                <th class="border-0">Tarif/Nuit</th>
+                                <th class="border-0">Chambres</th>
+                                <th class="border-0">Tarif</th>
                                 <th class="border-0">Statut</th>
-                                <th class="border-0">Équipements</th>
-                                <th class="border-0">Date création</th>
                                 <th class="border-0 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -35,6 +94,29 @@
                                     <tr data-appartement-id="<?= $appartement['id'] ?>">
                                         <td>
                                             <div class="fw-semibold"><?= esc($appartement['adresse']) ?></div>
+                                            <?php if (!empty($appartement['numero_bien'])): ?>
+                                                <small class="text-muted"><i class="feather-hash"></i> <?= esc($appartement['numero_bien']) ?></small>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $categorieClass = match($appartement['categorie'] ?? 'appartement') {
+                                                'appartement' => 'bg-info',
+                                                'logement' => 'bg-warning text-dark',
+                                                'boutique' => 'bg-secondary text-white',
+                                                default => 'bg-secondary'
+                                            };
+                                            $categorieText = match($appartement['categorie'] ?? 'appartement') {
+                                                'appartement' => 'Appartement',
+                                                'logement' => 'Logement',
+                                                'boutique' => 'Boutique',
+                                                default => ucfirst($appartement['categorie'] ?? 'Appartement')
+                                            };
+                                            ?>
+                                            <span class="badge <?= $categorieClass ?>"><?= $categorieText ?></span>
+                                            <?php if (!empty($appartement['superficie'])): ?>
+                                                <br><small class="text-muted"><?= $appartement['superficie'] ?> m²</small>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <?php
@@ -52,13 +134,20 @@
                                             <span class="badge <?= $typeClass ?>"><?= $typeText ?></span>
                                         </td>
                                         <td>
+                                            <?php if (!empty($appartement['nombre_chambres'])): ?>
+                                                <span class="badge bg-dark"><?= $appartement['nombre_chambres'] ?> ch.</span>
+                                            <?php else: ?>
+                                                <small class="text-muted">-</small>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
                                             <span class="fw-bold text-success"><?= number_format($appartement['tarifs'], 0, ',', ' ') ?> FCFA</span>
                                         </td>
                                         <td>
                                             <?php
                                             $statutClass = match($appartement['statut']) {
                                                 'disponible' => 'bg-success',
-                                                'occupe' => 'bg-warning text-dark', 
+                                                'occupe' => 'bg-warning text-dark',
                                                 'maintenance' => 'bg-danger',
                                                 default => 'bg-secondary'
                                             };
@@ -70,20 +159,6 @@
                                             };
                                             ?>
                                             <span class="badge <?= $statutClass ?>"><?= $statutText ?></span>
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                <?= !empty($appartement['equipements']) ? 
-                                                    (strlen($appartement['equipements']) > 50 ? 
-                                                        substr(esc($appartement['equipements']), 0, 50) . '...' : 
-                                                        esc($appartement['equipements'])) 
-                                                    : 'Non spécifié' ?>
-                                            </small>
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                <?= date('d/m/Y H:i', strtotime($appartement['created_at'])) ?>
-                                            </small>
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
@@ -122,7 +197,7 @@
                                 <tr>
                                     <td colspan="7" class="text-center py-5">
                                         <i class="feather-home" style="font-size: 48px; color: #d29751; opacity: 0.5;"></i>
-                                        <p class="text-muted mt-2">Aucun appartement trouvé</p>
+                                        <p class="text-muted mt-2">Aucun bien trouvé</p>
                                     </td>
                                 </tr>
                             <?php endif; ?>
@@ -166,6 +241,67 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="categorie" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                                <select class="form-select" id="categorie" name="categorie" required>
+                                    <option value="">Sélectionner la catégorie</option>
+                                    <option value="appartement">Appartement (2-3 chambres)</option>
+                                    <option value="logement">Logement (Studio, Maison, etc.)</option>
+                                    <option value="boutique">Boutique / Local commercial</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="">Sélectionner le type</option>
+                                    <option value="meuble">Meublé</option>
+                                    <option value="non_meuble">Non meublé</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4" id="nombreChambresContainer" style="display: none;">
+                            <div class="mb-3">
+                                <label for="nombre_chambres" class="form-label">Nombre de chambres <span class="text-danger">*</span></label>
+                                <select class="form-select" id="nombre_chambres" name="nombre_chambres">
+                                    <option value="">Sélectionner</option>
+                                    <option value="2">2 chambres</option>
+                                    <option value="3">3 chambres</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="superficie" class="form-label">Superficie (m²)</label>
+                                <input type="number" class="form-control" id="superficie" name="superficie" min="0" step="0.01" placeholder="65.5">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="etage" class="form-label">Étage</label>
+                                <input type="number" class="form-control" id="etage" name="etage" placeholder="Ex: 3">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="numero_bien" class="form-label">Numéro / Référence du bien</label>
+                                <input type="text" class="form-control" id="numero_bien" name="numero_bien" maxlength="50" placeholder="Ex: APT-A301">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="statut" class="form-label">Statut <span class="text-danger">*</span></label>
                                 <select class="form-select" id="statut" name="statut" required>
                                     <option value="">Sélectionner le statut</option>
@@ -175,17 +311,12 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="type" class="form-label">Type d'appartement <span class="text-danger">*</span></label>
-                                <select class="form-select" id="type" name="type" required>
-                                    <option value="">Sélectionner le type</option>
-                                    <option value="meuble">Meublé</option>
-                                    <option value="non_meuble">Non meublé</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description détaillée du bien..."></textarea>
+                        <div class="invalid-feedback"></div>
                     </div>
                     
                     <!-- Section Photos -->
@@ -268,18 +399,19 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="editStatut" class="form-label">Statut <span class="text-danger">*</span></label>
-                                <select class="form-select" id="editStatut" name="statut" required>
-                                    <option value="">Sélectionner le statut</option>
-                                    <option value="disponible">Disponible</option>
-                                    <option value="maintenance">En maintenance</option>
+                                <label for="editCategorie" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                                <select class="form-select" id="editCategorie" name="categorie" required>
+                                    <option value="">Sélectionner la catégorie</option>
+                                    <option value="appartement">Appartement (2-3 chambres)</option>
+                                    <option value="logement">Logement (Studio, Maison, etc.)</option>
+                                    <option value="boutique">Boutique / Local commercial</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="editType" class="form-label">Type d'appartement <span class="text-danger">*</span></label>
+                                <label for="editType" class="form-label">Type <span class="text-danger">*</span></label>
                                 <select class="form-select" id="editType" name="type" required>
                                     <option value="">Sélectionner le type</option>
                                     <option value="meuble">Meublé</option>
@@ -289,7 +421,62 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <div class="row">
+                        <div class="col-md-4" id="editNombreChambresContainer" style="display: none;">
+                            <div class="mb-3">
+                                <label for="editNombreChambres" class="form-label">Nombre de chambres <span class="text-danger">*</span></label>
+                                <select class="form-select" id="editNombreChambres" name="nombre_chambres">
+                                    <option value="">Sélectionner</option>
+                                    <option value="2">2 chambres</option>
+                                    <option value="3">3 chambres</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editSuperficie" class="form-label">Superficie (m²)</label>
+                                <input type="number" class="form-control" id="editSuperficie" name="superficie" min="0" step="0.01" placeholder="65.5">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editEtage" class="form-label">Étage</label>
+                                <input type="number" class="form-control" id="editEtage" name="etage" placeholder="Ex: 3">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editNumeroBien" class="form-label">Numéro / Référence du bien</label>
+                                <input type="text" class="form-control" id="editNumeroBien" name="numero_bien" maxlength="50" placeholder="Ex: APT-A301">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editStatut" class="form-label">Statut <span class="text-danger">*</span></label>
+                                <select class="form-select" id="editStatut" name="statut" required>
+                                    <option value="">Sélectionner le statut</option>
+                                    <option value="disponible">Disponible</option>
+                                    <option value="maintenance">En maintenance</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDescription" name="description" rows="3" placeholder="Description détaillée du bien..."></textarea>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
                     <!-- Section Photos pour modification -->
                     <div class="mb-4">
                         <label class="form-label">Photos de l'appartement</label>
@@ -438,6 +625,14 @@
 
 <script>
 $(document).ready(function() {
+    // Vérifier si on doit ouvrir la modale d'ajout
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'create') {
+        $('#createAppartementModal').modal('show');
+        // Nettoyer l'URL sans recharger la page
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     // Initialiser les tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -819,6 +1014,21 @@ $(document).ready(function() {
                     $('#editTarifs').val(appartement.tarifs);
                     $('#editStatut').val(appartement.statut);
                     $('#editType').val(appartement.type || 'meuble');
+                    $('#editCategorie').val(appartement.categorie || 'appartement');
+                    $('#editNombreChambres').val(appartement.nombre_chambres || '');
+                    $('#editSuperficie').val(appartement.superficie || '');
+                    $('#editNumeroBien').val(appartement.numero_bien || '');
+                    $('#editEtage').val(appartement.etage || '');
+                    $('#editDescription').val(appartement.description || '');
+
+                    // Afficher/masquer le champ nombre de chambres selon la catégorie
+                    if (appartement.categorie === 'appartement') {
+                        $('#editNombreChambresContainer').show();
+                        $('#editNombreChambres').prop('required', true);
+                    } else {
+                        $('#editNombreChambresContainer').hide();
+                        $('#editNombreChambres').prop('required', false);
+                    }
                     
                     // Charger les équipements existants
                     loadExistingEquipments(appartement.equipements);
@@ -1023,6 +1233,40 @@ $(document).ready(function() {
         `);
         $('#editEquipements').val('');
     });
+
+    // ===== GESTION DE L'AFFICHAGE CONDITIONNEL DU CHAMP NOMBRE DE CHAMBRES =====
+
+    // Pour le formulaire de création
+    $('#categorie').on('change', function() {
+        const categorie = $(this).val();
+        const $nombreChambresContainer = $('#nombreChambresContainer');
+        const $nombreChambres = $('#nombre_chambres');
+
+        if (categorie === 'appartement') {
+            $nombreChambresContainer.show();
+            $nombreChambres.prop('required', true);
+        } else {
+            $nombreChambresContainer.hide();
+            $nombreChambres.prop('required', false);
+            $nombreChambres.val(''); // Vider la valeur
+        }
+    });
+
+    // Pour le formulaire de modification
+    $('#editCategorie').on('change', function() {
+        const categorie = $(this).val();
+        const $nombreChambresContainer = $('#editNombreChambresContainer');
+        const $nombreChambres = $('#editNombreChambres');
+
+        if (categorie === 'appartement') {
+            $nombreChambresContainer.show();
+            $nombreChambres.prop('required', true);
+        } else {
+            $nombreChambresContainer.hide();
+            $nombreChambres.prop('required', false);
+            $nombreChambres.val(''); // Vider la valeur
+        }
+    });
 });
 
 // Fonction pour afficher les toasts
@@ -1057,4 +1301,58 @@ function showToast(type, message) {
 }
 </script>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<!-- DataTables JS -->
+<script src="<?= base_url('assets/admin/js/dataTables.min.js') ?>"></script>
+<script src="<?= base_url('assets/admin/js/dataTables.bs5.min.js') ?>"></script>
+
+<script>
+$(document).ready(function() {
+    // ===== INITIALISATION DE DATATABLES POUR LA PAGINATION =====
+    if ($.fn.DataTable.isDataTable('#appartementsTable')) {
+        $('#appartementsTable').DataTable().destroy();
+    }
+
+    $('#appartementsTable').DataTable({
+        language: {
+            processing: "Traitement en cours...",
+            search: "Rechercher&nbsp;:",
+            lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
+            info: "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+            infoEmpty: "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+            infoFiltered: "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+            infoPostFix: "",
+            loadingRecords: "Chargement en cours...",
+            zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+            emptyTable: "Aucune donn&eacute;e disponible dans le tableau",
+            paginate: {
+                first: "Premier",
+                previous: "Pr&eacute;c&eacute;dent",
+                next: "Suivant",
+                last: "Dernier"
+            },
+            aria: {
+                sortAscending: ": activer pour trier la colonne par ordre croissant",
+                sortDescending: ": activer pour trier la colonne par ordre d&eacute;croissant"
+            }
+        },
+        pageLength: 10,
+        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tout"]],
+        order: [[0, 'asc']],
+        responsive: true,
+        dom: '<"row mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+        columnDefs: [
+            { orderable: false, targets: -1 }
+        ],
+        drawCallback: function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+    });
+});
+</script>
 <?= $this->endSection() ?>

@@ -17,13 +17,7 @@
         <!-- Onglets -->
         <ul class="nav nav-tabs mb-4" id="locationTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="en_attente-tab" data-bs-toggle="tab" data-bs-target="#en_attente" type="button" role="tab">
-                    <i class="feather-clock me-2"></i>En Attente
-                    <span class="badge bg-warning text-dark ms-2"><?= count($locations['en_attente']) ?></span>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="en_cours-tab" data-bs-toggle="tab" data-bs-target="#en_cours" type="button" role="tab">
+                <button class="nav-link active" id="en_cours-tab" data-bs-toggle="tab" data-bs-target="#en_cours" type="button" role="tab">
                     <i class="feather-play-circle me-2"></i>En Cours
                     <span class="badge bg-info ms-2"><?= count($locations['en_cours']) ?></span>
                 </button>
@@ -45,60 +39,8 @@
         <!-- Contenu des onglets -->
         <div class="tab-content" id="locationTabsContent">
 
-            <!-- Onglet En Attente -->
-            <div class="tab-pane fade show active" id="en_attente" role="tabpanel">
-                <div class="row">
-                    <?php if (!empty($locations['en_attente'])): ?>
-                        <?php foreach ($locations['en_attente'] as $location): ?>
-                            <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px;">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <h5 class="mb-0"><?= esc($location['voiture_marque']) ?> <?= esc($location['voiture_modele']) ?></h5>
-                                            <span class="badge bg-warning text-dark">En Attente</span>
-                                        </div>
-                                        <p class="text-muted mb-2"><strong>Client:</strong> <?= esc($location['nom_client']) ?></p>
-                                        <p class="text-muted mb-2"><strong>Du:</strong> <?= date('d/m/Y', strtotime($location['date_debut'])) ?></p>
-                                        <p class="text-muted mb-2"><strong>Au:</strong> <?= date('d/m/Y', strtotime($location['date_fin_prevue'])) ?></p>
-                                        <p class="text-muted mb-2"><strong>Durée:</strong> <?= $location['nombre_jours'] ?> jour(s)</p>
-                                        <p class="text-muted mb-3"><strong>Montant:</strong> <?= number_format($location['montant_total'], 0, ',', ' ') ?> FCFA</p>
-
-                                        <div class="progress mb-2" style="height: 5px;">
-                                            <?php
-                                            $pourcentage = ($location['montant_total'] > 0) ? ($location['montant_paye'] / $location['montant_total'] * 100) : 0;
-                                            ?>
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: <?= $pourcentage ?>%"></div>
-                                        </div>
-                                        <small class="text-muted">Payé: <?= number_format($location['montant_paye'], 0, ',', ' ') ?> / <?= number_format($location['montant_total'], 0, ',', ' ') ?> FCFA</small>
-
-                                        <div class="d-flex justify-content-between mt-3">
-                                            <button class="btn btn-sm btn-success" onclick="demarrerLocation(<?= $location['id'] ?>)" title="Démarrer">
-                                                <i class="feather-play"></i> Démarrer
-                                            </button>
-                                            <button class="btn btn-sm btn-primary" onclick="voirLocation(<?= $location['id'] ?>)" title="Voir">
-                                                <i class="feather-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="annulerLocation(<?= $location['id'] ?>)" title="Annuler">
-                                                <i class="feather-x"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="col-12">
-                            <div class="text-center text-muted py-5">
-                                <i class="feather-clock" style="font-size: 3rem;"></i>
-                                <p class="mt-3">Aucune location en attente</p>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
             <!-- Onglet En Cours -->
-            <div class="tab-pane fade" id="en_cours" role="tabpanel">
+            <div class="tab-pane fade show active" id="en_cours" role="tabpanel">
                 <div class="row">
                     <?php if (!empty($locations['en_cours'])): ?>
                         <?php foreach ($locations['en_cours'] as $location): ?>
@@ -110,9 +52,16 @@
                                             <span class="badge bg-info">En Cours</span>
                                         </div>
                                         <p class="text-muted mb-2"><strong>Client:</strong> <?= esc($location['nom_client']) ?></p>
-                                        <p class="text-muted mb-2"><strong>Départ:</strong> <?= date('d/m/Y', strtotime($location['date_debut'])) ?></p>
-                                        <p class="text-muted mb-2"><strong>Retour prévu:</strong> <?= date('d/m/Y', strtotime($location['date_fin_prevue'])) ?></p>
-                                        <p class="text-muted mb-2"><strong>Km départ:</strong> <?= number_format($location['kilometrage_depart'], 0, ',', ' ') ?> km</p>
+                                        <p class="text-muted mb-2"><strong>Départ:</strong> <?= date('d/m/Y H:i', strtotime($location['date_debut'])) ?></p>
+                                        <p class="text-muted mb-2"><strong>Retour prévu:</strong> <?= date('d/m/Y H:i', strtotime($location['date_fin_prevue'])) ?></p>
+                                        <?php if ($location['type_location'] === 'heure'): ?>
+                                            <p class="text-muted mb-2"><strong>Durée:</strong> <?= $location['duree_heures'] ?> heure(s)</p>
+                                        <?php else: ?>
+                                            <p class="text-muted mb-2"><strong>Durée:</strong> <?= $location['nombre_jours'] ?> jour(s)</p>
+                                        <?php endif; ?>
+                                        <?php if (!empty($location['kilometrage_depart'])): ?>
+                                            <p class="text-muted mb-2"><strong>Km départ:</strong> <?= number_format($location['kilometrage_depart'], 0, ',', ' ') ?> km</p>
+                                        <?php endif; ?>
 
                                         <?php
                                         $dateRetourPrevue = new DateTime($location['date_fin_prevue']);
@@ -245,7 +194,6 @@
 <!-- Modals -->
 <?= $this->include('admin/pages/locations_voitures/modals/create') ?>
 <?= $this->include('admin/pages/locations_voitures/modals/view') ?>
-<?= $this->include('admin/pages/locations_voitures/modals/demarrer') ?>
 <?= $this->include('admin/pages/locations_voitures/modals/terminer') ?>
 <?= $this->include('admin/pages/locations_voitures/modals/annuler') ?>
 <?= $this->include('admin/pages/locations_voitures/modals/paiement') ?>

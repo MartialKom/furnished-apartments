@@ -197,4 +197,46 @@ class LocataireController extends BaseController
             'locataire' => $locataire
         ]);
     }
+
+    /**
+     * Recherche autocomplete des locataires
+     */
+    public function search()
+    {
+        $term = $this->request->getGet('term') ?? $this->request->getGet('q') ?? '';
+
+        if (strlen($term) < 2) {
+            return $this->response->setJSON([
+                'results' => []
+            ]);
+        }
+
+        // Rechercher par nom, email ou téléphone
+        $locataires = $this->locataireModel
+            ->groupStart()
+                ->like('nom', $term)
+                ->orLike('email', $term)
+                ->orLike('telephone', $term)
+            ->groupEnd()
+            ->orderBy('nom', 'ASC')
+            ->limit(10)
+            ->findAll();
+
+        // Formater pour Select2
+        $results = [];
+        foreach ($locataires as $locataire) {
+            $results[] = [
+                'id' => $locataire['id'],
+                'text' => $locataire['nom'] . ' - ' . $locataire['email'] . ' - ' . $locataire['telephone'],
+                'nom' => $locataire['nom'],
+                'email' => $locataire['email'],
+                'telephone' => $locataire['telephone'],
+                'data' => $locataire
+            ];
+        }
+
+        return $this->response->setJSON([
+            'results' => $results
+        ]);
+    }
 }

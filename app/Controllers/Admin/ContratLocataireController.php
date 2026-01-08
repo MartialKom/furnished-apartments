@@ -67,7 +67,7 @@ class ContratLocataireController extends BaseController
         // Vérifier la disponibilité de l'appartement
         $appartementId = $this->request->getPost('appartement_id');
         $dateDebut = $this->request->getPost('date_debut');
-        $dateFin = $this->request->getPost('date_fin');
+        $dateFin = $this->request->getPost('date_fin') ?: null;
 
         if (!$this->contratModel->verifierDisponibiliteAppartement($appartementId, $dateDebut, $dateFin)) {
             return $this->response->setJSON([

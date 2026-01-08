@@ -21,7 +21,7 @@ class TestEmailController extends BaseController
     {
         // Vérifier l'authentification
         if (!session()->has('user_id')) {
-            return redirect()->to('/admin/auth/login');
+            return redirect()->to('/admin/login');
         }
 
         $data = [
@@ -180,9 +180,9 @@ class TestEmailController extends BaseController
     private function getDefaultTestMessage()
     {
         $message = "Bonjour,\n\n";
-        $message .= "Ceci est un email de test envoyé depuis le système de gestion d'appartements meublés.\n\n";
+        $message .= "Ceci est un email de test envoyé depuis le système de gestion T-Lodge.\n\n";
         $message .= "Date/Heure: " . date('Y-m-d H:i:s') . "\n";
-        $message .= "Système: Furnished Apartments Management\n\n";
+        $message .= "Système: T-Lodge Management\n\n";
         $message .= "Si vous recevez cet email, la configuration SMTP fonctionne correctement !\n\n";
         $message .= "Cordialement,\n";
         $message .= "Le système de gestion";

@@ -145,7 +145,7 @@ class PaiementMensuelController extends BaseController
     public function envoyerRappel($id)
     {
         $echeance = $this->paiementModel->find($id);
-        
+
         if (!$echeance) {
             return $this->response->setJSON([
                 'success' => false,
@@ -154,7 +154,7 @@ class PaiementMensuelController extends BaseController
         }
 
         $contrat = $this->contratModel->getContratAvecDetails($echeance['contrat_id']);
-        
+
         $locataire = [
             'nom' => $contrat['locataire_nom'],
             'email' => $contrat['locataire_email'],
@@ -162,7 +162,7 @@ class PaiementMensuelController extends BaseController
         ];
 
         $notificationService = new \App\Libraries\NotificationService();
-        
+
         if ($echeance['statut'] === 'en_retard') {
             $result = $notificationService->envoyerNotificationRetard($locataire, $echeance, $contrat);
         } else {
@@ -172,25 +172,107 @@ class PaiementMensuelController extends BaseController
         if ($result) {
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Rappel envoyé avec succès.'
+                'message' => 'Rappel envoyé avec succès à ' . $locataire['nom']
             ]);
         } else {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Erreur lors de l\'envoi du rappel.'
+                'message' => 'Erreur lors de l\'envoi du rappel. Vérifiez la configuration SMTP.'
             ]);
         }
+    }
+
+    public function envoyerRappelsGroupes()
+    {
+        $echeancesProches = $this->paiementModel->getEcheancesProches();
+
+        if (empty($echeancesProches)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Aucune échéance proche à notifier.'
+            ]);
+        }
+
+        $notificationService = new \App\Libraries\NotificationService();
+        $envoyes = 0;
+        $erreurs = 0;
+
+        foreach ($echeancesProches as $echeance) {
+            $contrat = $this->contratModel->getContratAvecDetails($echeance['contrat_id']);
+
+            $locataire = [
+                'nom' => $contrat['locataire_nom'],
+                'email' => $contrat['locataire_email'],
+                'telephone' => $contrat['locataire_telephone']
+            ];
+
+            $result = $notificationService->envoyerNotificationEcheance($locataire, $echeance, $contrat);
+
+            if ($result) {
+                $envoyes++;
+            } else {
+                $erreurs++;
+            }
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "$envoyes rappel(s) envoyé(s) avec succès. $erreurs erreur(s).",
+            'envoyes' => $envoyes,
+            'erreurs' => $erreurs
+        ]);
+    }
+
+    public function envoyerRappelsRetard()
+    {
+        $retards = $this->paiementModel->getPaiementsEnRetard();
+
+        if (empty($retards)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Aucun paiement en retard.'
+            ]);
+        }
+
+        $notificationService = new \App\Libraries\NotificationService();
+        $envoyes = 0;
+        $erreurs = 0;
+
+        foreach ($retards as $retard) {
+            $contrat = $this->contratModel->getContratAvecDetails($retard['contrat_id']);
+
+            $locataire = [
+                'nom' => $contrat['locataire_nom'],
+                'email' => $contrat['locataire_email'],
+                'telephone' => $contrat['locataire_telephone']
+            ];
+
+            $result = $notificationService->envoyerNotificationRetard($locataire, $retard, $contrat);
+
+            if ($result) {
+                $envoyes++;
+            } else {
+                $erreurs++;
+            }
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "$envoyes rappel(s) de retard envoyé(s). $erreurs erreur(s).",
+            'envoyes' => $envoyes,
+            'erreurs' => $erreurs
+        ]);
     }
 
     public function dashboard()
     {
         $data = [
-            'title' => 'Dashboard Paiements Mensuels',
+            'title' => 'Tableau de Bord Paiements Mensuels',
             'echeances_proches' => $this->paiementModel->getEcheancesProches(),
             'retards' => $this->paiementModel->getPaiementsEnRetard(),
             'stats' => $this->getStatsPaiements()
         ];
-        
+
         return view('admin/pages/paiements_mensuels/dashboard', $data);
     }
 

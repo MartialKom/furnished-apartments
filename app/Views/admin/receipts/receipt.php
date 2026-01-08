@@ -33,7 +33,13 @@
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
-        
+
+        .company-logo {
+            max-width: 150px;
+            max-height: 80px;
+            margin-bottom: 15px;
+        }
+
         .company-name {
             font-size: 24px;
             font-weight: bold;
@@ -42,7 +48,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        
+
         .company-details {
             font-size: 11px;
             color: #666;
@@ -262,6 +268,9 @@
     <div class="receipt-container">
         <!-- En-tête -->
         <div class="header">
+            <?php if (!empty($structure_logo) && file_exists(FCPATH . $structure_logo)): ?>
+                <img src="<?= base_url($structure_logo) ?>" alt="Logo" class="company-logo">
+            <?php endif; ?>
             <div class="company-name"><?= $structure_nom ?></div>
             <div class="company-details">
                 <div><?= $structure_adresse ?></div>

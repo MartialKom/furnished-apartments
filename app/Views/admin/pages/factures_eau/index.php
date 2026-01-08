@@ -116,18 +116,33 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-sm btn-success me-1" onclick="marquerPayeFacture(<?= $facture['id'] ?>)" title="Marquer comme payé">
-                                                        <i class="feather-check"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-primary me-1" onclick="voirFacture(<?= $facture['id'] ?>)" title="Voir détails">
-                                                        <i class="feather-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-warning me-1" onclick="modifierFacture(<?= $facture['id'] ?>)" title="Modifier">
-                                                        <i class="feather-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-danger" onclick="supprimerFacture(<?= $facture['id'] ?>)" title="Supprimer">
-                                                        <i class="feather-trash-2"></i>
-                                                    </button>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a href="<?= base_url('admin/factures-eau/generer-facture/' . $facture['id']) ?>"
+                                                           target="_blank"
+                                                           class="btn btn-primary"
+                                                           data-bs-toggle="tooltip"
+                                                           title="Imprimer la facture">
+                                                            <i class="feather-printer"></i>
+                                                        </a>
+                                                        <button class="btn btn-success"
+                                                                onclick="marquerPayeFacture(<?= $facture['id'] ?>)"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Marquer comme payé">
+                                                            <i class="feather-check"></i>
+                                                        </button>
+                                                        <button class="btn btn-warning"
+                                                                onclick="modifierFacture(<?= $facture['id'] ?>)"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Modifier">
+                                                            <i class="feather-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-danger"
+                                                                onclick="supprimerFacture(<?= $facture['id'] ?>)"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Supprimer">
+                                                            <i class="feather-trash-2"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -190,15 +205,17 @@
                                                     <span class="badge bg-danger"><?= $diff->days ?> jour(s)</span>
                                                 </td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-sm btn-success me-1" onclick="marquerPayeFacture(<?= $facture['id'] ?>)">
-                                                        <i class="feather-check"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-primary me-1" onclick="voirFacture(<?= $facture['id'] ?>)">
-                                                        <i class="feather-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-warning" onclick="envoyerRelance(<?= $facture['id'] ?>)">
-                                                        <i class="feather-mail"></i> Relancer
-                                                    </button>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a href="<?= base_url('admin/factures-eau/generer-facture/' . $facture['id']) ?>" target="_blank" class="btn btn-primary" data-bs-toggle="tooltip" title="Imprimer la facture">
+                                                            <i class="feather-printer"></i>
+                                                        </a>
+                                                        <button class="btn btn-success" onclick="marquerPayeFacture(<?= $facture['id'] ?>)" data-bs-toggle="tooltip" title="Marquer comme payé">
+                                                            <i class="feather-check"></i>
+                                                        </button>
+                                                        <button class="btn btn-warning" onclick="envoyerRelance(<?= $facture['id'] ?>)" data-bs-toggle="tooltip" title="Envoyer une relance">
+                                                            <i class="feather-mail"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -252,12 +269,14 @@
                                                 <td class="text-success fw-semibold"><?= number_format($facture['montant_paye'], 0, ',', ' ') ?> FCFA</td>
                                                 <td class="text-danger fw-semibold"><?= number_format($facture['montant'] - $facture['montant_paye'], 0, ',', ' ') ?> FCFA</td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-sm btn-success me-1" onclick="marquerPayeFacture(<?= $facture['id'] ?>)">
-                                                        <i class="feather-check"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-primary" onclick="voirFacture(<?= $facture['id'] ?>)">
-                                                        <i class="feather-eye"></i>
-                                                    </button>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a href="<?= base_url('admin/factures-eau/generer-facture/' . $facture['id']) ?>" target="_blank" class="btn btn-primary" data-bs-toggle="tooltip" title="Imprimer la facture">
+                                                            <i class="feather-printer"></i>
+                                                        </a>
+                                                        <button class="btn btn-success" onclick="marquerPayeFacture(<?= $facture['id'] ?>)" data-bs-toggle="tooltip" title="Marquer comme payé">
+                                                            <i class="feather-check"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -327,9 +346,9 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-sm btn-primary" onclick="voirFacture(<?= $facture['id'] ?>)">
-                                                        <i class="feather-eye"></i>
-                                                    </button>
+                                                    <a href="<?= base_url('admin/factures-eau/generer-facture/' . $facture['id']) ?>" target="_blank" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Imprimer la facture">
+                                                        <i class="feather-printer"></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -354,6 +373,9 @@
 
 <!-- Modal Créer Facture -->
 <?= $this->include('admin/pages/factures_eau/modals/create') ?>
+
+<!-- Modal Modifier Facture -->
+<?= $this->include('admin/pages/factures_eau/modals/edit') ?>
 
 <!-- Modal Marquer Payé -->
 <?= $this->include('admin/pages/factures_eau/modals/marquer_paye') ?>
@@ -417,8 +439,41 @@ function voirFacture(id) {
 
 // Modifier
 function modifierFacture(id) {
-    // TODO: Implémenter la modification
-    alert('Fonctionnalité en cours de développement');
+    fetch(`<?= base_url('admin/factures-eau/get') ?>/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const facture = data.facture;
+
+                // Remplir les champs du formulaire
+                document.getElementById('edit_facture_id').value = facture.id;
+                document.getElementById('edit_contrat_info').value = `${facture.locataire_nom} - ${facture.appartement_adresse}`;
+
+                // Formater le mois/année pour l'affichage
+                const moisAnnee = facture.mois_annee;
+                const date = new Date(moisAnnee + '-01');
+                const moisNom = date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                document.getElementById('edit_mois_annee_display').value = moisNom.charAt(0).toUpperCase() + moisNom.slice(1);
+
+                // Remplir les autres champs
+                document.getElementById('edit_montant').value = facture.montant;
+                document.getElementById('edit_index_precedent').value = facture.index_precedent || '';
+                document.getElementById('edit_index_actuel').value = facture.index_actuel || '';
+                document.getElementById('edit_consommation_m3').value = facture.consommation_m3 || '';
+                document.getElementById('edit_date_emission').value = facture.date_emission;
+                document.getElementById('edit_date_echeance').value = facture.date_echeance;
+                document.getElementById('edit_notes').value = facture.notes || '';
+
+                // Afficher le modal
+                $('#editFactureModal').modal('show');
+            } else {
+                alert('Erreur: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la récupération des détails de la facture');
+        });
 }
 
 // Supprimer

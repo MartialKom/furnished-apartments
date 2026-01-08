@@ -13,9 +13,9 @@ return [
     'nav_blog' => 'Blog',
     
     // Header
-    'welcome_message' => 'Bienvenue chez Nsenoutower',
+    'welcome_message' => 'Bienvenue chez T-Lodge',
     'phone_number' => '+1 (438) 467-2660',
-    'email_address' => 'info@nsenou-tower.com',
+    'email_address' => 'contact@t-lodge.com',
     'hours_24_7' => '24/7',
     
     // Home page
@@ -77,7 +77,7 @@ return [
     
     // Footer
     'footer_about_title' => 'À Propos de Nous',
-    'footer_about_text' => 'Nsenoutower offre des appartements meublés de luxe avec des services haut de gamme pour un séjour exceptionnel.',
+    'footer_about_text' => 'T-Lodge offre des appartements meublés de luxe avec des services haut de gamme pour un séjour exceptionnel.',
     'footer_quick_links' => 'Liens Rapides',
     'footer_contact_title' => 'Contact',
     'footer_newsletter' => 'Newsletter',
@@ -190,16 +190,16 @@ return [
     'bathrooms_2' => '2 salles de bain',
     
     // Footer section
-    'footer_description' => 'NsenouTower combine le meilleur de la vie urbaine tout en vous offrant un cocon de sérénité. Choisir nos appartements, c\'est opter pour un cadre de vie d\'exception.',
+    'footer_description' => 'T-Lodge combine le meilleur de la vie urbaine tout en vous offrant un cocon de sérénité. Choisir nos appartements, c\'est opter pour un cadre de vie d\'exception.',
     'follow_us' => 'Suivez nous',
-    'nsenou_news' => 'Nouveautés Nsenou',
+    'nsenou_news' => 'Nouveautés T-Lodge',
     'reviews' => 'Revues',
     'help' => 'Aide',
     'useful_links' => 'Liens Utiles',
     'home_link' => 'Home',
     'contact_us_link' => 'Contactez nous',
     'services_link' => 'Services',
-    'copyright_text' => '© 2025 @ Nsenoutower All design by Tamaroas-Dev.',
+    'copyright_text' => '© 2025 T-Lodge. All Rights Reserved.',
 
     // About page
     'about_page_title' => 'À Propos de Nous',

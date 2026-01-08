@@ -110,8 +110,8 @@
                                     <div class="row text-center">
                                         <div class="col-6">
                                             <div class="info-box">
-                                                <span class="info-box-icon bg-info">
-                                                    <i class="fas fa-money-bill-wave"></i>
+                                                <span class="info-box-icon">
+                                                    <i class="fas fa-money-bill-wave text-info"></i>
                                                 </span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text">Total dû</span>
@@ -121,8 +121,8 @@
                                         </div>
                                         <div class="col-6">
                                             <div class="info-box">
-                                                <span class="info-box-icon bg-success">
-                                                    <i class="fas fa-check-circle"></i>
+                                                <span class="info-box-icon">
+                                                    <i class="fas fa-check-circle text-success"></i>
                                                 </span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text">Total payé</span>
@@ -132,8 +132,8 @@
                                         </div>
                                         <div class="col-6">
                                             <div class="info-box">
-                                                <span class="info-box-icon bg-warning">
-                                                    <i class="fas fa-clock"></i>
+                                                <span class="info-box-icon">
+                                                    <i class="fas fa-clock text-warning"></i>
                                                 </span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text">En attente</span>
@@ -143,8 +143,8 @@
                                         </div>
                                         <div class="col-6">
                                             <div class="info-box">
-                                                <span class="info-box-icon bg-danger">
-                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                <span class="info-box-icon">
+                                                    <i class="fas fa-exclamation-triangle text-danger"></i>
                                                 </span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text">En retard</span>
@@ -292,6 +292,30 @@
     </div>
 </div>
 
+<!-- Modal pour voir les détails d'un paiement -->
+<div class="modal fade" id="modalDetailsPaiement" tabindex="-1" role="dialog" aria-labelledby="modalDetailsPaiementLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetailsPaiementLabel">Détails du Paiement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body" id="detailsPaiementContent">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p>Chargement des détails...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="imprimerRecu" style="display:none;">
+                    <i class="feather-printer me-2"></i>Imprimer le Reçu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal pour enregistrer un paiement -->
 <div class="modal fade" id="modalEnregistrerPaiement" tabindex="-1" role="dialog" aria-labelledby="modalEnregistrerPaiementLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -393,8 +417,199 @@ function enregistrerPaiement(contratId, moisAnnee = null) {
 }
 
 function voirDetailsPaiement(paiementId) {
-    // TODO: Implémenter la vue des détails d'un paiement
-    toastr.info('Fonctionnalité en cours de développement');
+    // Réinitialiser le contenu de la modale
+    $('#detailsPaiementContent').html(`
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Chargement des détails...</p>
+        </div>
+    `);
+    $('#imprimerRecu').hide();
+
+    // Ouvrir la modale
+    $('#modalDetailsPaiement').modal('show');
+
+    // Récupérer les détails du paiement via AJAX
+    $.ajax({
+        url: '<?= base_url('admin/paiements-mensuels/echeance') ?>/' + paiementId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                const paiement = response.echeance;
+                const contrat = response.contrat;
+
+                // Déterminer les classes de statut
+                let statutClass = 'badge-secondary';
+                let statutText = 'Inconnu';
+                let statutIcon = 'feather-circle';
+
+                switch(paiement.statut) {
+                    case 'paye':
+                        statutClass = 'badge-success';
+                        statutText = 'Payé';
+                        statutIcon = 'feather-check-circle';
+                        break;
+                    case 'en_retard':
+                        statutClass = 'badge-danger';
+                        statutText = 'En retard';
+                        statutIcon = 'feather-alert-circle';
+                        break;
+                    case 'partiellement_paye':
+                        statutClass = 'badge-warning';
+                        statutText = 'Partiellement payé';
+                        statutIcon = 'feather-clock';
+                        break;
+                    case 'en_attente':
+                        statutClass = 'badge-info';
+                        statutText = 'En attente';
+                        statutIcon = 'feather-hourglass';
+                        break;
+                }
+
+                // Construire le HTML des détails
+                let html = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="feather-info me-2"></i>Informations Générales</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Mois/Année:</td>
+                                            <td>${paiement.mois_annee}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Date d'échéance:</td>
+                                            <td>${new Date(paiement.date_echeance).toLocaleDateString('fr-FR')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Statut:</td>
+                                            <td>
+                                                <span class="badge ${statutClass} d-flex align-items-center" style="width: fit-content;">
+                                                    <i class="${statutIcon} me-1" style="font-size: 12px;"></i>
+                                                    ${statutText}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0"><i class="feather-home me-2"></i>Appartement</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Adresse:</td>
+                                            <td>${contrat.appartement_adresse || 'N/A'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Loyer mensuel:</td>
+                                            <td class="text-primary fw-bold">${parseInt(contrat.loyer_mensuel).toLocaleString()} FCFA</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header" style="background: linear-gradient(135deg, #d29751 0%, #b8834a 100%);">
+                                    <h6 class="mb-0 text-white"><i class="feather-dollar-sign me-2"></i>Détails Financiers</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Montant dû:</td>
+                                            <td class="text-primary fw-bold">${parseInt(paiement.montant_du).toLocaleString()} FCFA</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Montant payé:</td>
+                                            <td class="text-success fw-bold">${parseInt(paiement.montant_paye || 0).toLocaleString()} FCFA</td>
+                                        </tr>
+                                        ${paiement.montant_paye > 0 && paiement.montant_paye < paiement.montant_du ? `
+                                        <tr>
+                                            <td class="fw-bold">Reste à payer:</td>
+                                            <td class="text-danger fw-bold">${(parseInt(paiement.montant_du) - parseInt(paiement.montant_paye)).toLocaleString()} FCFA</td>
+                                        </tr>
+                                        ` : ''}
+                                    </table>
+                                </div>
+                            </div>
+
+                            ${paiement.statut === 'paye' ? `
+                            <div class="card mb-3">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0"><i class="feather-check me-2"></i>Informations de Paiement</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Date de paiement:</td>
+                                            <td>${paiement.date_paiement ? new Date(paiement.date_paiement).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Mode de paiement:</td>
+                                            <td>${paiement.mode_paiement ? paiement.mode_paiement.charAt(0).toUpperCase() + paiement.mode_paiement.slice(1) : 'N/A'}</td>
+                                        </tr>
+                                        ${paiement.reference_paiement ? `
+                                        <tr>
+                                            <td class="fw-bold">Référence:</td>
+                                            <td>${paiement.reference_paiement}</td>
+                                        </tr>
+                                        ` : ''}
+                                    </table>
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    ${paiement.notes ? `
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="feather-file-text me-2"></i>Notes</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0">${paiement.notes}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+
+                $('#detailsPaiementContent').html(html);
+
+                // Afficher le bouton d'impression si le paiement est effectué
+                if (paiement.statut === 'paye') {
+                    $('#imprimerRecu').show().off('click').on('click', function() {
+                        window.open('<?= base_url('admin/receipts/generate') ?>/' + paiementId, '_blank');
+                    });
+                }
+            } else {
+                $('#detailsPaiementContent').html(`
+                    <div class="alert alert-danger">
+                        <i class="feather-x-circle me-2"></i>${response.message}
+                    </div>
+                `);
+            }
+        },
+        error: function(xhr) {
+            let errorMessage = 'Erreur lors du chargement des détails';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            $('#detailsPaiementContent').html(`
+                <div class="alert alert-danger">
+                    <i class="feather-x-circle me-2"></i>${errorMessage}
+                </div>
+            `);
+        }
+    });
 }
 
 function calculerMontantTotal() {

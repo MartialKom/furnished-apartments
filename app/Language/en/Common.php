@@ -13,9 +13,9 @@ return [
     'nav_blog' => 'Blog',
     
     // Header
-    'welcome_message' => 'Welcome to our Nsenoutower',
+    'welcome_message' => 'Welcome to T-Lodge',
     'phone_number' => '+1 (438) 467-2660',
-    'email_address' => 'info@nsenou-tower.com',
+    'email_address' => 'contact@t-lodge.com',
     'hours_24_7' => '24/7',
     
     // Home page
@@ -77,7 +77,7 @@ return [
     
     // Footer
     'footer_about_title' => 'About Us',
-    'footer_about_text' => 'Nsenoutower offers luxury furnished apartments with premium services for an exceptional stay.',
+    'footer_about_text' => 'T-Lodge offers luxury furnished apartments with premium services for an exceptional stay.',
     'footer_quick_links' => 'Quick Links',
     'footer_contact_title' => 'Contact',
     'footer_newsletter' => 'Newsletter',
@@ -190,16 +190,16 @@ return [
     'bathrooms_2' => '2 bathrooms',
     
     // Footer section
-    'footer_description' => 'NsenouTower combines the best of urban living while offering you a cocoon of serenity. Choosing our apartments means opting for an exceptional living environment.',
+    'footer_description' => 'T-Lodge combines the best of urban living while offering you a cocoon of serenity. Choosing our apartments means opting for an exceptional living environment.',
     'follow_us' => 'Follow us',
-    'nsenou_news' => 'Nsenou News',
+    'nsenou_news' => 'T-Lodge News',
     'reviews' => 'Reviews',
     'help' => 'Help',
     'useful_links' => 'Useful Links',
     'home_link' => 'Home',
     'contact_us_link' => 'Contact us',
     'services_link' => 'Services',
-    'copyright_text' => '© 2025 @ Nsenoutower All design by Tamaroas-Dev.',
+    'copyright_text' => '© 2025 T-Lodge. All Rights Reserved.',
 
     // About page
     'about_page_title' => 'About Us',

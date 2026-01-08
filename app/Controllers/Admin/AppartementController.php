@@ -36,6 +36,12 @@ class AppartementController extends BaseController
             'tarifs' => 'required|decimal',
             'statut' => 'required|in_list[disponible,maintenance]',
             'type' => 'required|in_list[meuble,non_meuble]',
+            'categorie' => 'required|in_list[appartement,logement,boutique]',
+            'nombre_chambres' => 'permit_empty|integer|in_list[2,3]',
+            'superficie' => 'permit_empty|decimal',
+            'numero_bien' => 'permit_empty|string|max_length[50]',
+            'etage' => 'permit_empty|integer',
+            'description' => 'permit_empty|string',
             'equipements' => 'permit_empty|string'
         ];
 
@@ -90,6 +96,12 @@ class AppartementController extends BaseController
             'tarifs' => $this->request->getPost('tarifs'),
             'statut' => $this->request->getPost('statut'),
             'type' => $this->request->getPost('type'),
+            'categorie' => $this->request->getPost('categorie'),
+            'nombre_chambres' => $this->request->getPost('nombre_chambres') ?: null,
+            'superficie' => $this->request->getPost('superficie') ?: null,
+            'numero_bien' => $this->request->getPost('numero_bien') ?: null,
+            'etage' => $this->request->getPost('etage') ?: null,
+            'description' => $this->request->getPost('description') ?: null,
             'photos' => implode(',', $uploadedPhotos),
             'equipements' => $this->request->getPost('equipements')
         ];
@@ -129,6 +141,12 @@ class AppartementController extends BaseController
             'tarifs' => 'required|decimal',
             'statut' => 'required|in_list[disponible,maintenance]',
             'type' => 'required|in_list[meuble,non_meuble]',
+            'categorie' => 'required|in_list[appartement,logement,boutique]',
+            'nombre_chambres' => 'permit_empty|integer|in_list[2,3]',
+            'superficie' => 'permit_empty|decimal',
+            'numero_bien' => 'permit_empty|string|max_length[50]',
+            'etage' => 'permit_empty|integer',
+            'description' => 'permit_empty|string',
             'equipements' => 'permit_empty|string'
         ];
 
@@ -187,6 +205,12 @@ class AppartementController extends BaseController
             'tarifs' => $this->request->getPost('tarifs'),
             'statut' => $this->request->getPost('statut'),
             'type' => $this->request->getPost('type'),
+            'categorie' => $this->request->getPost('categorie'),
+            'nombre_chambres' => $this->request->getPost('nombre_chambres') ?: null,
+            'superficie' => $this->request->getPost('superficie') ?: null,
+            'numero_bien' => $this->request->getPost('numero_bien') ?: null,
+            'etage' => $this->request->getPost('etage') ?: null,
+            'description' => $this->request->getPost('description') ?: null,
             'photos' => implode(',', $allPhotos),
             'equipements' => $this->request->getPost('equipements')
         ];

@@ -43,10 +43,10 @@ class LocataireModel extends Model
         'email' => 'required|valid_email',
         'telephone' => 'permit_empty|string|max_length[20]',
         'date_naissance' => 'permit_empty|valid_date',
-        'type_piece' => 'required|in_list[CNI,PASSPORT,CARTE_SEJOUR,AUTRE]',
+        'type_piece' => 'permit_empty|in_list[CNI,PASSPORT,CARTE_SEJOUR,AUTRE]',
         'numero_piece' => 'permit_empty|string|max_length[50]',
         'lieu_naissance' => 'permit_empty|string|max_length[255]',
-        'nationalite' => 'required|string|max_length[100]'
+        'nationalite' => 'permit_empty|string|max_length[100]'
     ];
     protected $validationMessages   = [
         'nom' => [
@@ -64,7 +64,6 @@ class LocataireModel extends Model
             'valid_date' => 'La date de naissance doit être valide.'
         ],
         'type_piece' => [
-            'required' => 'Le type de pièce d\'identité est obligatoire.',
             'in_list' => 'Le type de pièce d\'identité doit être CNI, PASSPORT, CARTE_SEJOUR ou AUTRE.'
         ],
         'numero_piece' => [
@@ -74,7 +73,6 @@ class LocataireModel extends Model
             'max_length' => 'Le lieu de naissance ne peut pas dépasser 255 caractères.'
         ],
         'nationalite' => [
-            'required' => 'La nationalité est obligatoire.',
             'max_length' => 'La nationalité ne peut pas dépasser 100 caractères.'
         ]
     ];

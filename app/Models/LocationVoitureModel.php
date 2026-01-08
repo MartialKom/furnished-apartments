@@ -14,6 +14,7 @@ class LocationVoitureModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'voiture_id',
+        'type_location',
         'locataire_id',
         'client_nom',
         'client_email',
@@ -23,7 +24,9 @@ class LocationVoitureModel extends Model
         'date_fin_prevue',
         'date_fin_reelle',
         'nombre_jours',
+        'duree_heures',
         'tarif_journalier',
+        'tarif_horaire',
         'montant_total',
         'caution_versee',
         'caution_restituee',
@@ -55,10 +58,13 @@ class LocationVoitureModel extends Model
     // Validation
     protected $validationRules      = [
         'voiture_id' => 'required|integer',
+        'type_location' => 'required|in_list[jour,heure]',
         'date_debut' => 'required|valid_date',
         'date_fin_prevue' => 'required|valid_date',
-        'nombre_jours' => 'required|integer|greater_than[0]',
-        'tarif_journalier' => 'required|decimal|greater_than[0]',
+        'nombre_jours' => 'permit_empty|integer|greater_than[0]',
+        'duree_heures' => 'permit_empty|integer|greater_than[0]',
+        'tarif_journalier' => 'permit_empty|decimal|greater_than[0]',
+        'tarif_horaire' => 'permit_empty|decimal|greater_than[0]',
         'montant_total' => 'required|decimal|greater_than[0]',
         'caution_versee' => 'permit_empty|decimal',
         'montant_paye' => 'permit_empty|decimal',
@@ -77,21 +83,39 @@ class LocationVoitureModel extends Model
     {
         log_message('info', '[LocationVoitureModel] Création location: ' . json_encode($data));
 
+        $typeLocation = $data['type_location'] ?? 'jour';
+
+        // Calculer selon le type de location
+        if ($typeLocation === 'heure') {
+            // Location horaire
+            if (!isset($data['duree_heures']) && isset($data['date_debut']) && isset($data['date_fin_prevue'])) {
+                $debut = new \DateTime($data['date_debut']);
+                $fin = new \DateTime($data['date_fin_prevue']);
+                $diff = $debut->diff($fin);
+                $data['duree_heures'] = ($diff->days * 24) + $diff->h;
+            }
+
+            // Calculer montant_total si non fourni
+            if (!isset($data['montant_total']) && isset($data['tarif_horaire']) && isset($data['duree_heures'])) {
+                $data['montant_total'] = $data['tarif_horaire'] * $data['duree_heures'];
+            }
+        } else {
+            // Location journalière
+            if (!isset($data['nombre_jours']) && isset($data['date_debut']) && isset($data['date_fin_prevue'])) {
+                $debut = new \DateTime($data['date_debut']);
+                $fin = new \DateTime($data['date_fin_prevue']);
+                $data['nombre_jours'] = $debut->diff($fin)->days + 1; // +1 pour inclure le jour de départ
+            }
+
+            // Calculer montant_total si non fourni
+            if (!isset($data['montant_total']) && isset($data['tarif_journalier']) && isset($data['nombre_jours'])) {
+                $data['montant_total'] = $data['tarif_journalier'] * $data['nombre_jours'];
+            }
+        }
+
         // Calculer montant_restant automatiquement
         if (!isset($data['montant_restant'])) {
             $data['montant_restant'] = $data['montant_total'] - ($data['montant_paye'] ?? 0);
-        }
-
-        // Calculer nombre de jours automatiquement si non fourni
-        if (!isset($data['nombre_jours']) && isset($data['date_debut']) && isset($data['date_fin_prevue'])) {
-            $debut = new \DateTime($data['date_debut']);
-            $fin = new \DateTime($data['date_fin_prevue']);
-            $data['nombre_jours'] = $debut->diff($fin)->days + 1; // +1 pour inclure le jour de départ
-        }
-
-        // Calculer montant_total si non fourni
-        if (!isset($data['montant_total']) && isset($data['tarif_journalier']) && isset($data['nombre_jours'])) {
-            $data['montant_total'] = $data['tarif_journalier'] * $data['nombre_jours'];
         }
 
         $result = $this->insert($data);

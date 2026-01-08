@@ -26,6 +26,9 @@ class ReservationController extends BaseController
 
     public function index()
     {
+        // Mettre à jour automatiquement les statuts en fonction des dates
+        $this->reservationModel->mettreAJourStatutsAutomatiques();
+
         // Récupérer toutes les réservations avec les informations du client et de l'appartement
         $reservations = $this->reservationModel->getReservationsWithClientInfo();
 
@@ -33,6 +36,8 @@ class ReservationController extends BaseController
         $reservationsParStatut = [
             'en_attente' => [],
             'confirmee' => [],
+            'en_cours' => [],
+            'terminee' => [],
             'annulee' => []
         ];
 
@@ -148,10 +153,10 @@ class ReservationController extends BaseController
 
         $reservation = $this->reservationModel
             ->select('reservations.*,
-                      COALESCE(locataires.nom, reservations.client_nom) as nom,
-                      COALESCE(locataires.telephone, reservations.client_telephone) as telephone,
-                      COALESCE(locataires.email, reservations.client_email) as email,
-                      appartements.adresse,
+                      COALESCE(locataires.nom, reservations.client_nom) as locataire_nom,
+                      COALESCE(locataires.telephone, reservations.client_telephone) as locataire_telephone,
+                      COALESCE(locataires.email, reservations.client_email) as locataire_email,
+                      appartements.adresse as appartement_adresse,
                       appartements.tarifs')
             ->join('locataires', 'locataires.id = reservations.locataire_id', 'left')
             ->join('appartements', 'appartements.id = reservations.appartement_id')
@@ -180,6 +185,7 @@ class ReservationController extends BaseController
             'date_debut' => 'required|valid_date',
             'date_fin' => 'required|valid_date',
             'montant_paye' => 'permit_empty|decimal',
+            'mode_paiement' => 'required|in_list[especes,orange_money,momo,carte_bancaire,virement]',
             'reduction_pourcentage' => 'permit_empty|decimal',
             'type_reservation' => 'required|in_list[en_ligne,telephonique,presentiel]',
             'notes' => 'permit_empty|string'
@@ -227,24 +233,51 @@ class ReservationController extends BaseController
 
         // Gérer la création ou sélection du locataire
         $locataireId = null;
-        $clientNom = null;
-        $clientEmail = null;
-        $clientTelephone = null;
 
         if ($clientType === 'nouveau') {
-            // Stocker les informations client directement dans la réservation
+            // Récupérer les informations du nouveau client
             $clientNom = $this->request->getPost('client_nom');
             $clientEmail = $this->request->getPost('client_email');
             $clientTelephone = $this->request->getPost('client_telephone');
 
-            // Vérifier si un locataire avec cet email existe déjà
-            $existingLocataire = $this->locataireModel->where('email', $clientEmail)->first();
+            log_message('info', "Nouveau client: {$clientNom}, Email: {$clientEmail}, Tél: {$clientTelephone}");
+
+            // Vérifier si un locataire avec cet email ou téléphone existe déjà
+            $existingLocataire = $this->locataireModel
+                ->groupStart()
+                    ->where('email', $clientEmail)
+                    ->orWhere('telephone', $clientTelephone)
+                ->groupEnd()
+                ->first();
+
             if ($existingLocataire) {
-                // Suggérer d'utiliser le locataire existant
-                log_message('info', 'Email ' . $clientEmail . ' déjà associé au locataire ID: ' . $existingLocataire['id']);
+                // Utiliser le locataire existant
+                $locataireId = $existingLocataire['id'];
+                log_message('info', "Locataire existant trouvé - ID: {$locataireId}");
+            } else {
+                // Créer un nouveau locataire
+                $locataireData = [
+                    'nom' => $clientNom,
+                    'email' => $clientEmail,
+                    'telephone' => $clientTelephone
+                ];
+
+                $locataireId = $this->locataireModel->insert($locataireData);
+
+                if ($locataireId) {
+                    log_message('info', "Nouveau locataire créé - ID: {$locataireId}");
+                } else {
+                    log_message('error', 'Échec de la création du locataire: ' . json_encode($this->locataireModel->errors()));
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Erreur lors de la création du locataire.',
+                        'errors' => $this->locataireModel->errors()
+                    ]);
+                }
             }
         } else {
             $locataireId = $this->request->getPost('locataire_id');
+            log_message('info', "Client existant sélectionné - ID: {$locataireId}");
         }
 
         // Calculer le prix total avec réduction
@@ -267,9 +300,6 @@ class ReservationController extends BaseController
 
         $data = [
             'locataire_id' => $locataireId,
-            'client_nom' => $clientNom,
-            'client_email' => $clientEmail,
-            'client_telephone' => $clientTelephone,
             'appartement_id' => $appartementId,
             'date_debut' => $dateDebut,
             'date_fin' => $dateFin,
@@ -279,6 +309,7 @@ class ReservationController extends BaseController
             'reduction_pourcentage' => $reductionPourcentage,
             'montant_paye' => $montantPaye,
             'montant_restant' => $prixCalcul['montant_total'] - $montantPaye,
+            'mode_paiement' => $this->request->getPost('mode_paiement'),
             'type_reservation' => $this->request->getPost('type_reservation'),
             'notes' => $this->request->getPost('notes'),
             'statut' => 'confirmee' // Les réservations manuelles sont confirmées par défaut
@@ -293,6 +324,7 @@ class ReservationController extends BaseController
                 log_message('info', "Réservation créée avec succès - ID: {$reservationId}");
 
                 // Si un montant a été payé, enregistrer le paiement
+                $paiementId = null;
                 if ($montantPaye > 0) {
                     log_message('info', "Enregistrement du paiement partiel de {$montantPaye} FCFA");
                     $paiementData = [
@@ -300,16 +332,25 @@ class ReservationController extends BaseController
                         'locataire_id' => $data['locataire_id'],
                         'montant' => $montantPaye,
                         'date' => date('Y-m-d'),
+                        'mode_paiement' => $data['mode_paiement'],
                         'statut' => 'paye'
                     ];
-                    $this->paiementModel->enregistrerPaiementPartiel($paiementData);
+                    $paiementId = $this->paiementModel->enregistrerPaiementPartiel($paiementData);
                 }
 
                 log_message('info', '=== RÉSERVATION CRÉÉE AVEC SUCCÈS ===');
-                return $this->response->setJSON([
+
+                $response = [
                     'success' => true,
                     'message' => 'Réservation créée avec succès !'
-                ]);
+                ];
+
+                // Ajouter l'ID du paiement si un paiement a été effectué
+                if ($paiementId) {
+                    $response['paiement_id'] = $paiementId;
+                }
+
+                return $this->response->setJSON($response);
             } else {
                 $modelErrors = $this->reservationModel->errors();
                 log_message('error', 'Échec création réservation - Erreurs du modèle: ' . json_encode($modelErrors));
@@ -342,7 +383,8 @@ class ReservationController extends BaseController
 
         $rules = [
             'montant' => 'required|decimal|greater_than[0]',
-            'date' => 'required|valid_date'
+            'date' => 'required|valid_date',
+            'mode_paiement' => 'required|in_list[especes,orange_money,momo,carte_bancaire,virement]'
         ];
 
         if (!$this->validate($rules)) {
@@ -361,7 +403,7 @@ class ReservationController extends BaseController
         }
 
         $montantPaiement = $this->request->getPost('montant');
-        
+
         // Vérifier que le paiement ne dépasse pas le montant restant
         if ($montantPaiement > $reservation['montant_restant']) {
             return $this->response->setJSON([
@@ -375,13 +417,17 @@ class ReservationController extends BaseController
             'locataire_id' => $reservation['locataire_id'] ?? null,
             'montant' => $montantPaiement,
             'date' => $this->request->getPost('date'),
+            'mode_paiement' => $this->request->getPost('mode_paiement'),
             'statut' => 'paye'
         ];
 
-        if ($this->paiementModel->enregistrerPaiementPartiel($paiementData)) {
+        $paiementId = $this->paiementModel->enregistrerPaiementPartiel($paiementData);
+
+        if ($paiementId) {
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Paiement enregistré avec succès !'
+                'message' => 'Paiement enregistré avec succès !',
+                'paiement_id' => $paiementId
             ]);
         } else {
             return $this->response->setJSON([

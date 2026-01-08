@@ -443,4 +443,74 @@ class FactureEauController extends BaseController
             ]);
         }
     }
+
+    /**
+     * Générer et afficher la facture en HTML
+     */
+    public function genererFacture($id = null)
+    {
+        if (!$id) {
+            return redirect()->back()->with('error', 'Facture non trouvée.');
+        }
+
+        // Récupérer la facture avec ses détails
+        $facture = $this->factureEauModel
+            ->select('factures_eau.*,
+                      locataires.nom as locataire_nom,
+                      locataires.email as locataire_email,
+                      locataires.telephone as locataire_telephone,
+                      appartements.adresse as appartement_adresse,
+                      contrats_locataires.id as contrat_id')
+            ->join('contrats_locataires', 'contrats_locataires.id = factures_eau.contrat_id')
+            ->join('locataires', 'locataires.id = contrats_locataires.locataire_id')
+            ->join('appartements', 'appartements.id = contrats_locataires.appartement_id')
+            ->find($id);
+
+        if (!$facture) {
+            return redirect()->back()->with('error', 'Facture non trouvée.');
+        }
+
+        // Récupérer les paramètres de la structure
+        $structureParamModel = new \App\Models\StructureParamModel();
+        $structureParams = $structureParamModel->getStructureParams();
+
+        // Calculer le reste à payer
+        $reste_a_payer = $facture['montant'] - ($facture['montant_paye'] ?? 0);
+
+        // Préparer les données pour la facture
+        $data = [
+            'numero_facture' => 'EAU-' . str_pad($facture['id'], 6, '0', STR_PAD_LEFT),
+            'date_emission' => $facture['date_emission'],
+            'date_echeance' => $facture['date_echeance'],
+            'date_paiement' => $facture['date_paiement'],
+            'locataire_nom' => $facture['locataire_nom'],
+            'locataire_email' => $facture['locataire_email'],
+            'locataire_telephone' => $facture['locataire_telephone'],
+            'appartement_adresse' => $facture['appartement_adresse'],
+            'contrat_id' => $facture['contrat_id'],
+            'mois_annee' => $facture['mois_annee'],
+            'montant' => $facture['montant'],
+            'consommation_m3' => $facture['consommation_m3'],
+            'index_precedent' => $facture['index_precedent'],
+            'index_actuel' => $facture['index_actuel'],
+            'montant_paye' => $facture['montant_paye'] ?? 0,
+            'reste_a_payer' => $reste_a_payer,
+            'statut' => $facture['statut'],
+            'mode_paiement' => $facture['mode_paiement'],
+            'reference_paiement' => $facture['reference_paiement'],
+            'notes' => $facture['notes'],
+            'structure_nom' => $structureParams['structure_name'] ?? 'T-Lodge',
+            'structure_adresse' => $structureParams['structure_address'] ?? '',
+            'structure_telephone' => $structureParams['structure_phone'] ?? '',
+            'structure_email' => $structureParams['structure_email'] ?? '',
+            'structure_rc' => $structureParams['structure_rc'] ?? '',
+            'structure_nif' => $structureParams['structure_nif'] ?? '',
+            'structure_logo' => $structureParams['structure_logo'] ?? '',
+
+            // Flag pour désactiver le script d'auto-impression lors de la génération PDF
+            'is_pdf_generation' => false
+        ];
+
+        return view('admin/factures_eau/facture_template', $data);
+    }
 }
