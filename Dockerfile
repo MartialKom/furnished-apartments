@@ -24,6 +24,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev unzip \
     && docker-php-ext-install zip mysqli pdo pdo_mysql
 
+# Copie la configuration PHP personnalisée
+COPY php.ini /usr/local/etc/php/conf.d/custom.ini
+
 # Copie les fichiers de l'application dans le dossier Apache
 COPY . /var/www/html/
 
