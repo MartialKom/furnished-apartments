@@ -6,116 +6,56 @@ use CodeIgniter\Config\BaseConfig;
 
 class Email extends BaseConfig
 {
-    public string $fromEmail  = '';
-    public string $fromName   = '';
-    public string $recipients = '';
-
-    /**
-     * The "user agent"
-     */
-    public string $userAgent = 'CodeIgniter';
-
-    /**
-     * The mail sending protocol: mail, sendmail, smtp
-     */
-    public string $protocol = 'mail';
-
-    /**
-     * The server path to Sendmail.
-     */
-    public string $mailPath = '/usr/sbin/sendmail';
-
-    /**
-     * SMTP Server Hostname
-     */
+    public string $protocol = 'smtp';
     public string $SMTPHost = '';
-
-    /**
-     * SMTP Username
-     */
     public string $SMTPUser = '';
-
-    /**
-     * SMTP Password
-     */
     public string $SMTPPass = '';
-
-    /**
-     * SMTP Port
-     */
-    public int $SMTPPort = 25;
-
-    /**
-     * SMTP Timeout (in seconds)
-     */
-    public int $SMTPTimeout = 5;
-
-    /**
-     * Enable persistent SMTP connections
-     */
-    public bool $SMTPKeepAlive = false;
-
-    /**
-     * SMTP Encryption.
-     *
-     * @var string '', 'tls' or 'ssl'. 'tls' will issue a STARTTLS command
-     *             to the server. 'ssl' means implicit SSL. Connection on port
-     *             465 should set this to ''.
-     */
-    public string $SMTPCrypto = 'tls';
-
-    /**
-     * Enable word-wrap
-     */
-    public bool $wordWrap = true;
-
-    /**
-     * Character count to wrap at
-     */
-    public int $wrapChars = 76;
-
-    /**
-     * Type of mail, either 'text' or 'html'
-     */
-    public string $mailType = 'text';
-
-    /**
-     * Character set (utf-8, iso-8859-1, etc.)
-     */
+    public int $SMTPPort = 465;
+    public string $SMTPCrypto = 'ssl';
+    public int $SMTPTimeout = 60;
+    public string $mailType = 'html';
     public string $charset = 'UTF-8';
+    public bool $wordWrap = true;
+    public int $wrapChars = 70;
+    public string $fromEmail = '';
+    public string $fromName = 'T-Lodge - Système de Gestion';
 
-    /**
-     * Whether to validate the email address
-     */
-    public bool $validate = false;
+    public function __construct()
+    {
+        parent::__construct();
 
-    /**
-     * Email Priority. 1 = highest. 5 = lowest. 3 = normal
-     */
-    public int $priority = 3;
+        try {
+            // Charger les paramètres SMTP depuis la base de données avec fallback .env
+            $structureParamModel = new \App\Models\StructureParamModel();
+            $smtpParams = $structureParamModel->getSmtpParams();
 
-    /**
-     * Newline character. (Use “\r\n” to comply with RFC 822)
-     */
-    public string $CRLF = "\r\n";
+            // Appliquer les paramètres (BD prioritaire, .env en fallback via getSmtpParams)
+            $this->SMTPHost = $smtpParams['smtp_host'] ?: 'smtp-fr.securemail.pro';
+            $this->SMTPPort = (int)($smtpParams['smtp_port'] ?: 465);
+            $this->SMTPUser = $smtpParams['smtp_user'] ?: 'contact@nsenoutower.com';
+            $this->SMTPPass = $smtpParams['smtp_pass'] ?: '';
+            $this->SMTPCrypto = $smtpParams['smtp_crypto'] ?: 'ssl';
+            $this->SMTPTimeout = (int)($smtpParams['smtp_timeout'] ?: 60);
+            $this->fromEmail = $smtpParams['smtp_from_email'] ?: $smtpParams['smtp_user'];
+            $this->fromName = $smtpParams['smtp_from_name'] ?: 'T-Lodge - Système de Gestion';
 
-    /**
-     * Newline character. (Use “\r\n” to comply with RFC 822)
-     */
+        } catch (\Exception $e) {
+            // Si erreur BD, utiliser uniquement les variables d'environnement
+            log_message('warning', 'Impossible de charger config SMTP depuis BD, fallback .env : ' . $e->getMessage());
+
+            $this->SMTPHost = getenv('SMTP_HOST') ?: 'smtp-fr.securemail.pro';
+            $this->SMTPUser = getenv('SMTP_USER') ?: 'contact@nsenoutower.com';
+            $this->SMTPPass = getenv('SMTP_PASS') ?: '';
+            $this->SMTPPort = (int)(getenv('SMTP_PORT') ?: 465);
+            $this->SMTPCrypto = getenv('SMTP_CRYPTO') ?: 'ssl';
+            $this->fromEmail = getenv('SMTP_USER') ?: 'contact@nsenoutower.com';
+        }
+    }
     public string $newline = "\r\n";
-
-    /**
-     * Enable BCC Batch Mode.
-     */
+    public string $crlf = "\r\n";
+    public bool $validate = true;
+    public int $priority = 3;
     public bool $BCCBatchMode = false;
-
-    /**
-     * Number of emails in each BCC batch
-     */
     public int $BCCBatchSize = 200;
-
-    /**
-     * Enable notify message from server
-     */
     public bool $DSN = false;
 }

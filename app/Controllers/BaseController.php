@@ -35,7 +35,7 @@ abstract class BaseController extends Controller
      *
      * @var list<string>
      */
-    protected $helpers = [];
+    protected $helpers = ['permission'];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -52,6 +52,15 @@ abstract class BaseController extends Controller
         parent::initController($request, $response, $logger);
 
         // Preload any models, libraries, etc, here.
+
+        // Set language from session or cookie
+        $session = session();
+        $language = $session->get('language') ?? $request->getCookie('language') ?? 'fr';
+        
+        if (in_array($language, ['en', 'fr'])) {
+            $request->setLocale($language);
+            $session->set('language', $language);
+        }
 
         // E.g.: $this->session = service('session');
     }

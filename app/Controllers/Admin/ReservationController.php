@@ -1,0 +1,486 @@
+<?php
+
+namespace App\Controllers\Admin;
+
+use App\Controllers\BaseController;
+use App\Models\ReservationModel;
+use App\Models\LocataireModel;
+use App\Models\AppartementModel;
+use App\Models\PaiementModel;
+use CodeIgniter\HTTP\ResponseInterface;
+
+class ReservationController extends BaseController
+{
+    protected $reservationModel;
+    protected $locataireModel;
+    protected $appartementModel;
+    protected $paiementModel;
+
+    public function __construct()
+    {
+        $this->reservationModel = new ReservationModel();
+        $this->locataireModel = new LocataireModel();
+        $this->appartementModel = new AppartementModel();
+        $this->paiementModel = new PaiementModel();
+    }
+
+    public function index()
+    {
+        // Mettre à jour automatiquement les statuts en fonction des dates
+        $this->reservationModel->mettreAJourStatutsAutomatiques();
+
+        // Récupérer toutes les réservations avec les informations du client et de l'appartement
+        $reservations = $this->reservationModel->getReservationsWithClientInfo();
+
+        // Organiser les réservations par statut
+        $reservationsParStatut = [
+            'en_attente' => [],
+            'confirmee' => [],
+            'en_cours' => [],
+            'terminee' => [],
+            'annulee' => []
+        ];
+
+        foreach ($reservations as $reservation) {
+            $reservationsParStatut[$reservation['statut']][] = $reservation;
+        }
+
+        $data = [
+            'title' => 'Gestion des Réservations',
+            'page_title' => 'Réservations',
+            'breadcrumbs' => '<li class="breadcrumb-item">Administration</li><li class="breadcrumb-item active">Réservations</li>',
+            'reservations' => $reservationsParStatut
+        ];
+
+        return view('admin/pages/reservations/index', $data);
+    }
+
+    public function confirmer($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        $reservation = $this->reservationModel->find($id);
+        if (!$reservation) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        if ($reservation['statut'] !== 'en_attente') {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Seules les réservations en attente peuvent être confirmées.'
+            ]);
+        }
+
+        if ($this->reservationModel->update($id, ['statut' => 'confirmee'])) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Réservation confirmée avec succès !'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Erreur lors de la confirmation de la réservation.'
+            ]);
+        }
+    }
+
+    public function annuler($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        $motif = $this->request->getPost('motif_annulation');
+        if (empty($motif)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Le motif d\'annulation est obligatoire.'
+            ]);
+        }
+
+        $reservation = $this->reservationModel->find($id);
+        if (!$reservation) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        if ($reservation['statut'] === 'annulee') {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Cette réservation est déjà annulée.'
+            ]);
+        }
+
+        $updateData = [
+            'statut' => 'annulee',
+            'motif_annulation' => $motif
+        ];
+
+        if ($this->reservationModel->update($id, $updateData)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Réservation annulée avec succès !'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Erreur lors de l\'annulation de la réservation.'
+            ]);
+        }
+    }
+
+    public function get($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        $reservation = $this->reservationModel
+            ->select('reservations.*,
+                      COALESCE(locataires.nom, reservations.client_nom) as locataire_nom,
+                      COALESCE(locataires.telephone, reservations.client_telephone) as locataire_telephone,
+                      COALESCE(locataires.email, reservations.client_email) as locataire_email,
+                      appartements.adresse as appartement_adresse,
+                      appartements.tarifs')
+            ->join('locataires', 'locataires.id = reservations.locataire_id', 'left')
+            ->join('appartements', 'appartements.id = reservations.appartement_id')
+            ->find($id);
+
+        if (!$reservation) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'reservation' => $reservation
+        ]);
+    }
+
+    public function create()
+    {
+        log_message('info', '=== DÉBUT CRÉATION RÉSERVATION ADMIN ===');
+        log_message('info', 'Données POST reçues: ' . json_encode($this->request->getPost()));
+
+        $rules = [
+            'appartement_id' => 'required|integer',
+            'date_debut' => 'required|valid_date',
+            'date_fin' => 'required|valid_date',
+            'montant_paye' => 'permit_empty|decimal',
+            'mode_paiement' => 'required|in_list[especes,orange_money,momo,carte_bancaire,virement]',
+            'reduction_pourcentage' => 'permit_empty|decimal',
+            'type_reservation' => 'required|in_list[en_ligne,telephonique,presentiel]',
+            'notes' => 'permit_empty|string'
+        ];
+
+        // Si c'est un nouveau client, ajouter les règles de validation
+        $clientType = $this->request->getPost('client_type');
+        log_message('info', 'Type de client: ' . $clientType);
+
+        if ($clientType === 'nouveau') {
+            $rules['client_nom'] = 'required|string|max_length[255]';
+            $rules['client_email'] = 'required|valid_email';
+            $rules['client_telephone'] = 'required|string|max_length[50]';
+        } else {
+            $rules['locataire_id'] = 'required|integer';
+        }
+
+        if (!$this->validate($rules)) {
+            $errors = $this->validator->getErrors();
+            log_message('error', 'VALIDATION ÉCHOUÉE: ' . json_encode($errors));
+            return $this->response->setJSON([
+                'success' => false,
+                'errors' => $errors
+            ]);
+        }
+
+        log_message('info', 'Validation réussie');
+
+        // Vérifier la disponibilité de l'appartement
+        $dateDebut = $this->request->getPost('date_debut');
+        $dateFin = $this->request->getPost('date_fin');
+        $appartementId = $this->request->getPost('appartement_id');
+
+        log_message('info', "Vérification disponibilité - Appartement: {$appartementId}, Du: {$dateDebut}, Au: {$dateFin}");
+
+        if (!$this->reservationModel->verifierDisponibilite($appartementId, $dateDebut, $dateFin)) {
+            log_message('warning', 'Appartement non disponible pour ces dates');
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'L\'appartement n\'est pas disponible pour ces dates.'
+            ]);
+        }
+
+        log_message('info', 'Appartement disponible');
+
+        // Gérer la création ou sélection du locataire
+        $locataireId = null;
+
+        if ($clientType === 'nouveau') {
+            // Récupérer les informations du nouveau client
+            $clientNom = $this->request->getPost('client_nom');
+            $clientEmail = $this->request->getPost('client_email');
+            $clientTelephone = $this->request->getPost('client_telephone');
+
+            log_message('info', "Nouveau client: {$clientNom}, Email: {$clientEmail}, Tél: {$clientTelephone}");
+
+            // Vérifier si un locataire avec cet email ou téléphone existe déjà
+            $existingLocataire = $this->locataireModel
+                ->groupStart()
+                    ->where('email', $clientEmail)
+                    ->orWhere('telephone', $clientTelephone)
+                ->groupEnd()
+                ->first();
+
+            if ($existingLocataire) {
+                // Utiliser le locataire existant
+                $locataireId = $existingLocataire['id'];
+                log_message('info', "Locataire existant trouvé - ID: {$locataireId}");
+            } else {
+                // Créer un nouveau locataire
+                $locataireData = [
+                    'nom' => $clientNom,
+                    'email' => $clientEmail,
+                    'telephone' => $clientTelephone
+                ];
+
+                $locataireId = $this->locataireModel->insert($locataireData);
+
+                if ($locataireId) {
+                    log_message('info', "Nouveau locataire créé - ID: {$locataireId}");
+                } else {
+                    log_message('error', 'Échec de la création du locataire: ' . json_encode($this->locataireModel->errors()));
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Erreur lors de la création du locataire.',
+                        'errors' => $this->locataireModel->errors()
+                    ]);
+                }
+            }
+        } else {
+            $locataireId = $this->request->getPost('locataire_id');
+            log_message('info', "Client existant sélectionné - ID: {$locataireId}");
+        }
+
+        // Calculer le prix total avec réduction
+        $reductionPourcentage = $this->request->getPost('reduction_pourcentage') ?? 0;
+        log_message('info', "Calcul du prix avec réduction de {$reductionPourcentage}%");
+
+        $prixCalcul = $this->reservationModel->calculerPrixTotal($appartementId, $dateDebut, $dateFin, $reductionPourcentage);
+
+        if (!$prixCalcul) {
+            log_message('error', 'Erreur lors du calcul du prix - Le calcul a retourné false');
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Erreur lors du calcul du prix.'
+            ]);
+        }
+
+        log_message('info', 'Prix calculé: ' . json_encode($prixCalcul));
+
+        $montantPaye = floatval($this->request->getPost('montant_paye') ?? 0);
+
+        $data = [
+            'locataire_id' => $locataireId,
+            'appartement_id' => $appartementId,
+            'date_debut' => $dateDebut,
+            'date_fin' => $dateFin,
+            'montant_total' => $prixCalcul['montant_total'],
+            'prix_original' => $prixCalcul['prix_original'],
+            'montant_reduction' => $prixCalcul['montant_reduction'],
+            'reduction_pourcentage' => $reductionPourcentage,
+            'montant_paye' => $montantPaye,
+            'montant_restant' => $prixCalcul['montant_total'] - $montantPaye,
+            'mode_paiement' => $this->request->getPost('mode_paiement'),
+            'type_reservation' => $this->request->getPost('type_reservation'),
+            'notes' => $this->request->getPost('notes'),
+            'statut' => 'confirmee' // Les réservations manuelles sont confirmées par défaut
+        ];
+
+        log_message('info', 'Données de réservation à insérer: ' . json_encode($data));
+
+        try {
+            $reservationId = $this->reservationModel->creerReservationManuelle($data);
+
+            if ($reservationId) {
+                log_message('info', "Réservation créée avec succès - ID: {$reservationId}");
+
+                // Si un montant a été payé, enregistrer le paiement
+                $paiementId = null;
+                if ($montantPaye > 0) {
+                    log_message('info', "Enregistrement du paiement partiel de {$montantPaye} FCFA");
+                    $paiementData = [
+                        'reservation_id' => $reservationId,
+                        'locataire_id' => $data['locataire_id'],
+                        'montant' => $montantPaye,
+                        'date' => date('Y-m-d'),
+                        'mode_paiement' => $data['mode_paiement'],
+                        'statut' => 'paye'
+                    ];
+                    $paiementId = $this->paiementModel->enregistrerPaiementPartiel($paiementData);
+                }
+
+                log_message('info', '=== RÉSERVATION CRÉÉE AVEC SUCCÈS ===');
+
+                $response = [
+                    'success' => true,
+                    'message' => 'Réservation créée avec succès !'
+                ];
+
+                // Ajouter l'ID du paiement si un paiement a été effectué
+                if ($paiementId) {
+                    $response['paiement_id'] = $paiementId;
+                }
+
+                return $this->response->setJSON($response);
+            } else {
+                $modelErrors = $this->reservationModel->errors();
+                log_message('error', 'Échec création réservation - Erreurs du modèle: ' . json_encode($modelErrors));
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Erreur lors de la création de la réservation.',
+                    'errors' => $modelErrors,
+                    'debug' => 'Le modèle a retourné false. Vérifiez les logs pour plus de détails.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'EXCEPTION lors de la création: ' . $e->getMessage());
+            log_message('error', 'Stack trace: ' . $e->getTraceAsString());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Exception: ' . $e->getMessage(),
+                'debug' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
+    public function addPayment($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        $rules = [
+            'montant' => 'required|decimal|greater_than[0]',
+            'date' => 'required|valid_date',
+            'mode_paiement' => 'required|in_list[especes,orange_money,momo,carte_bancaire,virement]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'errors' => $this->validator->getErrors()
+            ]);
+        }
+
+        $reservation = $this->reservationModel->find($id);
+        if (!$reservation) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        $montantPaiement = $this->request->getPost('montant');
+
+        // Vérifier que le paiement ne dépasse pas le montant restant
+        if ($montantPaiement > $reservation['montant_restant']) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Le montant du paiement ne peut pas dépasser le montant restant.'
+            ]);
+        }
+
+        $paiementData = [
+            'reservation_id' => $id,
+            'locataire_id' => $reservation['locataire_id'] ?? null,
+            'montant' => $montantPaiement,
+            'date' => $this->request->getPost('date'),
+            'mode_paiement' => $this->request->getPost('mode_paiement'),
+            'statut' => 'paye'
+        ];
+
+        $paiementId = $this->paiementModel->enregistrerPaiementPartiel($paiementData);
+
+        if ($paiementId) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Paiement enregistré avec succès !',
+                'paiement_id' => $paiementId
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Erreur lors de l\'enregistrement du paiement.'
+            ]);
+        }
+    }
+
+    public function getPayments($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ]);
+        }
+
+        $paiements = $this->paiementModel->getPaiementsByReservation($id);
+        
+        return $this->response->setJSON([
+            'success' => true,
+            'paiements' => $paiements
+        ]);
+    }
+
+    public function calculatePrice()
+    {
+        $appartementId = $this->request->getPost('appartement_id');
+        $dateDebut = $this->request->getPost('date_debut');
+        $dateFin = $this->request->getPost('date_fin');
+        $reductionPourcentage = $this->request->getPost('reduction_pourcentage') ?? 0;
+
+        if (!$appartementId || !$dateDebut || !$dateFin) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Données manquantes pour le calcul.'
+            ]);
+        }
+
+        $prixCalcul = $this->reservationModel->calculerPrixTotal($appartementId, $dateDebut, $dateFin, $reductionPourcentage);
+        
+        if (!$prixCalcul) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Erreur lors du calcul du prix.'
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'prix' => $prixCalcul
+        ]);
+    }
+
+}
