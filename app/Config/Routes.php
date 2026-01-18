@@ -74,7 +74,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('roles/store', 'RoleController::store');
         $routes->get('roles/edit/(:num)', 'RoleController::edit/$1');
         $routes->post('roles/update/(:num)', 'RoleController::update/$1');
-        $routes->delete('roles/delete/(:num)', 'RoleController::delete/$1');
+        $routes->post('roles/delete/(:num)', 'RoleController::delete/$1');
         $routes->get('roles/get/(:num)', 'RoleController::get/$1');
         $routes->post('roles/toggle-status/(:num)', 'RoleController::toggleStatus/$1');
 

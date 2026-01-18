@@ -27,6 +27,9 @@
     
     <!-- Toastr CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/admin/css/dataTables.bs5.min.css') ?>" />
     
     <script src="<?= base_url('assets/admin/js/jquery.min.js') ?>"></script>
     
@@ -168,6 +171,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="<?= base_url('assets/admin/js/vendors.min.js') ?>"></script>
+
+    <!-- DataTables JS -->
+    <script src="<?= base_url('assets/admin/js/dataTables.min.js') ?>"></script>
+    <script src="<?= base_url('assets/admin/js/dataTables.bs5.min.js') ?>"></script>
 
     <!-- Moment.js (required for daterangepicker) -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>

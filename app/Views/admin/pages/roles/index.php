@@ -177,8 +177,8 @@ $(document).ready(function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // View permissions
-    $('.view-permissions').on('click', function() {
+    // View permissions (délégation d'événements pour DataTables)
+    $(document).on('click', '.view-permissions', function() {
         const roleId = $(this).data('id');
 
         $.ajax({
@@ -227,8 +227,8 @@ $(document).ready(function() {
         });
     });
 
-    // Toggle status
-    $('.toggle-status').on('click', function() {
+    // Toggle status (délégation d'événements pour DataTables)
+    $(document).on('click', '.toggle-status', function() {
         const roleId = $(this).data('id');
         const currentStatus = $(this).data('statut');
         const newStatus = currentStatus === 'actif' ? 'inactif' : 'actif';
@@ -254,8 +254,8 @@ $(document).ready(function() {
         }
     });
 
-    // Delete role
-    $('.delete-role').on('click', function() {
+    // Delete role (délégation d'événements pour DataTables)
+    $(document).on('click', '.delete-role', function() {
         const roleId = $(this).data('id');
         const roleName = $(this).data('name');
         const usersCount = $(this).data('users-count');
@@ -268,7 +268,7 @@ $(document).ready(function() {
         if (confirm(`Voulez-vous vraiment supprimer le rôle "${roleName}" ?`)) {
             $.ajax({
                 url: `/admin/roles/delete/${roleId}`,
-                type: 'DELETE',
+                type: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
