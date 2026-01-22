@@ -424,4 +424,95 @@ class RoleController extends BaseController
             ]);
         }
     }
+
+    /**
+     * Debug - Diagnose roles and permissions issues
+     * Access via: /admin/roles/debug
+     */
+    public function debug()
+    {
+        $db = \Config\Database::connect();
+
+        // Get all roles with is_super_admin status
+        $roles = $db->table('roles')
+            ->select('id, nom, code, is_super_admin, is_system, statut')
+            ->get()
+            ->getResultArray();
+
+        // For each role, get permissions count and users count
+        foreach ($roles as &$role) {
+            // Count permissions
+            $role['permissions_count'] = $db->table('role_permissions')
+                ->where('role_id', $role['id'])
+                ->countAllResults();
+
+            // Get permission codes
+            $permissions = $db->table('role_permissions rp')
+                ->select('p.code')
+                ->join('permissions p', 'p.id = rp.permission_id')
+                ->where('rp.role_id', $role['id'])
+                ->get()
+                ->getResultArray();
+            $role['permission_codes'] = array_column($permissions, 'code');
+
+            // Count users
+            $role['users_count'] = $db->table('utilisateurs')
+                ->where('role_id', $role['id'])
+                ->countAllResults();
+
+            // Get users details
+            $users = $db->table('utilisateurs')
+                ->select('id, nom, prenom, nomUtilisateur, role, role_id')
+                ->where('role_id', $role['id'])
+                ->get()
+                ->getResultArray();
+            $role['users'] = $users;
+        }
+
+        // Get total permissions count
+        $totalPermissions = $db->table('permissions')->countAllResults();
+
+        // Get all stock-related permissions
+        $stockPermissions = $db->table('permissions')
+            ->select('id, code, nom')
+            ->like('code', 'stock')
+            ->orLike('code', 'produits')
+            ->orLike('code', 'approvisionnements')
+            ->orLike('code', 'sorties')
+            ->orLike('code', 'inventaires')
+            ->get()
+            ->getResultArray();
+
+        // Get current user session data
+        $session = session();
+        $currentUserDebug = [
+            'user_id' => $session->get('user_id'),
+            'user_nom' => $session->get('user_nom'),
+            'user_role' => $session->get('user_role'),
+            'user_role_id' => $session->get('user_role_id'),
+            'user_role_name' => $session->get('user_role_name'),
+            'is_super_admin' => $session->get('is_super_admin'),
+            'user_permissions' => $session->get('user_permissions')
+        ];
+
+        // Get users with old role field but no role_id
+        $usersWithoutRoleId = $db->table('utilisateurs')
+            ->select('id, nom, prenom, nomUtilisateur, role, role_id')
+            ->where('role_id IS NULL OR role_id = 0')
+            ->get()
+            ->getResultArray();
+
+        $data = [
+            'title' => 'Debug Rôles & Permissions',
+            'page_title' => 'Diagnostic Rôles & Permissions',
+            'breadcrumbs' => '<li class="breadcrumb-item">Administration</li><li class="breadcrumb-item active">Debug</li>',
+            'roles' => $roles,
+            'totalPermissions' => $totalPermissions,
+            'stockPermissions' => $stockPermissions,
+            'currentUserDebug' => $currentUserDebug,
+            'usersWithoutRoleId' => $usersWithoutRoleId
+        ];
+
+        return view('admin/pages/roles/debug', $data);
+    }
 }

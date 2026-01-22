@@ -142,18 +142,52 @@ class AuthFilter implements FilterInterface
 
     /**
      * Return access denied response
+     * Redirige vers la première page accessible de l'utilisateur
      */
     protected function accessDenied(RequestInterface $request)
     {
+        $session = session();
+        $redirectUrl = $this->getFirstAccessiblePage($session);
+
         if ($request->isAJAX()) {
             return service('response')->setJSON([
                 'success' => false,
                 'message' => 'Vous n\'avez pas les permissions nécessaires pour accéder à cette ressource.',
-                'redirect' => '/admin/dashboard'
+                'redirect' => $redirectUrl
             ])->setStatusCode(403);
         }
-        return redirect()->to('/admin/dashboard')
+        return redirect()->to($redirectUrl)
             ->with('error', 'Vous n\'avez pas les permissions nécessaires pour accéder à cette page.');
+    }
+
+    /**
+     * Trouve la première page accessible pour l'utilisateur
+     */
+    protected function getFirstAccessiblePage($session): string
+    {
+        $permissions = $session->get('user_permissions') ?? [];
+
+        // Ordre de priorité des pages à vérifier
+        $pagePermissions = [
+            '/admin/dashboard' => 'view_dashboard',
+            '/admin/stock' => 'view_stock_dashboard',
+            '/admin/stock/produits' => 'view_produits',
+            '/admin/appartements' => 'view_appartements',
+            '/admin/reservations' => 'view_reservations',
+            '/admin/voitures' => 'view_voitures',
+            '/admin/locataires' => 'view_locataires',
+            '/admin/paiements' => 'view_paiements',
+            '/admin/rapports' => 'view_rapports',
+        ];
+
+        foreach ($pagePermissions as $url => $permission) {
+            if (in_array($permission, $permissions)) {
+                return $url;
+            }
+        }
+
+        // Si aucune page accessible, rediriger vers une page d'erreur
+        return '/admin/access-denied';
     }
 
     /**

@@ -4,26 +4,50 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\UtilisateurModel;
+use App\Models\RoleModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class UtilisateurController extends BaseController
 {
     protected $utilisateurModel;
+    protected $roleModel;
 
     public function __construct()
     {
         $this->utilisateurModel = new UtilisateurModel();
+        $this->roleModel = new RoleModel();
     }
 
     public function index()
     {
+        // Récupérer les utilisateurs avec leurs rôles
         $utilisateurs = $this->utilisateurModel->orderBy('created_at', 'DESC')->findAll();
+
+        // Récupérer tous les rôles pour l'affichage et les formulaires
+        $roles = $this->roleModel->getActiveRoles();
+        $rolesIndexed = [];
+        foreach ($roles as $role) {
+            $rolesIndexed[$role['id']] = $role;
+        }
+
+        // Ajouter le nom du rôle à chaque utilisateur
+        foreach ($utilisateurs as &$utilisateur) {
+            if (!empty($utilisateur['role_id']) && isset($rolesIndexed[$utilisateur['role_id']])) {
+                $utilisateur['role_nom'] = $rolesIndexed[$utilisateur['role_id']]['nom'];
+                $utilisateur['role_code'] = $rolesIndexed[$utilisateur['role_id']]['code'];
+            } else {
+                // Compatibilité avec l'ancien système (champ role string)
+                $utilisateur['role_nom'] = ucfirst($utilisateur['role'] ?? 'Non défini');
+                $utilisateur['role_code'] = $utilisateur['role'] ?? '';
+            }
+        }
 
         $data = [
             'title' => 'Gestion des Utilisateurs',
             'page_title' => 'Utilisateurs',
             'breadcrumbs' => '<li class="breadcrumb-item">Administration</li><li class="breadcrumb-item active">Utilisateurs</li>',
-            'utilisateurs' => $utilisateurs
+            'utilisateurs' => $utilisateurs,
+            'roles' => $roles
         ];
 
         return view('admin/pages/utilisateurs/index', $data);
@@ -37,7 +61,7 @@ class UtilisateurController extends BaseController
             'nomUtilisateur' => 'required|string|max_length[50]|is_unique[utilisateurs.nomUtilisateur]',
             'telephone' => 'required|string|max_length[20]|is_unique[utilisateurs.telephone]',
             'email' => 'permit_empty|valid_email|max_length[150]',
-            'role' => 'required|in_list[admin,gestionnaire]',
+            'role_id' => 'required|integer',
             'motDePasse' => 'required|string|min_length[6]'
         ];
 
@@ -48,13 +72,24 @@ class UtilisateurController extends BaseController
             ]);
         }
 
+        // Vérifier que le rôle existe
+        $roleId = $this->request->getPost('role_id');
+        $role = $this->roleModel->find($roleId);
+        if (!$role) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Le rôle sélectionné n\'existe pas.'
+            ]);
+        }
+
         $data = [
             'nom' => $this->request->getPost('nom'),
             'prenom' => $this->request->getPost('prenom'),
             'nomUtilisateur' => $this->request->getPost('nomUtilisateur'),
             'telephone' => $this->request->getPost('telephone'),
             'email' => $this->request->getPost('email'),
-            'role' => $this->request->getPost('role'),
+            'role_id' => $roleId,
+            'role' => $role['code'], // Pour compatibilité avec l'ancien système
             'motDePasse' => $this->request->getPost('motDePasse'),
             'statut' => 'actif'
         ];
@@ -95,7 +130,7 @@ class UtilisateurController extends BaseController
             'nomUtilisateur' => "required|string|max_length[50]|is_unique[utilisateurs.nomUtilisateur,id,{$id}]",
             'telephone' => "required|string|max_length[20]|is_unique[utilisateurs.telephone,id,{$id}]",
             'email' => 'permit_empty|valid_email|max_length[150]',
-            'role' => 'required|in_list[admin,gestionnaire]'
+            'role_id' => 'required|integer'
         ];
 
         if (!$this->validate($rules)) {
@@ -105,13 +140,24 @@ class UtilisateurController extends BaseController
             ]);
         }
 
+        // Vérifier que le rôle existe
+        $roleId = $this->request->getPost('role_id');
+        $role = $this->roleModel->find($roleId);
+        if (!$role) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Le rôle sélectionné n\'existe pas.'
+            ]);
+        }
+
         $data = [
             'nom' => $this->request->getPost('nom'),
             'prenom' => $this->request->getPost('prenom'),
             'nomUtilisateur' => $this->request->getPost('nomUtilisateur'),
             'telephone' => $this->request->getPost('telephone'),
             'email' => $this->request->getPost('email'),
-            'role' => $this->request->getPost('role')
+            'role_id' => $roleId,
+            'role' => $role['code'] // Pour compatibilité avec l'ancien système
         ];
 
         // Ajouter le mot de passe seulement s'il est fourni

@@ -34,7 +34,7 @@ class UtilisateurModel extends Model
         'nomUtilisateur' => 'required|string|max_length[50]|is_unique[utilisateurs.nomUtilisateur,id,{id}]',
         'telephone' => 'required|string|max_length[20]|is_unique[utilisateurs.telephone,id,{id}]',
         'email' => 'permit_empty|valid_email|max_length[150]',
-        'role' => 'permit_empty|in_list[admin,gestionnaire]', // Kept for backward compatibility
+        'role' => 'permit_empty|string|max_length[50]', // Code du rôle pour compatibilité
         'role_id' => 'permit_empty|integer',
         'motDePasse' => 'required|string|min_length[6]',
         'statut' => 'permit_empty|in_list[actif,inactif]'

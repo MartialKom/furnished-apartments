@@ -55,6 +55,9 @@ $routes->group('reservation', ['namespace' => 'App\Controllers'], function ($rou
     $routes->get('check-availability', 'ReservationController::checkAvailability');
 });
 
+// Page d'accès refusé (sans filtre de permission pour éviter la boucle)
+$routes->get('admin/access-denied', 'App\Controllers\Admin\DashboardController::accessDenied');
+
 // Admin Routes (Protected)
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'auth'], function ($routes) {
     // Dashboard - accessible à tous les utilisateurs authentifiés
@@ -80,6 +83,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('roles/delete/(:num)', 'RoleController::delete/$1');
         $routes->get('roles/get/(:num)', 'RoleController::get/$1');
         $routes->post('roles/toggle-status/(:num)', 'RoleController::toggleStatus/$1');
+        $routes->get('roles/debug', 'RoleController::debug'); // Debug page - remove in production
 
         // Reports - Admin only
         $routes->get('reports', 'DashboardController::reports');

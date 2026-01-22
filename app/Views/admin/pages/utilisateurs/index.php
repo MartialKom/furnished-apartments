@@ -38,8 +38,17 @@
                                         <td><?= esc($utilisateur['email']) ?></td>
                                         <td><?= esc($utilisateur['telephone']) ?></td>
                                         <td>
-                                            <span class="badge bg-<?= $utilisateur['role'] === 'admin' ? 'danger' : 'primary' ?>">
-                                                <?= ucfirst($utilisateur['role']) ?>
+                                            <?php
+                                            $badgeClass = 'primary';
+                                            $roleCode = $utilisateur['role_code'] ?? $utilisateur['role'] ?? '';
+                                            if (in_array($roleCode, ['admin', 'super_admin'])) {
+                                                $badgeClass = 'danger';
+                                            } elseif ($roleCode === 'gestionnaire') {
+                                                $badgeClass = 'info';
+                                            }
+                                            ?>
+                                            <span class="badge bg-<?= $badgeClass ?>">
+                                                <?= esc($utilisateur['role_nom'] ?? ucfirst($utilisateur['role'] ?? 'Non défini')) ?>
                                             </span>
                                         </td>
                                         <td>
@@ -112,11 +121,14 @@
                         <input type="email" class="form-control" id="email" name="email">
                     </div>
                     <div class="mb-3">
-                        <label for="role" class="form-label">Rôle <span class="text-danger">*</span></label>
-                        <select class="form-control" id="role" name="role" required>
+                        <label for="role_id" class="form-label">Rôle <span class="text-danger">*</span></label>
+                        <select class="form-control" id="role_id" name="role_id" required>
                             <option value="">Sélectionner un rôle</option>
-                            <option value="admin">Administrateur</option>
-                            <option value="gestionnaire">Gestionnaire</option>
+                            <?php if (!empty($roles)): ?>
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?= $role['id'] ?>"><?= esc($role['nom']) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -171,11 +183,14 @@
                         <input type="email" class="form-control" id="edit_email" name="email">
                     </div>
                     <div class="mb-3">
-                        <label for="edit_role" class="form-label">Rôle <span class="text-danger">*</span></label>
-                        <select class="form-control" id="edit_role" name="role" required>
+                        <label for="edit_role_id" class="form-label">Rôle <span class="text-danger">*</span></label>
+                        <select class="form-control" id="edit_role_id" name="role_id" required>
                             <option value="">Sélectionner un rôle</option>
-                            <option value="admin">Administrateur</option>
-                            <option value="gestionnaire">Gestionnaire</option>
+                            <?php if (!empty($roles)): ?>
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?= $role['id'] ?>"><?= esc($role['nom']) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -236,7 +251,7 @@ $(document).ready(function() {
                     $('#edit_nomUtilisateur').val(utilisateur.nomUtilisateur);
                     $('#edit_telephone').val(utilisateur.telephone);
                     $('#edit_email').val(utilisateur.email);
-                    $('#edit_role').val(utilisateur.role);
+                    $('#edit_role_id').val(utilisateur.role_id);
                     $('#editUtilisateurModal').modal('show');
                 }
             }

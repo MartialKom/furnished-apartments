@@ -370,4 +370,27 @@ class DashboardController extends BaseController
 
         return view('admin/pages/reports', $data);
     }
+
+    /**
+     * Page d'accès refusé - affichée quand l'utilisateur n'a aucune permission
+     */
+    public function accessDenied()
+    {
+        $session = session();
+
+        // Si pas connecté, rediriger vers login
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/admin/login');
+        }
+
+        $data = [
+            'title' => 'Accès Refusé',
+            'page_title' => 'Accès Refusé',
+            'breadcrumbs' => '<li class="breadcrumb-item active">Accès Refusé</li>',
+            'user_role_name' => $session->get('user_role_name'),
+            'user_permissions' => $session->get('user_permissions') ?? []
+        ];
+
+        return view('admin/pages/access_denied', $data);
+    }
 }

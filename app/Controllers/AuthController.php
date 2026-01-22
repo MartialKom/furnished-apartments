@@ -19,8 +19,13 @@ class AuthController extends BaseController
 
     public function login()
     {
-        if ($this->session->get('user_id')) {
-            return redirect()->to('/admin/dashboard');
+        if ($this->session->get('is_logged_in')) {
+            // Rediriger vers la première page accessible
+            $sessionData = [
+                'is_super_admin' => $this->session->get('is_super_admin'),
+                'user_permissions' => $this->session->get('user_permissions') ?? []
+            ];
+            return redirect()->to($this->getFirstAccessiblePage($sessionData));
         }
 
         $data = [
@@ -82,7 +87,9 @@ class AuthController extends BaseController
 
             log_message('info', "User {$user['id']} ({$user['nomUtilisateur']}) logged in with role: " . ($userWithPermissions['role_data']['nom'] ?? 'N/A'));
 
-            return redirect()->to('/admin/dashboard')->with('success', 'Connexion réussie !');
+            // Rediriger vers la première page accessible
+            $redirectUrl = $this->getFirstAccessiblePage($sessionData);
+            return redirect()->to($redirectUrl)->with('success', 'Connexion réussie !');
         } else {
             return redirect()->back()->withInput()->with('error', 'Nom d\'utilisateur ou mot de passe incorrect.');
         }
@@ -92,5 +99,40 @@ class AuthController extends BaseController
     {
         $this->session->destroy();
         return redirect()->to('/admin/login')->with('success', 'Vous avez été déconnecté avec succès.');
+    }
+
+    /**
+     * Trouve la première page accessible pour l'utilisateur après login
+     */
+    protected function getFirstAccessiblePage(array $sessionData): string
+    {
+        // Super admin va toujours au dashboard
+        if ($sessionData['is_super_admin'] ?? false) {
+            return '/admin/dashboard';
+        }
+
+        $permissions = $sessionData['user_permissions'] ?? [];
+
+        // Ordre de priorité des pages à vérifier
+        $pagePermissions = [
+            '/admin/dashboard' => 'view_dashboard',
+            '/admin/stock' => 'view_stock_dashboard',
+            '/admin/stock/produits' => 'view_produits',
+            '/admin/appartements' => 'view_appartements',
+            '/admin/reservations' => 'view_reservations',
+            '/admin/voitures' => 'view_voitures',
+            '/admin/locataires' => 'view_locataires',
+            '/admin/paiements' => 'view_paiements',
+            '/admin/rapports' => 'view_rapports',
+        ];
+
+        foreach ($pagePermissions as $url => $permission) {
+            if (in_array($permission, $permissions)) {
+                return $url;
+            }
+        }
+
+        // Si aucune page accessible, page d'erreur
+        return '/admin/access-denied';
     }
 }
