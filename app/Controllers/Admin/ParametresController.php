@@ -81,21 +81,24 @@ class ParametresController extends BaseController
             ]);
 
             if ($validated) {
-                // Créer le dossier s'il n'existe pas
-                $uploadPath = FCPATH . 'uploads/parametres/';
+                // Créer le dossier s'il n'existe pas (stockage dans writable/uploads pour Docker)
+                $uploadPath = WRITEPATH . 'uploads/parametres/';
                 if (!is_dir($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
                 }
 
                 // Supprimer l'ancien logo s'il existe
-                if (!empty($params['structure_logo']) && file_exists(FCPATH . $params['structure_logo'])) {
-                    @unlink(FCPATH . $params['structure_logo']);
+                if (!empty($params['structure_logo'])) {
+                    $oldLogoPath = WRITEPATH . $params['structure_logo'];
+                    if (file_exists($oldLogoPath)) {
+                        @unlink($oldLogoPath);
+                    }
                 }
 
                 // Générer un nom unique
                 $newName = 'logo_' . time() . '.' . $logoFile->getExtension();
 
-                // Déplacer le fichier
+                // Déplacer le fichier vers writable/uploads
                 $logoFile->move($uploadPath, $newName);
 
                 // Mettre à jour le paramètre avec le chemin relatif
@@ -128,8 +131,11 @@ class ParametresController extends BaseController
 
         $currentLogo = $this->structureParamModel->getParam('structure_logo');
 
-        if (!empty($currentLogo) && file_exists(FCPATH . $currentLogo)) {
-            @unlink(FCPATH . $currentLogo);
+        if (!empty($currentLogo)) {
+            $logoPath = WRITEPATH . $currentLogo;
+            if (file_exists($logoPath)) {
+                @unlink($logoPath);
+            }
         }
 
         // Mettre à jour le paramètre

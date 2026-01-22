@@ -52,10 +52,16 @@ class AppartementController extends BaseController
             ]);
         }
 
-        // Gérer l'upload des photos
+        // Gérer l'upload des photos (stockage dans writable/uploads pour Docker)
         $uploadedPhotos = [];
         $photoFiles = $this->request->getFiles();
-        
+
+        // Créer le dossier s'il n'existe pas
+        $uploadPath = WRITEPATH . 'uploads/appartements/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
         if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
             foreach ($photoFiles['photoFiles'] as $file) {
                 if ($file && $file->isValid() && !$file->hasMoved()) {
@@ -66,7 +72,7 @@ class AppartementController extends BaseController
                             'message' => 'Format de fichier non autorisé: ' . $file->getClientName()
                         ]);
                     }
-                    
+
                     // Vérifier la taille (5MB max)
                     if ($file->getSizeByUnit('mb') > 5) {
                         return $this->response->setJSON([
@@ -74,12 +80,12 @@ class AppartementController extends BaseController
                             'message' => 'Fichier trop volumineux: ' . $file->getClientName() . ' (max 5MB)'
                         ]);
                     }
-                    
+
                     // Générer un nom unique
                     $newName = $file->getRandomName();
-                    
-                    // Déplacer le fichier
-                    if ($file->move(FCPATH . 'uploads/appartements/', $newName)) {
+
+                    // Déplacer le fichier vers writable/uploads
+                    if ($file->move($uploadPath, $newName)) {
                         $uploadedPhotos[] = 'uploads/appartements/' . $newName;
                     } else {
                         return $this->response->setJSON([
@@ -160,11 +166,17 @@ class AppartementController extends BaseController
         // Récupérer les photos existantes
         $existingPhotos = explode(',', $appartement['photos'] ?? '');
         $existingPhotos = array_filter($existingPhotos); // Supprimer les valeurs vides
-        
-        // Gérer l'upload des nouvelles photos
+
+        // Gérer l'upload des nouvelles photos (stockage dans writable/uploads pour Docker)
         $uploadedPhotos = [];
         $photoFiles = $this->request->getFiles();
-        
+
+        // Créer le dossier s'il n'existe pas
+        $uploadPath = WRITEPATH . 'uploads/appartements/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
         if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
             foreach ($photoFiles['photoFiles'] as $file) {
                 if ($file && $file->isValid() && !$file->hasMoved()) {
@@ -175,17 +187,17 @@ class AppartementController extends BaseController
                             'message' => 'Format de fichier non autorisé: ' . $file->getClientName()
                         ]);
                     }
-                    
+
                     if ($file->getSizeByUnit('mb') > 5) {
                         return $this->response->setJSON([
                             'success' => false,
                             'message' => 'Fichier trop volumineux: ' . $file->getClientName() . ' (max 5MB)'
                         ]);
                     }
-                    
+
                     $newName = $file->getRandomName();
-                    
-                    if ($file->move(FCPATH . 'uploads/appartements/', $newName)) {
+
+                    if ($file->move($uploadPath, $newName)) {
                         $uploadedPhotos[] = 'uploads/appartements/' . $newName;
                     } else {
                         return $this->response->setJSON([

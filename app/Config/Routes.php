@@ -6,6 +6,9 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+// Route pour servir les images depuis writable/uploads (nécessaire pour Docker)
+$routes->get('uploads/(:segment)/(:any)', 'ImageController::serve/$1/$2');
+
 // Route par défaut - Page d'accueil frontend
 $routes->get('/', 'Frontend\HomeController::index');
 

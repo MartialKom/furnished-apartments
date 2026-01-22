@@ -71,12 +71,27 @@ class VoitureController extends BaseController
             ]);
         }
 
-        // Gérer l'upload des photos
+        // Gérer l'upload des photos (stockage dans writable/uploads pour Docker)
         $uploadedPhotos = [];
         $photoFiles = $this->request->getFiles();
 
+        // Créer le dossier s'il n'existe pas
+        $uploadPath = WRITEPATH . 'uploads/voitures/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        // Limite de 5 images maximum pour les voitures
+        $maxPhotos = 5;
+        $photoCount = 0;
+
         if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
             foreach ($photoFiles['photoFiles'] as $file) {
+                // Vérifier la limite de photos
+                if ($photoCount >= $maxPhotos) {
+                    break;
+                }
+
                 if ($file && $file->isValid() && !$file->hasMoved()) {
                     // Vérifier le type de fichier
                     if (!in_array($file->getClientMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])) {
@@ -97,9 +112,10 @@ class VoitureController extends BaseController
                     // Générer un nom unique
                     $newName = $file->getRandomName();
 
-                    // Déplacer le fichier
-                    if ($file->move(FCPATH . 'uploads/voitures/', $newName)) {
+                    // Déplacer le fichier vers writable/uploads
+                    if ($file->move($uploadPath, $newName)) {
                         $uploadedPhotos[] = 'uploads/voitures/' . $newName;
+                        $photoCount++;
                     } else {
                         return $this->response->setJSON([
                             'success' => false,
@@ -108,6 +124,11 @@ class VoitureController extends BaseController
                     }
                 }
             }
+        }
+
+        // Avertir si des photos ont été ignorées
+        if (isset($photoFiles['photoFiles']) && count($photoFiles['photoFiles']) > $maxPhotos) {
+            log_message('info', 'Voiture: ' . (count($photoFiles['photoFiles']) - $maxPhotos) . ' photos ignorées (max 5)');
         }
 
         $data = [
@@ -223,12 +244,34 @@ class VoitureController extends BaseController
         $existingPhotos = explode(',', $voiture['photos'] ?? '');
         $existingPhotos = array_filter($existingPhotos); // Supprimer les valeurs vides
 
-        // Gérer l'upload des nouvelles photos
+        // Gérer l'upload des nouvelles photos (stockage dans writable/uploads pour Docker)
         $uploadedPhotos = [];
         $photoFiles = $this->request->getFiles();
 
-        if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles'])) {
+        // Créer le dossier s'il n'existe pas
+        $uploadPath = WRITEPATH . 'uploads/voitures/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        // Limite de 5 images maximum pour les voitures (incluant les existantes)
+        $maxPhotos = 5;
+        $remainingSlots = $maxPhotos - count($existingPhotos);
+
+        if ($remainingSlots <= 0) {
+            // Déjà 5 photos ou plus, on ne peut plus en ajouter
+            $remainingSlots = 0;
+        }
+
+        $photoCount = 0;
+
+        if (isset($photoFiles['photoFiles']) && is_array($photoFiles['photoFiles']) && $remainingSlots > 0) {
             foreach ($photoFiles['photoFiles'] as $file) {
+                // Vérifier la limite de photos
+                if ($photoCount >= $remainingSlots) {
+                    break;
+                }
+
                 if ($file && $file->isValid() && !$file->hasMoved()) {
                     // Vérifications comme dans store()
                     if (!in_array($file->getClientMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])) {
@@ -247,8 +290,9 @@ class VoitureController extends BaseController
 
                     $newName = $file->getRandomName();
 
-                    if ($file->move(FCPATH . 'uploads/voitures/', $newName)) {
+                    if ($file->move($uploadPath, $newName)) {
                         $uploadedPhotos[] = 'uploads/voitures/' . $newName;
+                        $photoCount++;
                     } else {
                         return $this->response->setJSON([
                             'success' => false,
@@ -259,8 +303,9 @@ class VoitureController extends BaseController
             }
         }
 
-        // Combiner photos existantes et nouvelles
+        // Combiner photos existantes et nouvelles (max 5 au total)
         $allPhotos = array_merge($existingPhotos, $uploadedPhotos);
+        $allPhotos = array_slice($allPhotos, 0, $maxPhotos); // S'assurer de ne pas dépasser 5
 
         $data = [
             'marque' => $this->request->getPost('marque'),

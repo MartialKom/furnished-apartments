@@ -82,13 +82,13 @@
                         </div>
 
                         <div class="col-md-12 mb-3">
-                            <label for="photoFiles" class="form-label">Photos (Maximum 3)</label>
+                            <label for="photoFiles" class="form-label">Photos (Maximum 5)</label>
                             <div class="border rounded p-3" style="background-color: #f8f9fa;">
                                 <div class="d-flex align-items-center">
                                     <button type="button" class="btn btn-sm btn-primary me-3" onclick="document.getElementById('photoFiles').click()">
                                         <i class="feather-upload me-2"></i>Choisir les photos
                                     </button>
-                                    <small class="text-muted">JPG, PNG, WEBP (Max 5MB par photo)</small>
+                                    <small class="text-muted">JPG, PNG, WEBP (Max 5MB par photo, 5 photos max)</small>
                                 </div>
                                 <div id="photoPreviewContainer" class="mt-3" style="display: none;">
                                     <div id="photoPreviewList" class="d-flex gap-2 flex-wrap"></div>
@@ -151,9 +151,10 @@ let selectedPhotos = [];
 
 document.getElementById('photoFiles').addEventListener('change', function(e) {
     const files = Array.from(e.target.files);
+    const maxPhotos = 5;
 
-    if (files.length > 3) {
-        alert('Vous ne pouvez télécharger que 3 photos maximum');
+    if (files.length > maxPhotos) {
+        alert('Vous ne pouvez télécharger que ' + maxPhotos + ' photos maximum');
         e.target.value = '';
         return;
     }

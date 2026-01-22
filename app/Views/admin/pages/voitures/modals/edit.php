@@ -94,14 +94,14 @@
                         </div>
 
                         <div class="col-md-12 mb-3">
-                            <label for="editPhotoFiles" class="form-label">Photos (Maximum 3 au total)</label>
+                            <label for="editPhotoFiles" class="form-label">Photos (Maximum 5 au total)</label>
                             <div class="border rounded p-3" style="background-color: #f8f9fa;">
                                 <div id="editExistingPhotos" class="mb-3"></div>
                                 <div class="d-flex align-items-center">
                                     <button type="button" class="btn btn-sm btn-primary me-3" onclick="document.getElementById('editPhotoFiles').click()">
                                         <i class="feather-upload me-2"></i>Ajouter des photos
                                     </button>
-                                    <small class="text-muted">JPG, PNG, WEBP (Max 5MB par photo)</small>
+                                    <small class="text-muted">JPG, PNG, WEBP (Max 5MB par photo, 5 photos max)</small>
                                 </div>
                                 <div id="editPhotoPreviewContainer" class="mt-3" style="display: none;">
                                     <div id="editPhotoPreviewList" class="d-flex gap-2 flex-wrap"></div>
@@ -166,10 +166,11 @@ let editExistingPhotosData = [];
 // Gestion de l'upload de nouvelles photos pour l'édition
 document.getElementById('editPhotoFiles').addEventListener('change', function(e) {
     const files = Array.from(e.target.files);
+    const maxPhotos = 5;
     const totalPhotos = editExistingPhotosData.length + files.length;
 
-    if (totalPhotos > 3) {
-        alert('Vous ne pouvez avoir que 3 photos maximum au total');
+    if (totalPhotos > maxPhotos) {
+        alert('Vous ne pouvez avoir que ' + maxPhotos + ' photos maximum au total');
         e.target.value = '';
         return;
     }
