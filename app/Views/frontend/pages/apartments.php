@@ -32,63 +32,100 @@
         <?php if (!empty($appartements)): ?>
             <div class="row">
                 <?php foreach ($appartements as $appartement): ?>
-                    <div class="col-lg-3 col-md-6 mb-30">
-                        <div class="apartment-card">
+                    <div class="col-lg-4 col-md-6 mb-30">
+                        <div class="apartment-card" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
                             <!-- Image -->
-                            <div class="apartment-img">
+                            <div class="apartment-img" style="position: relative;">
                                 <?php
                                 $photos = !empty($appartement['photos']) ? explode(',', $appartement['photos']) : [];
-                                $photos = array_filter($photos); // Supprimer les valeurs vides
+                                $photos = array_filter($photos);
                                 $firstPhoto = !empty($photos) ? base_url($photos[0]) : base_url('assets/frontend/images/default-apartment.jpg');
                                 ?>
                                 <img src="<?= $firstPhoto ?>" alt="<?= esc($appartement['adresse']) ?>" style="width: 100%; height: 250px; object-fit: cover;">
-                                <div class="apartment-price">
+                                <div class="apartment-price" style="position: absolute; bottom: 15px; right: 15px; background: #d29751; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
                                     <span><?= number_format($appartement['tarifs'], 0, ',', ' ') ?> FCFA/Nuit</span>
                                 </div>
                             </div>
 
                             <!-- Content -->
-                            <div class="apartment-content">
-                                <h4 class="apartment-title">
-                                    <a href="<?= base_url('apartments/' . $appartement['id']) ?>">
+                            <div class="apartment-content" style="padding: 20px;">
+                                <h4 class="apartment-title" style="margin-bottom: 15px; font-size: 1.4rem; font-weight: bold;">
+                                    <a href="<?= base_url('apartments/' . $appartement['id']) ?>" style="color: #333; text-decoration: none;">
                                         <?= esc($appartement['adresse']) ?>
                                     </a>
                                 </h4>
 
-                                <!-- Description (Extract from equipements or create short text) -->
-                                <p class="apartment-desc">
-                                    <?php
-                                    $equipements = !empty($appartement['equipements']) ? explode(',', $appartement['equipements']) : [];
-                                    $equipements = array_map('trim', $equipements); // Supprimer les espaces
-                                    $equipements = array_filter($equipements); // Supprimer les valeurs vides
-                                    if (!empty($equipements)) {
-                                        echo 'Équipé de : ' . implode(', ', array_slice($equipements, 0, 3));
-                                        if (count($equipements) > 3) {
-                                            echo '...';
-                                        }
-                                    } else {
-                                        echo 'Appartement meublé moderne et confortable';
-                                    }
-                                    ?>
+                                <p class="text-muted mb-2" style="font-size: 0.9rem;">
+                                    <i class="fas fa-home"></i> Appartement meuble
                                 </p>
 
-                                <!-- Equipements Icons -->
-                                <?php if (!empty($equipements)): ?>
-                                    <ul class="apartment-features">
-                                        <?php foreach (array_slice($equipements, 0, 3) as $equip): ?>
-                                            <li>
-                                                <i class="fas fa-check-circle"></i>
-                                                <span><?= esc($equip) ?></span>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
+                                <!-- Apartment Features -->
+                                <div class="apartment-features" style="margin: 15px 0;">
+                                    <div class="row">
+                                        <?php
+                                        $equipements = !empty($appartement['equipements']) ? explode(',', $appartement['equipements']) : [];
+                                        $equipements = array_map('trim', $equipements);
+                                        $equipements = array_filter($equipements);
+                                        $displayEquipements = array_slice($equipements, 0, 4);
+                                        ?>
+                                        <?php if (in_array('Wifi', $equipements) || in_array('WiFi', $equipements) || in_array('wifi', $equipements)): ?>
+                                            <div class="col-6 mb-2">
+                                                <span style="display: flex; align-items: center; font-size: 0.9rem;">
+                                                    <i class="fas fa-wifi" style="color: #d29751; margin-right: 8px;"></i>
+                                                    WiFi
+                                                </span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (in_array('Climatisation', $equipements) || in_array('climatisation', $equipements) || in_array('Clim', $equipements)): ?>
+                                            <div class="col-6 mb-2">
+                                                <span style="display: flex; align-items: center; font-size: 0.9rem;">
+                                                    <i class="fas fa-snowflake" style="color: #d29751; margin-right: 8px;"></i>
+                                                    Climatisation
+                                                </span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (in_array('Cuisine', $equipements) || in_array('cuisine', $equipements)): ?>
+                                            <div class="col-6 mb-2">
+                                                <span style="display: flex; align-items: center; font-size: 0.9rem;">
+                                                    <i class="fas fa-utensils" style="color: #d29751; margin-right: 8px;"></i>
+                                                    Cuisine
+                                                </span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (in_array('Parking', $equipements) || in_array('parking', $equipements)): ?>
+                                            <div class="col-6 mb-2">
+                                                <span style="display: flex; align-items: center; font-size: 0.9rem;">
+                                                    <i class="fas fa-parking" style="color: #d29751; margin-right: 8px;"></i>
+                                                    Parking
+                                                </span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (in_array('TV', $equipements) || in_array('tv', $equipements) || in_array('Television', $equipements)): ?>
+                                            <div class="col-6 mb-2">
+                                                <span style="display: flex; align-items: center; font-size: 0.9rem;">
+                                                    <i class="fas fa-tv" style="color: #d29751; margin-right: 8px;"></i>
+                                                    TV
+                                                </span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (count($displayEquipements) > 0 && empty(array_intersect(['Wifi', 'WiFi', 'wifi', 'Climatisation', 'climatisation', 'Clim', 'Cuisine', 'cuisine', 'Parking', 'parking', 'TV', 'tv', 'Television'], $equipements))): ?>
+                                            <?php foreach (array_slice($displayEquipements, 0, 4) as $equip): ?>
+                                                <div class="col-6 mb-2">
+                                                    <span style="display: flex; align-items: center; font-size: 0.9rem;">
+                                                        <i class="fas fa-check-circle" style="color: #d29751; margin-right: 8px;"></i>
+                                                        <?= esc($equip) ?>
+                                                    </span>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
 
-                                <!-- Reserve Button -->
-                                <div class="apartment-btn">
-                                    <button type="button" class="btn btn-reserve" onclick="openReservationModal(<?= $appartement['id'] ?>, '<?= esc($appartement['adresse'], 'js') ?>', <?= $appartement['tarifs'] ?>)">
-                                        <i class="fas fa-calendar-check"></i> Réserver
-                                    </button>
+                                <!-- View Details Button -->
+                                <div class="apartment-btn mt-3">
+                                    <a href="<?= base_url('apartments/' . $appartement['id']) ?>" class="btn w-100" style="background: #d29751; color: white; padding: 10px; border-radius: 5px; text-decoration: none; display: block; text-align: center;">
+                                        <i class="fas fa-eye"></i> Voir les details
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -98,224 +135,87 @@
         <?php else: ?>
             <div class="row">
                 <div class="col-12">
-                    <div class="alert alert-info text-center">
-                        <i class="fas fa-info-circle fa-2x mb-3"></i>
-                        <h4>Aucun appartement disponible pour le moment</h4>
-                        <p>Tous nos appartements sont actuellement occupés. Veuillez réessayer ultérieurement ou nous contacter pour plus d'informations.</p>
-                        <a href="<?= base_url('contact') ?>" class="btn btn-primary mt-3">Nous Contacter</a>
+                    <div class="text-center py-5" style="background: #f8f9fa; border-radius: 10px;">
+                        <i class="fas fa-home" style="font-size: 4rem; color: #d29751; margin-bottom: 20px;"></i>
+                        <h3 style="color: #666;">Aucun appartement disponible pour le moment</h3>
+                        <p style="color: #999;">Verifiez a nouveau plus tard ou contactez-nous pour plus d'informations.</p>
+                        <a href="<?= base_url('/#contact') ?>" class="btn mt-3" style="background: #d29751; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none;">
+                            Nous contacter
+                        </a>
                     </div>
                 </div>
             </div>
         <?php endif; ?>
     </div>
 </section>
-
-<!-- Reservation Modal -->
-<div class="modal fade" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #d29751 0%, #b87d3f 100%); color: white;">
-                <h5 class="modal-title" id="reservationModalLabel">
-                    <i class="fas fa-calendar-alt"></i> Réserver un Appartement
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Apartment Info Display -->
-                <div class="selected-apartment-info mb-4 p-3" style="background: #f8f9fa; border-left: 4px solid #d29751; border-radius: 5px;">
-                    <h6 class="mb-2" style="color: #d29751;">
-                        <i class="fas fa-home"></i> Appartement sélectionné
-                    </h6>
-                    <p class="mb-1" id="selected-apartment-name" style="font-weight: 600;"></p>
-                    <p class="mb-0" style="color: #28a745; font-size: 18px; font-weight: bold;">
-                        <span id="selected-apartment-price"></span> FCFA/Nuit
-                    </p>
-                </div>
-
-                <!-- Reservation Form -->
-                <?= view('frontend/reservation/form_modal') ?>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Apartments Section End -->
 
 <style>
-    /* Apartment Card Styles */
-    .apartment-card {
-        border: 1px solid #e0e0e0;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        background: white;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
+.apartment-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-    .apartment-card:hover {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        transform: translateY(-5px);
-    }
+.apartment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+}
 
-    .apartment-img {
-        position: relative;
-        overflow: hidden;
-    }
+.apartment-title a:hover {
+    color: #d29751 !important;
+}
 
-    .apartment-img img {
-        transition: transform 0.3s ease;
-    }
+.btn:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
 
-    .apartment-card:hover .apartment-img img {
-        transform: scale(1.1);
-    }
+/* Breadcrumb Area */
+.breadcrumb-area {
+    padding: 120px 0 80px;
+    position: relative;
+}
 
-    .apartment-price {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: #d29751;
-        color: white;
-        padding: 8px 15px;
-        border-radius: 25px;
-        font-weight: 600;
-        font-size: 14px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
+.breadcrumb-area::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
 
-    .apartment-content {
-        padding: 20px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
+.breadcrumb-wrap {
+    position: relative;
+    z-index: 1;
+}
 
-    .apartment-title {
-        font-size: 18px;
-        margin-bottom: 10px;
-        font-weight: 600;
-    }
+.breadcrumb-title h2 {
+    color: white;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
 
-    .apartment-title a {
-        color: #333;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
+.breadcrumb-wrap .breadcrumb {
+    background: transparent;
+    justify-content: center;
+    margin-bottom: 0;
+}
 
-    .apartment-title a:hover {
-        color: #d29751;
-    }
+.breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+}
 
-    .apartment-desc {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 15px;
-        line-height: 1.6;
-    }
+.breadcrumb-item.active {
+    color: white;
+}
 
-    .apartment-features {
-        list-style: none;
-        padding: 0;
-        margin-bottom: 20px;
-    }
-
-    .apartment-features li {
-        font-size: 13px;
-        color: #555;
-        margin-bottom: 8px;
-    }
-
-    .apartment-features i {
-        color: #d29751;
-        margin-right: 8px;
-    }
-
-    .apartment-btn {
-        margin-top: auto;
-    }
-
-    .btn-reserve {
-        width: 100%;
-        background: #d29751;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 5px;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
-
-    .btn-reserve:hover {
-        background: #b87d3f;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(210, 151, 81, 0.3);
-    }
-
-    .btn-reserve i {
-        margin-right: 8px;
-    }
-
-    /* Breadcrumb Area */
-    .breadcrumb-area {
-        padding: 120px 0 80px;
-        position: relative;
-    }
-
-    .breadcrumb-area::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-    }
-
-    .breadcrumb-wrap {
-        position: relative;
-        z-index: 1;
-    }
-
-    .breadcrumb-title h2 {
-        color: white;
-        font-size: 48px;
-        font-weight: 700;
-        margin-bottom: 20px;
-    }
-
-    .breadcrumb-wrap .breadcrumb {
-        background: transparent;
-        justify-content: center;
-        margin-bottom: 0;
-    }
-
-    .breadcrumb-item a {
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-    }
-
-    .breadcrumb-item.active {
-        color: white;
-    }
-
-    .breadcrumb-item + .breadcrumb-item::before {
-        color: rgba(255, 255, 255, 0.6);
-    }
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.6);
+}
 </style>
-
-<script>
-    function openReservationModal(appartementId, appartementName, price) {
-        // Set apartment info in modal
-        document.getElementById('selected-apartment-name').textContent = appartementName;
-        document.getElementById('selected-apartment-price').textContent = new Intl.NumberFormat('fr-FR').format(price);
-
-        // Call the modal form's data setter function
-        setModalAppartementData(appartementId, price);
-
-        // Open modal
-        const modal = new bootstrap.Modal(document.getElementById('reservationModal'));
-        modal.show();
-    }
-</script>
 
 <?= $this->endSection() ?>

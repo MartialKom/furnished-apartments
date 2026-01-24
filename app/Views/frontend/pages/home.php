@@ -338,7 +338,7 @@
                                 <ul>
                                     <li><?= lang('Common.floor_number') ?><span class="after"> 3</span></li>
                                     <li><?= lang('Common.room_number') ?><span class="after"> 2</span></li>
-                                    <li><?= lang('Common.price_label') ?><span class="after"><?= lang('Common.from') ?> 40000<?= lang('Common.price_month') ?></span></li>
+                                    <li><?= lang('Common.price_label') ?><span class="after"><?= lang('Common.from') ?> 40000<?= lang('Common.per_day_short') ?></span></li>
                                 </ul>
                                 <div class="mt-30">
                                     <a href="<?= base_url('reservation') ?>" class="btn" style="background: #d29751; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
@@ -363,7 +363,7 @@
                                 <ul>
                                     <li><?= lang('Common.floor_number') ?><span class="after"> 2</span></li>
                                     <li><?= lang('Common.room_number') ?><span class="after"> 4</span></li>
-                                    <li><?= lang('Common.price_label') ?><span class="after"><?= lang('Common.from') ?> 60000<?= lang('Common.price_month') ?></span></li>
+                                    <li><?= lang('Common.price_label') ?><span class="after"><?= lang('Common.from') ?> 60000<?= lang('Common.per_day_short') ?></span></li>
                                 </ul>
                                 <div class="mt-30">
                                     <a href="<?= base_url('reservation') ?>" class="btn" style="background: #d29751; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">

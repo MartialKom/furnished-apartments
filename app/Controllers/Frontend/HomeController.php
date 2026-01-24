@@ -46,7 +46,17 @@ class HomeController extends BaseController
 
     public function apartmentDetails($id = null)
     {
-        $data['apartment_id'] = $id;
+        $appartement = $this->appartementModel->find($id);
+
+        if (!$appartement) {
+            return redirect()->to('/apartments')->with('error', 'Appartement non trouvé');
+        }
+
+        $data = [
+            'title' => $appartement['adresse'],
+            'appartement' => $appartement
+        ];
+
         return view('frontend/pages/apartment_details', $data);
     }
 
